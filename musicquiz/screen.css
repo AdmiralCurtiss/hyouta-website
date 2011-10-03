@@ -1,0 +1,187 @@
+h2 {
+	font-size: 14pt;
+	text-decoration: none;
+	text-align: center;
+}
+
+h3 {
+	font-size: 12pt;
+	text-decoration: none;
+	text-align: left;
+}
+
+div.welcome {
+ font-size: 14pt;
+ color: black;
+ position: absolute;
+ top: 0;
+ right: 0;
+ }
+
+div.navi {
+ color: #3F003F;
+ text-align: center;
+ font-size: 16pt;
+ text-decoration: none;
+ font-family: Arial;
+ }
+
+div.navi a {
+ color: #3F003F;
+ }
+
+div.navi a:hover {
+ color: #3F007F;
+ }
+ 
+ 
+a:link {
+ color: #DDDDDD;
+ text-decoration: none;
+}
+
+a:visited {
+ color: #AAAAAA;
+ text-decoration: none;
+}
+
+a:hover {
+ color: orange;
+ text-decoration: underline;
+}
+
+iframe.iframe-content {
+ position: absolute;
+ top: 83px;
+ left: 0;
+ width: 75%;
+ height: 555px;
+ }
+
+iframe.iframe-releases {
+ position: absolute;
+ top: 83px;
+ right: 0;
+ width: 25%;
+ height: 555px;
+ }
+
+div.stylechange {
+ font-size: 10pt;
+ color: black;
+ position: absolute;
+ top: 28px;
+ right: 0;
+ }
+
+table.results tr td.percentage span.gamestat {
+	display: none;
+}
+
+table.results tr td.percentage:hover span.gamestat {
+	display: block;
+	position: absolute;
+	background-color: black;
+	border: 1px;
+	border-style: solid;
+	border-color: white;
+	padding: 0 5px;
+	text-align: left;
+}
+
+table.results tr td.percentage span.gamestat:hover {
+	display: none;
+}
+
+table.results tr td.percentage span.songstat {
+	display: none;
+}
+
+table.results tr td.percentage:hover span.songstat {
+	display: block;
+	position: absolute;
+	background-color: black;
+	border: 1px;
+	border-style: solid;
+	border-color: white;
+	padding: 0 5px;
+	right: 10px;
+	text-align: left;
+}
+
+table.results tr td.percentage span.songstat:hover {
+	display: none;
+}
+
+table.results tr.highlight { background-color: #0C0C5F }
+
+span.songavailable { color: lightgreen; }
+span.songnotavailable { color: red; }
+span.songavailable a { color: lightgreen; }
+span.songnotavailable a { color: red; }
+table.results th.songlistB { background-color: darkred; }
+table.results tr td.songlistB { background-color: darkred; }
+table.results tr td.percentagesonglistB { background-color: darkred; }
+table.results tr.highlight td.songlistB { background-color: #3C0C2F }
+table.results tr.highlight td.percentagesonglistB { background-color: #3C0C2F; }
+
+table.results tr td.percentagesonglistB span.gamestat {
+	display: none;
+}
+
+table.results tr td.percentagesonglistB:hover span.gamestat {
+	display: block;
+	position: absolute;
+	background-color: black;
+	border: 1px;
+	border-style: solid;
+	border-color: white;
+	padding: 0 5px;
+	text-align: left;
+}
+
+table.results tr td.percentagesonglistB span.gamestat:hover {
+	display: none;
+}
+
+table.results tr td.percentagesonglistB span.songstat {
+	display: none;
+}
+
+table.results tr td.percentagesonglistB:hover span.songstat {
+	display: block;
+	position: absolute;
+	background-color: black;
+	border: 1px;
+	border-style: solid;
+	border-color: white;
+	padding: 0 5px;
+	right: 10px;
+	text-align: left;
+}
+
+table.results tr td.percentagesonglistB span.songstat:hover {
+	display: none;
+}
+
+div.blogentry a {
+	color: #0077CC;
+}
+
+ /* Runde Ecken */
+.corner_top-right {
+ clear: both;
+ background:url(pic/corner_top-right.gif) top right no-repeat;
+ }
+
+.corner_top-left {
+ background:url(pic/corner_top-left.gif) top left no-repeat;
+ }
+
+.corner_bottom-right {
+ background:url(pic/corner_bottom-right.gif) bottom right no-repeat;
+ }
+
+.corner_bottom-left {
+ background:url(pic/corner_bottom-left.gif) bottom left no-repeat;
+ }

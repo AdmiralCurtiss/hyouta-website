@@ -1,0 +1,119 @@
+body {
+	font-family: Arial;
+}
+
+h1 {
+ text-align: center;
+ font-size: 32pt;
+ }
+
+h3 {
+ text-align: center;
+ text-decoration: underline;
+ font-size: 18pt;
+ }
+
+li {
+ list-style-image: url(pic/MarioSmall.gif);
+ }
+
+li.interests {
+ font-size: 10pt;
+ }
+
+textarea {
+ font-family: Courier New,Arial,Tahoma;
+ }
+
+
+
+ /* Formatierung der Blogeinträge */
+
+div.newsentry_outside {
+ margin: 8px 50px;
+}
+
+div.blog {
+ margin: 0;
+ padding: 8px;
+ }
+
+div.blogentry {
+ margin: 0 8px 0 0;
+ padding: 4px;
+ }
+
+div.title {
+ font-weight: bold;
+ color: purple;
+ }
+
+div.title:hover {
+ color: orange;
+ }
+
+div.date {
+ font-size: 10pt;
+ text-align: right;
+ float: right;
+ color: black;
+ }
+
+div.category {
+ font-style: italic;
+ color: black;
+ }
+
+div.post {
+ color: black;
+ }
+
+div.newsentry_icon {
+ float: left;
+ margin: 0 5px 0 0;
+}
+
+div.floatclear {
+ clear: both;
+}
+
+div.next_page {
+ float: right;
+ color: white;
+}
+div.next_page>a {
+ color: white;
+}
+div.prev_page {
+ float: left;
+ color: white;
+}
+
+div.prev_page>a {
+ color: white;
+}
+div.select_page {
+ text-align: center;
+ color: white;
+}
+
+div.select_page>a {
+ color: white;
+}
+
+.italic {
+ font-style: italic;
+}
+.bold {
+ font-weight: bold; 
+}
+span.current_page {
+ color: #C0C0C0;
+}
+table.centered {
+ margin-left: auto;
+ margin-right: auto;
+}
+div.centered {
+ text-align: center;
+}

@@ -1,0 +1,47 @@
+html {
+	background-color: #000030;
+	color: white;
+}
+
+.login {
+	float: left;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background-color: #000030;
+	width: 20%;
+	text-align: right;
+	z-index:10;
+}
+
+.login-ie {
+	background-color: #000030;
+	width: 20%;
+	text-align: right;
+	z-index:10;
+}
+
+.left .right {
+	display: table;
+}
+
+#main {
+	float: left;
+	width: 100%;
+}
+
+#menu {
+	float: left;
+	clear: both;
+	width: 80%;
+}
+
+#logo {
+	font-size: 22pt;
+}
+
+ul#menulist { width: 100%; height: 43px; background: #000030 url("images/menu-bg.gif") top left repeat-x; font-size: 0.8em; font-family: "Lucida Grande", Verdana, sans-serif; font-weight: bold; list-style-type: none; margin: 0; padding: 0; }
+ul#menulist li { display: block; float: left; margin: 0 0 0 5px; }
+ul#menulist li a { height: 43px; color: #777; text-decoration: none; display: block; float: left; line-height: 200%; padding: 8px 15px 0; }
+ul#menulist li a:hover { color: #333; }
+ul#menulist li a.current{ color: #FFF; background: #000030 url("images/current-bg.gif") top left repeat-x; padding: 5px 15px 0; }
