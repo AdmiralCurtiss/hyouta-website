@@ -22,5 +22,13 @@ class user {
 		}
 		return false;
 	}
+	
+	function is_vgmusicoftheday() {
+		if ( $this->role >= 3 ) {
+			return true;
+		}
+		return false;
+	}
+	
 }
 ?>

@@ -18,6 +18,11 @@ class song {
 	var $halfguessed;
 	var $hidden;
 	
+	var $artist;
+	var $lossy;
+	var $lossless;
+	var $date;
+	
 	var $username;
 	var $userid;
 

@@ -24,6 +24,10 @@
 		$section['register'] = 'register_form.php';
 	}
 	
+	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+		$section['vgmoftheday'] = 'vgmusicoftheday.php';
+	}
+	
 	if ( $session->logged_in && $session->user->is_admin() ) {
 		$section['songadd']    = 'songadd.php';
 		$section['songedit']   = 'songedit.php';

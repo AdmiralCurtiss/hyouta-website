@@ -781,6 +781,45 @@ class db {
 		
 		return false;
 	}
+	
+	function get_vgmusicoftheday_songs_count() {
+		$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday';
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$data = mysql_fetch_assoc($resultset);
+			return $data['c'];
+		}
+	}
+	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC' ) {
+		$start_with = (int)$start_with;
+		$amount = (int)$amount;
+		
+		$query = 'SELECT id, day, artist, game, song, url_yt, url_lossy, url_lossless, quiz_id FROM vgmusicoftheday'
+				.' ORDER BY '.$order
+				.' LIMIT '.$start_with.', '.$amount;
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$songs = array();
+			$i = 0;
+			while ( $data = mysql_fetch_assoc($resultset) ) {
+				$songid = (int)$data['id'];
+				$songs[$i] = new song($songid, $data['yt'], null, $data['game'], $data['song']);
+				$songs[$i]->artist = $data['artist'];
+				$songs[$i]->lossy = $data['url_lossy'];
+				$songs[$i]->lossless = $data['url_lossless'];
+				$songs[$i]->date = $data['day'];
+				$songs[$i]->gameid = $data['quiz_id'];
+
+				$i++;
+			}
+			return $songs;
+		}
+		
+		return false;
+	}
+	
 	function get_guessed_songs( $userid, $songid_only, $start_with = 0, $amount = 50, $order = 'time DESC', $include_series = false, $halfguess_check = false ) {
 		$userid = (int)$userid;
 		$start_with = (int)$start_with;
