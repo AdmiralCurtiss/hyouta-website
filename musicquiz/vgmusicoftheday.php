@@ -115,12 +115,15 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 			if ( $song->url != null ) {
 				foreach ( $song->url as $url ) {
 					if ( $url->has_icon() ) {
-						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" border="0" /></a>';
+						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a> ';
 					} else {
 						echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>';
 					}
 				}
+			} else {
+				echo '&nbsp;';
 			}
+		echo '<a href="index.php?section=vgmotd-urladd&id='.$song->songid.'"><img src="images/plus.gif" title="Add new URL" border="0" /></a>';
 		echo '</td>'
 			.'</tr>';
 	}

@@ -26,23 +26,27 @@ class url_container {
 	}
 	
 	static function get_types() {
-		$types = $session->db->get_vgmusicoftheday_types;
+		if ( self::$types == null ) {
+			global $session;
+			self::$types = $session->db->get_vgmusicoftheday_types();
+		}
+		return self::$types;
 	}
 	
 	function has_icon() {
-		if ( $types == null ) get_types();
-		if ( $types[$url_type]->icon != null ) return true;
+		if ( self::$types == null ) self::get_types();
+		if ( self::$types[$this->url_type]->icon != null ) return true;
 		return false;
 	}
 	
 	function get_icon() {
-		if ( $types == null ) get_types();
-		return $types[$url_type]->icon;
+		if ( self::$types == null ) self::get_types();
+		return self::$types[$this->url_type]->icon;
 	}
 	
 	function get_typename() {
-		if ( $types == null ) get_types();
-		return $types[$url_type]->name;
+		if ( self::$types == null ) self::get_types();
+		return self::$types[$this->url_type]->name;
 	}
 }
 ?>

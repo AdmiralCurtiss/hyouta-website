@@ -26,6 +26,7 @@
 	
 	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		$section['vgmoftheday'] = 'vgmusicoftheday.php';
+		$section['vgmotd-urladd'] = 'vgmusicoftheday_addurl.php';
 	}
 	
 	if ( $session->logged_in && $session->user->is_admin() ) {
