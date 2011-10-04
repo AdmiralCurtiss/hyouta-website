@@ -19,8 +19,6 @@ class song {
 	var $hidden;
 	
 	var $artist;
-	var $lossy;
-	var $lossless;
 	var $date;
 	
 	var $username;

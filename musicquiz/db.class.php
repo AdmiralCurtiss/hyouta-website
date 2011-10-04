@@ -1,6 +1,7 @@
 <?php
 require_once 'user.class.php';
 require_once 'song.class.php';
+require_once 'url_container.class.php';
 
 class db {
 
@@ -782,6 +783,20 @@ class db {
 		return false;
 	}
 	
+	function get_vgmusicoftheday_types() {
+		$query = 'SELECT id, name, icon FROM vgmusicoftheday_types ORDER BY id';
+	
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$types = array();
+			while ( $data = mysql_fetch_assoc($resultset) ) {
+				$typeid = (int)$data['id'];
+				$types[$typeid] = new vgmusicoftheday_type($typeid, $data['name'], $data['icon']);
+			}
+			return $types;
+		}
+	}
+	
 	function get_vgmusicoftheday_songs_count() {
 		$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday';
 		
@@ -791,11 +806,61 @@ class db {
 			return $data['c'];
 		}
 	}
+	
+	function add_vgmusicoftheday_url( $vgm_id, $url_type, $url ) {
+		$vgm_id = (int)$vgm_id;
+		$url_type = (int)$url_type;
+		$url = mysql_real_escape_string(stripslashes($url));
+		
+		$query = 'INSERT INTO vgmusicoftheday_urls ( vgm_id, url, url_type ) VALUES ( '.$vgm_id.', "'.$url.'", '.$url_type.' )';
+		
+		if ( mysql_query($query, $this->database) ) {
+			return mysql_insert_id();
+		}
+		
+		return false;
+	}
+	
+	function edit_vgmusicoftheday_url( $id, $vgm_id, $url_type, $url ) {
+		$id = (int)$id;
+		$vgm_id = (int)$vgm_id;
+		$url_type = (int)$url_type;
+		$url = mysql_real_escape_string(stripslashes($url));
+		
+		$query = 'UPDATE vgmusicoftheday_urls SET vgm_id = '.$vgm_id.', url = "'.$url.'", url_type = '.$url_type.' WHERE id = '.$id;
+		
+		return mysql_query($query, $this->database);
+	}
+	
+	function delete_vgmusicoftheday_url( $id ) {
+		$id = (int)$id;
+		
+		$query = 'DELETE FROM vgmusicoftheday_urls WHERE id = '.$id;
+		
+		return mysql_query($query, $this->database);
+	}
+	
+	function add_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id ) {
+	/*
+		$vgm_id = (int)$vgm_id;
+		$url_type = (int)$url_type;
+		$url = mysql_real_escape_string(stripslashes($url));
+		
+		$query = 'INSERT INTO vgmusicoftheday_urls ( vgm_id, url, url_type ) VALUES ( '.$vgm_id.', "'.$url.'", '.$url_type.' )';
+		
+		if ( mysql_query($query, $this->database) ) {
+			return mysql_insert_id();
+		}
+		
+		return false;
+	*/
+	}
+	
 	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC' ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
 		
-		$query = 'SELECT id, day, artist, game, song, url_yt, url_lossy, url_lossless, quiz_id FROM vgmusicoftheday'
+		$query = 'SELECT id, day, artist, game, song, quiz_id FROM vgmusicoftheday'
 				.' ORDER BY '.$order
 				.' LIMIT '.$start_with.', '.$amount;
 		
@@ -805,12 +870,22 @@ class db {
 			$i = 0;
 			while ( $data = mysql_fetch_assoc($resultset) ) {
 				$songid = (int)$data['id'];
-				$songs[$i] = new song($songid, $data['yt'], null, $data['game'], $data['song']);
+				$songs[$i] = new song($songid, null, null, $data['game'], $data['song']);
 				$songs[$i]->artist = $data['artist'];
-				$songs[$i]->lossy = $data['url_lossy'];
-				$songs[$i]->lossless = $data['url_lossless'];
 				$songs[$i]->date = $data['day'];
 				$songs[$i]->gameid = $data['quiz_id'];
+				
+				// grab urls
+				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
+				$resultset_urls = mysql_query($query_urls, $this->database);
+				if ( $resultset_urls ) {
+					$urls = array();
+					while ( $data_urls = mysql_fetch_assoc($resultset_urls) ) {
+						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type']);
+					}
+					$songs[$i]->url = $urls;
+				}
+				// end grab urls
 
 				$i++;
 			}

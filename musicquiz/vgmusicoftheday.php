@@ -6,6 +6,7 @@ if ( !isset( $session ) ) {
 if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	require_once 'db.class.php';
 	require_once 'song.class.php';
+	require_once 'url_container.class.php';
 
 	error_reporting(E_ALL);
 	
@@ -101,9 +102,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		.'<th><a href="'.$sorturl.'artist'.( $currentorder == 'artist' ? 'D' : '' ).'">Artist</a></th>'
 		.'<th><a href="'.$sorturl.'game'.( $currentorder == 'game' ? 'D' : '' ).'">Game</a></th>'
 		.'<th><a href="'.$sorturl.'song'.( $currentorder == 'song' ? 'D' : '' ).'">Song</a></th>'
-		.'<th>YT</th>'
-		.'<th>mp3</th>'
-		.'<th>flac</th>'
+		.'<th>URLs</th>'
 		.'</tr>';
 
 	foreach( $songs as $song ) {
@@ -112,9 +111,17 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
 			.'<td>'.$song->names.'</td>'
-			.'<td align="middle">'.( $song->url == null ? '-' : '<a href="'.$song->url.'">YT</a>' ).'</td>'
-			.'<td align="middle">'.( $song->lossy == null ? '-' : '<a href="'.$song->lossy.'">Lossy</a>' ).'</td>'
-			.'<td align="middle">'.( $song->lossless == null ? '-' : '<a href="'.$song->lossless.'">Lossless</a>' ).'</td>'
+			.'<td align="middle">';
+			if ( $song->url != null ) {
+				foreach ( $song->url as $url ) {
+					if ( $url->has_icon() ) {
+						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" border="0" /></a>';
+					} else {
+						echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>';
+					}
+				}
+			}
+		echo '</td>'
 			.'</tr>';
 	}
 	echo '</table>';
