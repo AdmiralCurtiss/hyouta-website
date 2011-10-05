@@ -15,7 +15,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	( isset($_GET['start']) && ($_GET['start'] >= 0) ) ? $_GET['start'] = (int)$_GET['start'] : $_GET['start'] =  0;
 	( isset($_GET['show'])  && ($_GET['show']  >  0) ) ? $_GET['show'] =  (int)$_GET['show']  : $_GET['show']  = 50;
 
-	$sorting_criteria = 'day ASC';
+	$sorting_criteria = 'day DESC';
 
 	if ( isset($_GET['order']) ) {
 		switch ( $_GET['order'] ) {
@@ -42,6 +42,12 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 				break;
 			case 'songD':
 				$sorting_criteria = 'song DESC';
+				break;
+			case 'uploader':
+				$sorting_criteria = 'username ASC';
+				break;
+			case 'uploaderD':
+				$sorting_criteria = 'username DESC';
 				break;
 			default:
 				break;
@@ -95,7 +101,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	if ( isset( $_GET['order'] ) ) {
 		$currentorder = $_GET['order'];
 	} else {
-		$currentorder = 'day';
+		$currentorder = 'dayD';
 	}
 
 	echo '<table border="1" width="100%" class="results" id="resulttable"><tr><th><a href="'.$sorturl.'day'.( $currentorder == 'day' ? 'D' : '' ).'">Date</a></th>'
@@ -103,6 +109,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		.'<th><a href="'.$sorturl.'game'.( $currentorder == 'game' ? 'D' : '' ).'">Game</a></th>'
 		.'<th><a href="'.$sorturl.'song'.( $currentorder == 'song' ? 'D' : '' ).'">Song</a></th>'
 		.'<th>URLs</th>'
+		.'<th><a href="'.$sorturl.'uploader'.( $currentorder == 'uploader' ? 'D' : '' ).'">Uploader</a></th>'
 		.'</tr>';
 
 	foreach( $songs as $song ) {
@@ -115,16 +122,17 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 			if ( $song->url != null ) {
 				foreach ( $song->url as $url ) {
 					if ( $url->has_icon() ) {
-						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a> ';
+						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
 					} else {
-						echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>';
+						echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
 					}
 				}
 			} else {
 				echo '&nbsp;';
 			}
-		echo '<a href="index.php?section=vgmotd-urladd&id='.$song->songid.'"><img src="images/plus.gif" title="Add new URL" border="0" /></a>';
-		echo '</td>'
+		echo '<a href="index.php?section=vgmotd-urladd&id='.$song->songid.'"><img src="images/plus.gif" title="Add new URL" border="0" /></a>'
+			.'</td>'
+			.'<td align="middle">'.( $song->username == null ? '&nbsp;' : $song->username ).'</td>'
 			.'</tr>';
 	}
 	echo '</table>';

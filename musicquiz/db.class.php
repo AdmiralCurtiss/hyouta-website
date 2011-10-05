@@ -839,28 +839,49 @@ class db {
 		
 		return mysql_query($query, $this->database);
 	}
-	
-	function add_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id ) {
-	/*
-		$vgm_id = (int)$vgm_id;
-		$url_type = (int)$url_type;
-		$url = mysql_real_escape_string(stripslashes($url));
+
+	function edit_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id, $uploaderid ) {
+		$id = (int)$id;
+		$day = mysql_real_escape_string(stripslashes($day));
+		$artist = mysql_real_escape_string(stripslashes($artist));
+		$game = mysql_real_escape_string(stripslashes($game));
+		$song = mysql_real_escape_string(stripslashes($song));
+		$quiz_id = (int)$quiz_id;
+		$uploaderid = (int)$uploaderid;
 		
-		$query = 'INSERT INTO vgmusicoftheday_urls ( vgm_id, url, url_type ) VALUES ( '.$vgm_id.', "'.$url.'", '.$url_type.' )';
+		$query = 'UPDATE vgmusicoftheday'
+				.' SET day = STR_TO_DATE("'.$day.'","%Y-%m-%d"), artist = "'.$artist.'", game = "'.$game.'", song = "'.$song.'",'
+				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).' )'
+				.' WHERE id = '.$id;
+		
+		return mysql_query($query, $this->database);
+	}
+
+	function add_vgmusicoftheday_song( $day, $artist, $game, $song, $quiz_id, $uploaderid ) {
+		$day = mysql_real_escape_string(stripslashes($day));
+		$artist = mysql_real_escape_string(stripslashes($artist));
+		$game = mysql_real_escape_string(stripslashes($game));
+		$song = mysql_real_escape_string(stripslashes($song));
+		$quiz_id = (int)$quiz_id;
+		$uploaderid = (int)$uploaderid;
+		
+		$query = 'INSERT INTO vgmusicoftheday ( day, artist, game, song, quiz_id, uploaderid ) VALUES'
+				.' ( STR_TO_DATE("'.$day.'","%Y-%m-%d"), "'.$artist.'", "'.$game.'", "'.$song.'",'
+				.' '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).' )';
 		
 		if ( mysql_query($query, $this->database) ) {
 			return mysql_insert_id();
 		}
 		
 		return false;
-	*/
 	}
 	
 	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC' ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
 		
-		$query = 'SELECT id, day, artist, game, song, quiz_id FROM vgmusicoftheday'
+		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username FROM vgmusicoftheday'
+				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' ORDER BY '.$order
 				.' LIMIT '.$start_with.', '.$amount;
 		
@@ -874,6 +895,8 @@ class db {
 				$songs[$i]->artist = $data['artist'];
 				$songs[$i]->date = $data['day'];
 				$songs[$i]->gameid = $data['quiz_id'];
+				$songs[$i]->userid = $data['userid'];
+				$songs[$i]->username = $data['username'];
 				
 				// grab urls
 				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
