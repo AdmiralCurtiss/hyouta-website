@@ -51,14 +51,29 @@ class db {
 		
 		return false;
 	}
-	function get_all_users() {
-		$query = 'SELECT userid, username, role, halfguess, guessorder FROM music_users ORDER BY username ASC';
+	function get_users_with_rank($role) {
+		$role = (int)$role;
+		$query = 'SELECT userid, username, role, halfguess, guessorder, autoplay FROM music_users WHERE role >= '.$role;
 		
 		$resultset = mysql_query($query, $this->database);
 		if ( $resultset ) {
 			$users = array();
 			while ( $data = mysql_fetch_assoc($resultset) ) {
-				$users[(int)$data['userid']] = new user((int)$data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder']);
+				$users[(int)$data['userid']] = new user((int)$data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder'], $data['autoplay']);
+			}
+			return $users;
+		}
+		
+		return false;
+	}
+	function get_all_users() {
+		$query = 'SELECT userid, username, role, halfguess, guessorder, autoplay FROM music_users ORDER BY username ASC';
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$users = array();
+			while ( $data = mysql_fetch_assoc($resultset) ) {
+				$users[(int)$data['userid']] = new user((int)$data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder'], $data['autoplay']);
 			}
 			return $users;
 		}

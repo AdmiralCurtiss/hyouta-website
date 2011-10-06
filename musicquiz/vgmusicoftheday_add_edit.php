@@ -13,11 +13,15 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 
 	$db = new db($database);
 	
-	if ( isset($_POST['formaction']) ) {
-		$_POST['type'] = (int)$_POST['type'];
-		if ( $_POST['type'] <= 0 ) die();
+	$uploaders = $db->get_users_with_rank(3);
 	
-		if ( $_POST['formaction'] == 'Add' ) {
+	if ( isset($_POST['formaction']) && $_POST['formaction'] == 'Add' ) {
+		$date_day = (int)$_POST['date_day'];
+		$date_month = (int)$_POST['date_month'];
+		$date_year = (int)$_POST['date_year'];
+		$uploaderid = (int)$_POST['uploaderid'];
+	
+		if ( $date_day > 0 && $date_month > 0 && $date_year > 0 ) {
 			
 		} else {
 			echo '???';
@@ -29,7 +33,32 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 <table>
 	<tr>
 		<td>Date:</td>
-		<td><select name="type"><option value="1">Jan</option></select></td>
+		<td>
+<select name="date_day"><?php
+for ( $i = 1; $i <= 31; $i++ ) {
+	echo '<option value="'.$i.'">'.$i.'</option>';
+}
+ ?></select>
+<select name="date_month">
+<option value="1">January</option>
+<option value="2">February</option>
+<option value="3">March</option>
+<option value="4">April</option>
+<option value="5">May</option>
+<option value="6">June</option>
+<option value="7">July</option>
+<option value="8">August</option>
+<option value="9">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option>
+</select>
+<select name="date_year"><?php
+for ( $i = 2010; $i <= 2015; $i++ ) {
+	echo '<option value="'.$i.'">'.$i.'</option>';
+}
+ ?></select>
+</td>
 	</tr>
 	<tr>
 		<td>Artist:</td>
@@ -46,8 +75,8 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	<tr>
 		<td>Uploader:</td>
 		<td><select name="uploaderid"><?php
-					foreach ( $types as $type ) {
-						echo '<option value="'.$type->typeid.'"><img src="'.$type->icon.'" /> '.$type->name.'</option>';
+					foreach ( $uploaders as $uploader ) {
+						echo '<option value="'.$uploader->userid.'">'.$uploader->username.'</option>';
 					}
 				?></select></td>
 	</tr>
