@@ -866,7 +866,7 @@ class db {
 		
 		$query = 'UPDATE vgmusicoftheday'
 				.' SET day = STR_TO_DATE("'.$day.'","%Y-%m-%d"), artist = "'.$artist.'", game = "'.$game.'", song = "'.$song.'",'
-				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).' )'
+				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid )
 				.' WHERE id = '.$id;
 		
 		return mysql_query($query, $this->database);
@@ -891,6 +891,43 @@ class db {
 		return false;
 	}
 	
+	function get_vgmusicoftheday_song( $id ) {
+		
+		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username FROM vgmusicoftheday'
+				.' LEFT JOIN music_users ON uploaderid = userid'
+				.' WHERE id = '.$id;
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$i = 0;
+			while ( $data = mysql_fetch_assoc($resultset) ) {
+				$songid = (int)$data['id'];
+				$songs = new song($songid, null, null, $data['game'], $data['song']);
+				$songs->artist = $data['artist'];
+				$songs->date = $data['day'];
+				$songs->gameid = $data['quiz_id'];
+				$songs->userid = $data['userid'];
+				$songs->username = $data['username'];
+				
+				// grab urls
+				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
+				$resultset_urls = mysql_query($query_urls, $this->database);
+				if ( $resultset_urls ) {
+					$urls = array();
+					while ( $data_urls = mysql_fetch_assoc($resultset_urls) ) {
+						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type']);
+					}
+					$songs->url = $urls;
+				}
+				// end grab urls
+
+				$i++;
+			}
+			return $songs;
+		}
+		
+		return false;
+	}
 	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC' ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;

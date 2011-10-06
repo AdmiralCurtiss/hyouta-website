@@ -104,7 +104,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		$currentorder = 'dayD';
 	}
 
-	echo '<table border="1" width="100%" class="results" id="resulttable"><tr><th><a href="'.$sorturl.'day'.( $currentorder == 'day' ? 'D' : '' ).'">Date</a></th>'
+	echo '<table border="1" width="100%" class="results" id="resulttable"><tr><th></th><th><a href="'.$sorturl.'day'.( $currentorder == 'day' ? 'D' : '' ).'">Date</a></th>'
 		.'<th><a href="'.$sorturl.'artist'.( $currentorder == 'artist' ? 'D' : '' ).'">Artist</a></th>'
 		.'<th><a href="'.$sorturl.'game'.( $currentorder == 'game' ? 'D' : '' ).'">Game</a></th>'
 		.'<th><a href="'.$sorturl.'song'.( $currentorder == 'song' ? 'D' : '' ).'">Song</a></th>'
@@ -114,6 +114,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 
 	foreach( $songs as $song ) {
 		echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">'
+			.'<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'">e</a></td>'
 			.'<td align="right">'.$song->date.'</td>'
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
@@ -139,6 +140,8 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	
 	echo $pagestable;
 	
+	echo '<br><br><br><br><br>';
+	echo '<a href="index.php?section=vgmotd-add-edit">Add a new song</a>';
 	echo '<br><br><br><br><br>';
 	
 } else {

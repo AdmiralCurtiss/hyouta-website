@@ -81,12 +81,27 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		}
 	}
 	
+	$current_song = $db->get_vgmusicoftheday_song($_GET['id']);
+	
+	echo '<div>'
+		.'Adding a link for <b>'.$current_song->games.' - '.$current_song->names.' by '.$current_song->artist.'</b>, uploaded by '.$current_song->username.'.<br><br>The following links already exist: ';
+	
+	foreach ( $current_song->url as $url ) {
+		if ( $url->has_icon() ) {
+			echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
+		} else {
+			echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
+		}
+	}
+	
+	echo '</div><br><br>';
+	
 ?><div>
 <form action="index.php?section=vgmotd-urladd&id=<?php echo $_GET['id']; ?>" method="post" enctype="multipart/form-data">
 <table>
 	<tr>
 		<td>URL:</td>
-		<td><input type="text" name="url"/></td>
+		<td><input type="text" name="url" size="120"/></td>
 	</tr>
 	<tr>
 		<td>Type:</td>
@@ -108,7 +123,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 <table>
 	<tr>
 		<td>File:</td>
-		<td><input name="file" type="file"/></td>
+		<td><input name="file" type="file" size="100"/></td>
 	</tr>
 	<tr>
 		<td>Type:</td>
