@@ -812,8 +812,15 @@ class db {
 		}
 	}
 	
-	function get_vgmusicoftheday_songs_count() {
-		$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday';
+	function get_vgmusicoftheday_songs_count($search_string = false) {
+		if ( $search_string !== false ) {
+			$search_string = mysql_real_escape_string(stripslashes($search_string));
+			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'
+				.' LEFT JOIN music_users ON uploaderid = userid'
+				.' WHERE UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'")';
+		} else {
+			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday';
+		}
 		
 		$resultset = mysql_query($query, $this->database);
 		if ( $resultset ) {
@@ -928,12 +935,17 @@ class db {
 		
 		return false;
 	}
-	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC' ) {
+	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
+		if ( $search_string !== false ) {
+			$search_string = mysql_real_escape_string(stripslashes($search_string));
+		}
 		
 		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
+				.( $search_string === false ? '' :
+					' WHERE UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'")' )
 				.' ORDER BY '.$order
 				.' LIMIT '.$start_with.', '.$amount;
 		

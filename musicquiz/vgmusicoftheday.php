@@ -14,6 +14,14 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 
 	( isset($_GET['start']) && ($_GET['start'] >= 0) ) ? $_GET['start'] = (int)$_GET['start'] : $_GET['start'] =  0;
 	( isset($_GET['show'])  && ($_GET['show']  >  0) ) ? $_GET['show'] =  (int)$_GET['show']  : $_GET['show']  = 50;
+	if ( isset($_GET['search']) ) {
+		$search_string = trim($_GET['search']);
+		if ( $search_string != '' ) {
+			$searching = true;
+		} else {
+			$searching = false;
+		}
+	}
 
 	$sorting_criteria = 'day DESC';
 
@@ -54,19 +62,28 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		}	
 	}
 	
-	$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria );
-
-	if ( !$songs ) {
-		echo 'Did not retrieve anything from the database!';
-		return;
+	if ( $searching ) {
+		$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string );
+		$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count($search_string);
+	} else {
+		$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria );
+		$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count();
 	}
 
-	$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count();
+	echo '<div align="center"><a href="index.php?section=vgmotd-add-edit">Add a new song</a></div><br>';
+	
+	echo '<div align="center"><form action="index.php" method="get"><input type="hidden" name="section" value="vgmoftheday"/><input type="text" name="search" value="'.( $searching ? $search_string : '' ).'" size="65"/><input type="submit" value="Search"/></form></div>';
+	
+	if ( !$songs ) {
+		echo 'Nothing found!';
+		return;
+	}
 	
 	$pagestable = '<table width="100%"><tr><td width="20%">';
 	if ( $_GET['start'] > 0 ) { //previous page
 		$pagestable .= '<a href="index.php?section=vgmoftheday&start='.($_GET['start']-$_GET['show']).'&show='.$_GET['show']
 			.( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' )
+			.( $searching ? '&search='.$search_string : '' )
 			.'">&lt;-- Previous Page</a>';
 	}
 	$pagestable .= '</td><td align="center" width="60%">';
@@ -74,7 +91,8 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	//pagelist
 	$pageamount = ceil($amount_guessed_pagecalc / $_GET['show']);
 	if ( $pageamount != 1 ) {
-		$pagelinkend = ( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' );
+		$pagelinkend = ( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' )
+			.( $searching ? '&search='.$search_string : '' );
 		for ( $i = 1 ; $i <= $pageamount ; $i++ ) {
 			$pageshow = $_GET['show']*($i-1);
 			if ( $pageshow == $_GET['start'] ) {
@@ -89,6 +107,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	if ( ($_GET['start']+$_GET['show']) < $amount_guessed_pagecalc ) { //next page
 		$pagestable .= '<a href="index.php?section=vgmoftheday&start='.($_GET['start']+$_GET['show']).'&show='.$_GET['show']
 			.( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' )
+			.( $searching ? '&search='.$search_string : '' )
 			.'">Next Page --&gt;</a>';
 	}
 	$pagestable .= '</td></tr></table>';
@@ -96,6 +115,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	echo $pagestable;
 
 	$sorturl = 'index.php?section=vgmoftheday&start='.$_GET['start'].'&show='.$_GET['show']
+			.( $searching ? '&search='.$search_string : '' )
 			.'&order=';
 	
 	if ( isset( $_GET['order'] ) ) {
@@ -114,7 +134,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 
 	foreach( $songs as $song ) {
 		echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">'
-			.'<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'">e</a></td>'
+			.'<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>'
 			.'<td align="right">'.$song->date.'</td>'
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
@@ -140,8 +160,6 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	
 	echo $pagestable;
 	
-	echo '<br><br><br><br><br>';
-	echo '<a href="index.php?section=vgmotd-add-edit">Add a new song</a>';
 	echo '<br><br><br><br><br>';
 	
 } else {
