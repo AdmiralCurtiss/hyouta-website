@@ -118,7 +118,12 @@ for ( $i = 2010; $i <= ($today_year+1); $i++ ) {
 		<td>Uploader:</td>
 		<td><select name="uploaderid"><?php
 					foreach ( $uploaders as $uploader ) {
-						echo '<option value="'.$uploader->userid.'"'.( $current_song->userid == $uploader->userid ? ' selected' : '' ).'>'.$uploader->username.'</option>';
+						echo '<option value="'.$uploader->userid.'"'
+						.( $editing
+						   ? ( $current_song->userid == $uploader->userid ? ' selected' : '' )
+						   : ( $session->userid == $uploader->userid ? ' selected' : '' )
+						 )
+						.'>'.$uploader->username.'</option>';
 					}
 				?></select></td>
 	</tr>
