@@ -32,6 +32,9 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 				} else {
 					$counter = 0;
 					$filename = $_FILES["file"]["name"];
+					$filename = str_replace( array('`',  '´',  'é', 'è', 'ê', 'á', 'à', 'â', 'ú', 'ù', 'û', 'ó', 'ò', 'ô', 'í', 'ì', 'î', 'ä', 'ö', 'ü', 'É', 'È', 'Ê', 'Á', 'À', 'Â', 'Ú', 'Ù', 'Û', 'Ó', 'Ò', 'Ô', 'Ì', 'Í', 'Î', 'Ä', 'Ö', 'Ü', '<', '>', ':', '"', '/', '\\', '|', '?', '*', '\0') ,
+											 array('\'', '\'', 'e', 'e', 'e', 'a', 'a', 'a', 'u', 'u', 'u', 'o', 'o', 'o', 'i', 'i', 'i', 'a', 'o', 'u', 'E', 'E', 'E', 'A', 'A', 'A', 'U', 'U', 'U', 'O', 'O', 'O', 'I', 'I', 'I', 'A', 'O', 'U', '_', '_', '_', '_', '_', '_' , '_', '_', '_', '_'), $filename);
+					$filename = preg_replace('/[^a-z0-9_\.\-[:space:]\(\)\[\]\{\}\&]/i', '_', $filename); 
 					$pos = strrpos($filename, '.');
 					if ( $pos === false ) {
 						$extension = '';
