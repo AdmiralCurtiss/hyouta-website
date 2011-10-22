@@ -18,7 +18,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	$db = new db($database);
 	
 	$uploaders = $db->get_users_with_rank(3);
-	
+
 	if ( isset($_POST['formaction']) && ( $_POST['formaction'] == 'Add' || $_POST['formaction'] == 'Edit' ) ) {
 		$date_day = (int)$_POST['date_day'];
 		$date_month = (int)$_POST['date_month'];
@@ -57,8 +57,11 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		$current_song = $db->get_vgmusicoftheday_song($songid);
 		if ( !$current_song ) die();
 		
+		echo '<div align="center"><a href="index.php?section=vgmotd-add-edit">Add a new song</a></div><br>';
+		
 		echo '<div>'
 			.'Editing <b>'.$current_song->games.' - '.$current_song->names.' by '.$current_song->artist.'</b>, uploaded by '.$current_song->username.'.<br><br></div>';
+		echo '<div><a href="index.php?section=vgmotd-urladd&id='.$songid.'">Edit this song\'s URLs</a></div><br>';
 		
 		$expldate = explode('-', $current_song->date);
 		
@@ -135,6 +138,17 @@ for ( $i = 2010; $i <= ($today_year+1); $i++ ) {
 </form>
 </div>
 <?php
+
+	if ( $editing ) {
+		$current_song = $db->get_vgmusicoftheday_song($songid);
+		if ( !$current_song ) die();
+		
+		echo '<div>Copy for Youtube:</div><br>';
+
+		echo '<div>VGMusic of the Day #: '.$current_song->games.' - '.$current_song->names.'</div><br>';
+		
+		echo '<div>Game: '.$current_song->games.'<br>Title: '.$current_song->names.'<br>Composer: '.$current_song->artist.'<br>Uploaded by '.$current_song->username.'</div>';
+	}
 
 } else {
 	include 'main.php';

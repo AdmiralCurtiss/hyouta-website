@@ -97,7 +97,9 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		}
 	}
 	
-	echo '</div><br><br>';
+	echo '</div><br>';
+	echo '<div><a href="index.php?section=vgmotd-add-edit&id='.$_GET['id'].'">Edit this song\'s Data</a></div><br>';
+	echo '<br>';
 	
 ?><div>
 <form action="index.php?section=vgmotd-urladd&id=<?php echo $_GET['id']; ?>" method="post" enctype="multipart/form-data">
