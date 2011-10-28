@@ -798,8 +798,11 @@ class db {
 		return false;
 	}
 	
-	function get_vgmusicoftheday_types() {
-		$query = 'SELECT id, name, icon FROM vgmusicoftheday_types ORDER BY id';
+	function get_vgmusicoftheday_types($linktype = -1) {
+		$linktype = (int)$linktype;
+		$query = 'SELECT id, name, icon FROM vgmusicoftheday_types'
+				.( $linktype == -1 ? '' : ' WHERE linktype = '.$linktype )
+				.' ORDER BY id';
 	
 		$resultset = mysql_query($query, $this->database);
 		if ( $resultset ) {

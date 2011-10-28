@@ -25,12 +25,17 @@ class url_container {
 		$this->url_type = (int)$url_type;
 	}
 	
-	static function get_types() {
-		if ( self::$types == null ) {
+	static function get_types($linktype = -1) {
+		if ( $linktype == -1 ) {
+			if ( self::$types == null ) {
+				global $session;
+				self::$types = $session->db->get_vgmusicoftheday_types();
+			}
+			return self::$types;
+		} else {
 			global $session;
-			self::$types = $session->db->get_vgmusicoftheday_types();
+			return $session->db->get_vgmusicoftheday_types($linktype);
 		}
-		return self::$types;
 	}
 	
 	function has_icon() {
