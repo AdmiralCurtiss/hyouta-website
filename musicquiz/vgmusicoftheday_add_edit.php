@@ -145,7 +145,7 @@ for ( $i = 2010; $i <= ($today_year+1); $i++ ) {
 		
 		echo '<div>Copy for Youtube:</div><br>';
 
-		echo '<div>VGMusic of the Day #: '.$current_song->games.' - '.$current_song->names.'</div><br>';
+		echo '<div>VGMusic of the Day '.$current_song->daynumber.': '.$current_song->games.' - '.$current_song->names.'</div><br>';
 		
 		echo '<div>Game: '.$current_song->games.'<br>Title: '.$current_song->names.'<br>Composer: '.$current_song->artist.'<br>Uploaded by '.$current_song->username.'</div>';
 	}

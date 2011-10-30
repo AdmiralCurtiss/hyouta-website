@@ -20,6 +20,7 @@ class song {
 	
 	var $artist;
 	var $date;
+	var $daynumber;
 	
 	var $username;
 	var $userid;

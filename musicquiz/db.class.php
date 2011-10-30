@@ -903,7 +903,7 @@ class db {
 	
 	function get_vgmusicoftheday_song( $id ) {
 		
-		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username FROM vgmusicoftheday'
+		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' WHERE id = '.$id;
 		
@@ -918,6 +918,7 @@ class db {
 				$songs->gameid = $data['quiz_id'];
 				$songs->userid = $data['userid'];
 				$songs->username = $data['username'];
+				$songs->daynumber = $data['daynumber'];
 				
 				// grab urls
 				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
@@ -945,7 +946,7 @@ class db {
 			$search_string = mysql_real_escape_string(stripslashes($search_string));
 		}
 		
-		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username FROM vgmusicoftheday'
+		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.( $search_string === false ? '' :
 					' WHERE UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'")' )
@@ -964,6 +965,7 @@ class db {
 				$songs[$i]->gameid = $data['quiz_id'];
 				$songs[$i]->userid = $data['userid'];
 				$songs[$i]->username = $data['username'];
+				$songs[$i]->daynumber = $data['daynumber'];
 				
 				// grab urls
 				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
