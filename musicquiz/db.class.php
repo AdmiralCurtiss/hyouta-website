@@ -89,6 +89,7 @@ class db {
 		if ( $resultset ) {
 			$data = mysql_fetch_assoc($resultset);
 			if ( $data == false ) return false;
+			if ( $data['role'] == 0 ) return false;
 			$user = new user($data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder']);
 			return $user;
 		}
@@ -103,6 +104,8 @@ class db {
 		return mysql_query($query, $this->database);
 	}
 	function confirm_user($userid, $sessiontoken) {
+		if ( $sessiontoken == null || $sessiontoken == '' ) return false;
+	
 		$userid = (int)$userid;
 		$query = 'SELECT session FROM music_users WHERE userid = '.$userid;
 		
@@ -831,6 +834,23 @@ class db {
 			return $data['c'];
 		}
 	}
+	function get_vgmusicoftheday_songs_youtubeonly_count($search_string = false) {
+		if ( $search_string !== false ) {
+			$search_string = mysql_real_escape_string(stripslashes($search_string));
+			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'
+				.' LEFT JOIN music_users ON uploaderid = userid'
+				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1'
+				.' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )';
+		} else {
+			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1';
+		}
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$data = mysql_fetch_assoc($resultset);
+			return $data['c'];
+		}
+	}
 	
 	function add_vgmusicoftheday_url( $vgm_id, $url_type, $url ) {
 		$vgm_id = (int)$vgm_id;
@@ -986,6 +1006,49 @@ class db {
 		
 		return false;
 	}
+
+	function get_vgmusicoftheday_songs_youtubeonly( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false ) {
+		$start_with = (int)$start_with;
+		$amount = (int)$amount;
+		if ( $search_string !== false ) {
+			$search_string = mysql_real_escape_string(stripslashes($search_string));
+		}
+		
+		$query = 'SELECT vgmusicoftheday.id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber, url, vgmusicoftheday_urls.id AS urlid FROM vgmusicoftheday'
+				.' LEFT JOIN music_users ON uploaderid = userid'
+				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id'
+				.' WHERE url_type = 1'
+				.( $search_string === false ? '' :
+					' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )' )
+				.' ORDER BY '.$order
+				.' LIMIT '.$start_with.', '.$amount;
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$songs = array();
+			$i = 0;
+			while ( $data = mysql_fetch_assoc($resultset) ) {
+				$songid = (int)$data['id'];
+				$songs[$i] = new song($songid, null, null, $data['game'], $data['song']);
+				$songs[$i]->artist = $data['artist'];
+				$songs[$i]->date = $data['day'];
+				$songs[$i]->gameid = $data['quiz_id'];
+				$songs[$i]->userid = $data['userid'];
+				$songs[$i]->username = $data['username'];
+				$songs[$i]->daynumber = $data['daynumber'];
+				
+				$urls = array();
+				$urls[] = new url_container($data['urlid'], $data['url'], 1);
+				$songs[$i]->url = $urls;
+
+				$i++;
+			}
+			return $songs;
+		}
+		
+		return false;
+	}
+
 	
 	function get_guessed_songs( $userid, $songid_only, $start_with = 0, $amount = 50, $order = 'time DESC', $include_series = false, $halfguess_check = false ) {
 		$userid = (int)$userid;

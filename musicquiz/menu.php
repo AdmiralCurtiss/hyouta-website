@@ -16,9 +16,7 @@ if ( !isset( $session ) ) {
 		$menu['register'] = 'Register';
 	}
 	
-	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
-		$menu['vgmoftheday'] = 'VGMusic of the Day';
-	}
+	$menu['vgmoftheday'] = 'VGMusic of the Day';
 	
 	if ( $session->logged_in && $session->user->is_admin() ) {
 		$menu['songadd']  = 'Add new Song';

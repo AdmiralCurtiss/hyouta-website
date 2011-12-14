@@ -3,12 +3,18 @@ if ( !isset( $session ) ) {
 	die();
 }
 
-if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+//if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	require_once 'db.class.php';
 	require_once 'song.class.php';
 	require_once 'url_container.class.php';
 
 	error_reporting(E_ALL);
+	
+	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+		$vgmotduser = true;
+	} else {
+		$vgmotduser = false;
+	}
 	
 	$db = new db($database);
 
@@ -63,14 +69,28 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	}
 	
 	if ( $searching ) {
-		$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string );
-		$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count($search_string);
+		if ( $vgmotduser ) {
+			$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string );
+			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count($search_string);
+		} else {
+			$songs = $db->get_vgmusicoftheday_songs_youtubeonly( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string );
+			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_youtubeonly_count($search_string);
+		}
 	} else {
-		$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria );
-		$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count();
+		if ( $vgmotduser ) {
+			$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria );
+			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count();
+		} else {
+			$songs = $db->get_vgmusicoftheday_songs_youtubeonly( $_GET['start'], $_GET['show'], $sorting_criteria );
+			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_youtubeonly_count();
+		}
 	}
-
-	echo '<div align="center"><a href="index.php?section=vgmotd-add-edit">Add a new song</a></div><br>';
+	
+	echo '<div align="center"><br><a href="http://www.youtube.com/user/VGMusicOfTheDay">VGMusic of the Day Youtube Channel</a></div><br>';
+	
+	if ( $vgmotduser ) {
+		echo '<div align="center"><a href="index.php?section=vgmotd-add-edit">Add a new song</a></div><br>';
+	}
 	
 	echo '<div align="center"><form action="index.php" method="get"><input type="hidden" name="section" value="vgmoftheday"/><input type="text" name="search" value="'.( $searching ? $search_string : '' ).'" size="65"/><input type="submit" value="Search"/></form></div>';
 	
@@ -124,38 +144,47 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		$currentorder = 'dayD';
 	}
 
-	echo '<table border="1" width="100%" class="results" id="resulttable"><tr><th></th>'
-		.'<th><a href="'.$sorturl.'day'.( $currentorder == 'day' ? 'D' : '' ).'">Day</a></th>'
+	echo '<table border="1" width="100%" class="results" id="resulttable"><tr>';
+	if ( $vgmotduser ) {
+		echo '<th></th>';
+	}
+	echo '<th><a href="'.$sorturl.'day'.( $currentorder == 'day' ? 'D' : '' ).'">Day</a></th>'
 		.'<th><a href="'.$sorturl.'day'.( $currentorder == 'day' ? 'D' : '' ).'">Date</a></th>'
 		.'<th><a href="'.$sorturl.'artist'.( $currentorder == 'artist' ? 'D' : '' ).'">Artist</a></th>'
 		.'<th><a href="'.$sorturl.'game'.( $currentorder == 'game' ? 'D' : '' ).'">Game</a></th>'
 		.'<th><a href="'.$sorturl.'song'.( $currentorder == 'song' ? 'D' : '' ).'">Song</a></th>'
-		.'<th>URLs</th>'
+		.'<th>'.( $vgmotduser ? 'URLs' : 'Youtube' ).'</th>'
 		.'<th><a href="'.$sorturl.'uploader'.( $currentorder == 'uploader' ? 'D' : '' ).'">Uploader</a></th>'
 		.'</tr>';
 
 	foreach( $songs as $song ) {
-		echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">'
-			.'<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>'
-			.'<td align="right">'.$song->daynumber.'</td>'
+		echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">';
+		if ( $vgmotduser ) {
+			echo '<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>';
+		}
+		echo '<td align="right">'.$song->daynumber.'</td>'
 			.'<td align="right">'.$song->date.'</td>'
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
 			.'<td>'.$song->names.'</td>'
 			.'<td align="middle">';
-			if ( $song->url != null ) {
-				foreach ( $song->url as $url ) {
-					if ( $url->has_icon() ) {
-						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
-					} else {
-						echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
-					}
+		if ( $song->url != null ) {
+			foreach ( $song->url as $url ) {
+				if ( $url->has_icon() ) {
+					echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
+				} else {
+					echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
 				}
-			} else {
-				echo '&nbsp;';
 			}
-		echo '<a href="index.php?section=vgmotd-urladd&id='.$song->songid.'"><img src="images/plus.gif" title="Add new URL" border="0" /></a>'
-			.'</td>'
+		} else {
+			echo '&nbsp;';
+		}
+		
+		if ( $vgmotduser ) {
+			echo '<a href="index.php?section=vgmotd-urladd&id='.$song->songid.'">'
+				.'<img src="images/plus.gif" title="Add new URL" border="0" /></a>';
+		}
+		echo '</td>'
 			.'<td align="middle">'.( $song->username == null ? '&nbsp;' : $song->username ).'</td>'
 			.'</tr>';
 	}
@@ -165,7 +194,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	
 	echo '<br><br><br><br><br>';
 	
-} else {
-	include 'main.php';
-}
+//} else {
+//	include 'main.php';
+//}
 ?>
