@@ -148,6 +148,13 @@ for ( $i = 2010; $i <= ($today_year+1); $i++ ) {
 		echo '<div>VGMusic of the Day '.$current_song->daynumber.': '.$current_song->games.' - '.$current_song->names.'</div><br>';
 		
 		echo '<div>Game: '.$current_song->games.'<br>Title: '.$current_song->names.'<br>Composer: '.$current_song->artist.'<br>Uploaded by '.$current_song->username.'</div>';
+		
+		echo '<div>Tag Suggestions:';
+		$tags = $current_song->suggest_tags();
+		foreach ($tags as &$tag) {
+			echo ' '.$tag;
+		}
+		echo '</div>';
 	}
 
 } else {

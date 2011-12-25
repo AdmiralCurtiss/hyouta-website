@@ -33,6 +33,24 @@ class song {
 		$this->names = $names;
 	}
 	
+	function suggest_tags() {
+		$tags = array();
+		$tags[] = 'vgmusic';
+		$tags[] = 'of';
+		$tags[] = 'the';
+		$tags[] = 'day';
+		$tags[] = 'video';
+		$tags[] = 'game';
+		$tags[] = 'music';
+		
+		$tags = array_merge( $tags, explode(' ', $this->games), explode(' ', $this->names), explode(' ', $this->artist) );
+		
+		foreach ($tags as &$tag) {
+			$tag = preg_replace('/[^a-zA-Z0-9\s]/', '', $tag);;
+		}
+		return $tags;
+	}
+	
 	function strip_string( $str ) {
 		//remove non-letter characters
 		$str = str_replace( array('\\', '-', '_', ',', '&', ';', '.', ':', '+', '~', '/', '"', '!', '?', '#', '<', '>', '|', '(', ')','*') , ' ', $str);
