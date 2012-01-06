@@ -163,7 +163,7 @@ if ( !isset( $session ) ) {
 			echo '<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>';
 		}
 		echo '<td align="right">'.$song->daynumber.'</td>'
-			.'<td align="right">'.$song->date.'</td>'
+			.'<td align="right">'.$song->get_day_of_week_from_vgmotddaynum().'&nbsp;'.$song->date.'</td>'
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
 			.'<td>'.$song->names.'</td>'
