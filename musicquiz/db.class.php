@@ -887,7 +887,7 @@ class db {
 
 	function edit_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id, $uploaderid ) {
 		$id = (int)$id;
-		$day = mysql_real_escape_string(stripslashes($day));
+		$day = $day ? mysql_real_escape_string(stripslashes($day)) : false;
 		$artist = mysql_real_escape_string(stripslashes($artist));
 		$game = mysql_real_escape_string(stripslashes($game));
 		$song = mysql_real_escape_string(stripslashes($song));
@@ -895,7 +895,7 @@ class db {
 		$uploaderid = (int)$uploaderid;
 		
 		$query = 'UPDATE vgmusicoftheday'
-				.' SET day = STR_TO_DATE("'.$day.'","%Y-%m-%d"), artist = "'.$artist.'", game = "'.$game.'", song = "'.$song.'",'
+				.' SET day = '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', artist = "'.$artist.'", game = "'.$game.'", song = "'.$song.'",'
 				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid )
 				.' WHERE id = '.$id;
 		
@@ -903,7 +903,7 @@ class db {
 	}
 
 	function add_vgmusicoftheday_song( $day, $artist, $game, $song, $quiz_id, $uploaderid ) {
-		$day = mysql_real_escape_string(stripslashes($day));
+		$day = $day ? mysql_real_escape_string(stripslashes($day)) : false;
 		$artist = mysql_real_escape_string(stripslashes($artist));
 		$game = mysql_real_escape_string(stripslashes($game));
 		$song = mysql_real_escape_string(stripslashes($song));
@@ -911,7 +911,7 @@ class db {
 		$uploaderid = (int)$uploaderid;
 		
 		$query = 'INSERT INTO vgmusicoftheday ( day, artist, game, song, quiz_id, uploaderid ) VALUES'
-				.' ( STR_TO_DATE("'.$day.'","%Y-%m-%d"), "'.$artist.'", "'.$game.'", "'.$song.'",'
+				.' ( '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', "'.$artist.'", "'.$game.'", "'.$song.'",'
 				.' '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).' )';
 		
 		if ( mysql_query($query, $this->database) ) {
