@@ -153,7 +153,7 @@ if ( !isset( $session ) ) {
 		.'<th><a href="'.$sorturl.'artist'.( $currentorder == 'artist' ? 'D' : '' ).'">Artist</a></th>'
 		.'<th><a href="'.$sorturl.'game'.( $currentorder == 'game' ? 'D' : '' ).'">Game</a></th>'
 		.'<th><a href="'.$sorturl.'song'.( $currentorder == 'song' ? 'D' : '' ).'">Song</a></th>'
-		.'<th>'.( $vgmotduser ? 'URLs' : 'Youtube' ).'</th>'
+		.( $vgmotduser ? '<th colspan="6">URLs</th>' : '<th>Youtube</th>' )
 		.'<th><a href="'.$sorturl.'uploader'.( $currentorder == 'uploader' ? 'D' : '' ).'">Uploader</a></th>'
 		.'</tr>';
 
@@ -163,17 +163,44 @@ if ( !isset( $session ) ) {
 			echo '<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>';
 		}
 		echo '<td align="right">'.$song->daynumber.'</td>'
-			.'<td align="right">'.$song->get_day_of_week_from_vgmotddaynum().'&nbsp;'.$song->date.'</td>'
+			.'<td align="right">'.( $song->date != null ? $song->get_day_of_week_from_vgmotddaynum().'&nbsp;'.$song->date : '' ).'</td>'
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
-			.'<td>'.$song->names.'</td>'
-			.'<td align="middle">';
+			.'<td>'.$song->names.'</td>';
 		if ( $song->url != null ) {
-			foreach ( $song->url as $url ) {
-				if ( $url->has_icon() ) {
-					echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
-				} else {
-					echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
+			if ( $vgmotduser ) {
+				$typelist = array( array(1), array(2), array(3), array(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20), array(255));
+				// this here is not really efficient (better would be throwing each "group" into a separate array and then looping over those, I assume), but whatever, it works well enough
+				foreach ( $typelist as $t ) {
+					echo '<td align="middle">';
+					$f = true;
+					foreach ( $song->url as $url ) {
+						if ( in_array($url->url_type, $t) ) {
+							if ( $f == true ) {
+								$f = false;
+							} else {
+								echo '<br>';
+							}
+							
+							if ( $url->has_icon() ) {
+								echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>';
+							} else {
+								echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
+							}
+						}
+					}
+					if ( $f == true ) echo '&nbsp;';
+					echo '</td>';
+				}
+			} else {
+				foreach ( $song->url as $url ) {
+					echo '<td align="middle">';
+					if ( $url->has_icon() ) {
+						echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
+					} else {
+						echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
+					}
+					echo '</td>';
 				}
 			}
 		} else {
@@ -181,11 +208,10 @@ if ( !isset( $session ) ) {
 		}
 		
 		if ( $vgmotduser ) {
-			echo '<a href="index.php?section=vgmotd-urladd&id='.$song->songid.'">'
-				.'<img src="images/plus.gif" title="Add new URL" border="0" /></a>';
+			echo '<td align="middle"><a href="index.php?section=vgmotd-urladd&id='.$song->songid.'">'
+				.'<img src="images/plus.gif" title="Add new URL" border="0" /></a></td>';
 		}
-		echo '</td>'
-			.'<td align="middle">'.( $song->username == null ? '&nbsp;' : $song->username ).'</td>'
+		echo '<td align="middle">'.( $song->username == null ? '&nbsp;' : $song->username ).'</td>'
 			.'</tr>';
 	}
 	echo '</table>';

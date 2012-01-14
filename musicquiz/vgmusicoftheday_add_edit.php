@@ -122,7 +122,7 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 	echo '<option value="'.$i.'"'.( $today_year == $i ? ' selected' : '' ).'>'.$i.'</option>';
 }
  ?></select>
-<input type="checkbox" name="nodate" value="yes"<?php if ( $current_song->date == null ) echo ' checked'; ?> /> Do not assign date (store song for later).
+<input type="checkbox" name="nodate" value="yes"<?php if ( $editing ) if ( $current_song->date == null ) echo ' checked'; ?> /> Do not assign date (store song for later).
 </td>
 	</tr>
 	<tr>
