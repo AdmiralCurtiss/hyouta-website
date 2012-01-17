@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	header('Content-type: text/html; charset=iso-8859-1');
 ?><html>
 <head>
@@ -17,6 +17,7 @@
 ?></head>
 <body<?php 	if ( isset($_GET['section']) && $_GET['section'] == 'guess' ) echo ' onload="setFocus()"'; ?>>
 	<div id="logo">
-		<img src="images/logo.png" style="float: left; margin: 4px;" /> ~Video Game Music Quiz~<br>I'll think of a slogan someday!
+		<img src="images/logo.png" style="float: left; margin: 4px;" /> ~Video Game Music Quiz~
+		<div class="smallheader">Shoot for the moon! If you miss you will still be among the stars.</div>
 	</div>
 	
