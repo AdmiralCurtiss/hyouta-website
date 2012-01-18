@@ -204,7 +204,10 @@ if ( !isset( $session ) ) {
 				}
 			}
 		} else {
-			echo '&nbsp;';
+			// empty cells if there's no URL
+			for ( $i = 0; $i < 5; ++$i ) {
+				echo '<td>&nbsp;</td>';
+			}
 		}
 		
 		if ( $vgmotduser ) {
