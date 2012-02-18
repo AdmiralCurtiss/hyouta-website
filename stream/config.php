@@ -27,6 +27,7 @@ $apis = array(
 //	"zachnorn" => "Zachnorn",
 	"red13n" => "red13n",
 	"pika025" => "Pika025",
+	"fuyukiosari" => "Fuyuki",
   ),
 );
 
