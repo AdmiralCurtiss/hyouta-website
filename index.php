@@ -20,7 +20,7 @@ Just a small page I use to distribute video game saves.
 </p>
 <br><br><br>
 <h3>Other stuff</h3>
-<a href="/stuff/FaceCopy1.1.rar">FaceCopy (v1.1), a helper tool for Screenshot LPs with mugshots</a><br>
+<a href="/stuff/FaceCopy1.2.rar">FaceCopy (v1.2), a helper tool for Screenshot LPs with mugshots</a><br>
 <br>
 <a href="/stuff/RadiantHistoriaTextDump.rar">Radiant Historia Text Rip</a><br>
 <a href="/stuff/DarkDawnMessageRipEUR.rar">Golden Sun Dark Dawn Text Rip</a><br>
