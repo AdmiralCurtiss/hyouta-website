@@ -21,6 +21,7 @@ class song {
 	var $artist;
 	var $date;
 	var $daynumber;
+	var $comment;
 	
 	var $username;
 	var $userid;
@@ -31,6 +32,8 @@ class song {
 		$this->difficulty = (int)$difficulty;
 		$this->games = $games;
 		$this->names = $names;
+		
+		$this->comment = null;
 	}
 	
 	function suggest_tags() {

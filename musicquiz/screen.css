@@ -129,6 +129,21 @@ table.results tr td.percentagesonglistB span.gamestat {
 	display: none;
 }
 
+table.results tr.rowwithcomment span.vgmotdcomment {
+	display: none;
+}
+
+table.results tr.rowwithcomment:hover td span.vgmotdcomment {
+	display: block;
+	position: absolute;
+	background-color: black;
+	border: 1px;
+	border-style: solid;
+	border-color: white;
+	padding: 0 5px;
+	text-align: left;
+}
+
 table.results tr td.percentagesonglistB:hover span.gamestat {
 	display: block;
 	position: absolute;

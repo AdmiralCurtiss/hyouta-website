@@ -31,15 +31,17 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 			$artist = trim($_POST['artist']);
 			$game = trim($_POST['game']);
 			$song = trim($_POST['song']);
+			$comment = trim($_POST['comment']);
+			$comment = $comment == '' ? false : $comment;
 			
 			$date_for_function = $nodate ? false : $date_year.'-'.$date_month.'-'.$date_day;
 			
 			if ( $artist != '' && $game != '' && $song != '' ) {
 				if ( $editing ) {
-					$edit_success = $db->edit_vgmusicoftheday_song( $songid, $date_for_function, $artist, $game, $song, 0, $uploaderid );
+					$edit_success = $db->edit_vgmusicoftheday_song( $songid, $date_for_function, $artist, $game, $song, 0, $uploaderid, $comment );
 					if ( !$edit_success ) echo 'Editing failed!';
 				} else {
-					$songid = $db->add_vgmusicoftheday_song( $date_for_function, $artist, $game, $song, 0, $uploaderid );
+					$songid = $db->add_vgmusicoftheday_song( $date_for_function, $artist, $game, $song, 0, $uploaderid, $comment );
 					if ( $songid <= 0 ) {
 						echo 'Adding failed!';
 					} else {
@@ -151,6 +153,10 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 						.'>'.$uploader->username.'</option>';
 					}
 				?></select></td>
+	</tr>
+	<tr>
+		<td>Comment:</td>
+		<td><textarea name="comment" size="90"><?php if ( $editing ) echo $current_song->comment; else if ( isset($_POST['comment']) ) echo $_POST['comment']; ?></textarea></td>
 	</tr>
 	<tr>
 		<td></td>

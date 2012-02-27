@@ -885,7 +885,7 @@ class db {
 		return mysql_query($query, $this->database);
 	}
 
-	function edit_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id, $uploaderid ) {
+	function edit_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id, $uploaderid, $comment = false ) {
 		$id = (int)$id;
 		$day = $day ? mysql_real_escape_string(stripslashes($day)) : false;
 		$artist = mysql_real_escape_string(stripslashes($artist));
@@ -893,26 +893,31 @@ class db {
 		$song = mysql_real_escape_string(stripslashes($song));
 		$quiz_id = (int)$quiz_id;
 		$uploaderid = (int)$uploaderid;
+		$comment = $comment ? mysql_real_escape_string(stripslashes($comment)) : false;
 		
 		$query = 'UPDATE vgmusicoftheday'
 				.' SET day = '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', artist = "'.$artist.'", game = "'.$game.'", song = "'.$song.'",'
-				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid )
+				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).','
+				.' comment = '.( $comment ? '"'.$comment.'"' : 'NULL' )
 				.' WHERE id = '.$id;
 		
 		return mysql_query($query, $this->database);
 	}
 
-	function add_vgmusicoftheday_song( $day, $artist, $game, $song, $quiz_id, $uploaderid ) {
+	function add_vgmusicoftheday_song( $day, $artist, $game, $song, $quiz_id, $uploaderid, $comment = false ) {
 		$day = $day ? mysql_real_escape_string(stripslashes($day)) : false;
 		$artist = mysql_real_escape_string(stripslashes($artist));
 		$game = mysql_real_escape_string(stripslashes($game));
 		$song = mysql_real_escape_string(stripslashes($song));
 		$quiz_id = (int)$quiz_id;
 		$uploaderid = (int)$uploaderid;
+		$comment = $comment ? mysql_real_escape_string(stripslashes($comment)) : false;
 		
-		$query = 'INSERT INTO vgmusicoftheday ( day, artist, game, song, quiz_id, uploaderid ) VALUES'
-				.' ( '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', "'.$artist.'", "'.$game.'", "'.$song.'",'
-				.' '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).' )';
+		$query = 'INSERT INTO vgmusicoftheday ( day, artist, game, song, quiz_id, uploaderid, comment ) VALUES'
+				.' ( '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', "'.$artist.'", "'.$game.'", "'.$song.'", '
+				.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).', '
+				.( $comment ? '"'.$comment.'"' : 'NULL' ).' )'
+				;
 		
 		if ( mysql_query($query, $this->database) ) {
 			return mysql_insert_id();
@@ -923,7 +928,7 @@ class db {
 	
 	function get_vgmusicoftheday_song( $id ) {
 		
-		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
+		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, comment, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' WHERE id = '.$id;
 		
@@ -939,6 +944,7 @@ class db {
 				$songs->userid = $data['userid'];
 				$songs->username = $data['username'];
 				$songs->daynumber = $data['daynumber'];
+				$songs->comment = $data['comment'];
 				
 				// grab urls
 				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
@@ -966,7 +972,7 @@ class db {
 			$search_string = mysql_real_escape_string(stripslashes($search_string));
 		}
 		
-		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
+		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, comment, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.( $search_string === false ? '' :
 					' WHERE UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'")' )
@@ -986,6 +992,7 @@ class db {
 				$songs[$i]->userid = $data['userid'];
 				$songs[$i]->username = $data['username'];
 				$songs[$i]->daynumber = $data['daynumber'];
+				$songs[$i]->comment = $data['comment'];
 				
 				// grab urls
 				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';

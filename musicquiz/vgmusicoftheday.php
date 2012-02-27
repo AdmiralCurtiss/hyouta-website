@@ -158,12 +158,23 @@ if ( !isset( $session ) ) {
 		.'</tr>';
 
 	foreach( $songs as $song ) {
-		echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">';
+		if ( $song->comment ) {
+			echo '<tr class="normal rowwithcomment" onMouseOver="this.className=\'highlight rowwithcomment\'" onMouseOut="this.className=\'normal rowwithcomment\'" id="vgmotd_'.$song->id.'">';
+		} else {
+			echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">';
+		}
 		if ( $vgmotduser ) {
 			echo '<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>';
 		}
-		echo '<td align="right">'.$song->daynumber.'</td>'
-			.'<td align="right">'.( $song->date != null ? $song->get_day_of_week_from_vgmotddaynum().'&nbsp;'.$song->date : '' ).'</td>'
+		echo '<td align="right">';
+		if ( $song->comment ) {
+			echo '<u>'.$song->daynumber.'</u>';
+			echo '<span class="vgmotdcomment">'.$song->comment.'</span>';
+		} else {
+			echo $song->daynumber;
+		}
+		echo '</td>';
+		echo '<td align="right">'.( $song->date != null ? $song->get_day_of_week_from_vgmotddaynum().'&nbsp;'.$song->date : '' ).'</td>'
 			.'<td>'.$song->artist.'</td>'
 			.'<td>'.$song->games.'</td>'
 			.'<td>'.$song->names.'</td>';
