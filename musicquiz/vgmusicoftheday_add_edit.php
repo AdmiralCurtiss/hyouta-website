@@ -143,14 +143,24 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 		<td>Uploader:</td>
 		<td><select name="uploaderid"><?php
 					foreach ( $uploaders as $uploader ) {
-						echo '<option value="'.$uploader->userid.'"'
-						.( $editing ?
-						     ( $current_song->userid == $uploader->userid ? ' selected' : '' )
-						   : isset($uploaderid) ? 
-							     ( $uploaderid == $uploader->userid ? ' selected' : '' )
-							   : ( $session->userid == $uploader->userid ? ' selected' : '' )
-						 )
-						.'>'.$uploader->username.'</option>';
+						echo '<option value="'.$uploader->userid.'"';
+						if ( $editing ) {
+							if ( $current_song->userid == $uploader->userid ) {
+								echo ' selected';
+							}
+						} else {
+							if ( isset($uploaderid) ) {
+								// when creating a new entry, and form has already been submitted & rejected
+								if ( $uploaderid == $uploader->userid ) echo ' selected';
+							} else {
+								// when creating a new entry on first page load
+								if ( $session->userid == $uploader->userid ) echo ' selected';
+							}
+						}
+						echo '>'.$uploader->username.'</option>';
+						//echo '---$current_song->userid = '.$current_song->userid;
+						//echo '---$uploader->userid = '.$uploader->userid;
+						//echo '---$editing = '.$editing;
 					}
 				?></select></td>
 	</tr>
