@@ -1399,7 +1399,7 @@ class db {
 		} else {
 			return false;
 		}
-		$query .= ' WHERE songid = '.$songid.' AND name = "'.$name.'"';
+		$query .= ' WHERE songid = '.$songid.' AND UPPER(name) = UPPER("'.$name.'")';
 		$resultset = mysql_query($query, $this->database);
 		if ( $resultset ) {
 			$data = mysql_fetch_assoc($resultset);
