@@ -486,11 +486,22 @@ class db {
 		if ( $gamecorrect ) $points++;
 		if ( $songcorrect ) $points += 2;
 		if ( $halfguess && ( !$gameguess || !$songguess ) ) $points += 4;
-				
+		
+		if ( !$gamecorrect && $gameguess ) {
+			$game_in_wrong_list = $this->check_wrong_guess( $songid, $gameguess, 'g' );
+		} else {
+			$game_in_wrong_list = false;
+		}
+		if ( !$songcorrect && $songguess ) {
+			$song_in_wrong_list = $this->check_wrong_guess( $songid, $songguess, 'n' );
+		} else {
+			$song_in_wrong_list = false;
+		}
+		
 		// auto-hide if all guessed is correct
-		if ( $gamecorrect && $songcorrect ) { $hidefromall = 1; }
-		else if ( $gamecorrect && !$songguess ) { $hidefromall = 1; }
-		else if ( $songcorrect && !$gameguess ) { $hidefromall = 1; }
+		if ( ($gamecorrect || $game_in_wrong_list) && ($songcorrect || $song_in_wrong_list) ) { $hidefromall = 1; }
+		else if ( ($gamecorrect || $game_in_wrong_list) && !$songguess ) { $hidefromall = 1; }
+		else if ( ($songcorrect || $song_in_wrong_list) && !$gameguess ) { $hidefromall = 1; }
 		else { $hidefromall = 0; }
 				
 		$query = 'INSERT INTO music_guesses ( userid, songid, gameguess, songguess, points, hidefromall ) '
@@ -1359,6 +1370,58 @@ class db {
 		$songid = (int)$songid;
 		
 		$query = 'UPDATE music_guesses SET hidefromall = 1 WHERE userid = '.$userid.( $songid != -1 ? ' AND songid = '.$songid : '' );
+		
+		$success = mysql_query($query, $this->database);
+		
+		if ( $success ) {
+			// push the entry we've just hidden into the wrong guesses table
+			$song = $this->get_guessed_song($userid, $songid);
+			if ( !$song->game_correct ) {
+				$this->insert_wrong_guess($songid, $song->game_guessed, 'g');
+			}
+			if ( !$song->name_correct ) {
+				$this->insert_wrong_guess($songid, $song->name_guessed, 'n');
+			}
+		}
+		
+		return $success;
+	}
+	
+	function check_wrong_guess( $songid, $name, $type ) {
+		$songid = (int)$songid;
+		$name = mysql_real_escape_string(stripslashes($name));
+		
+		$query = 'SELECT COUNT(1) AS wrongexists FROM ';
+		if ( $type == 'g' ) {
+			$query .= 'music_wrong_games';
+		} else if ( $type == 'n' ) {
+			$query .= 'music_wrong_names';
+		} else {
+			return false;
+		}
+		$query .= ' WHERE songid = '.$songid.' AND name = "'.$name.'"';
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$data = mysql_fetch_assoc($resultset);
+			if ( $data['wrongexists'] == 1 ) return true;
+			return false;
+		} else {
+			return false;
+		}
+	}
+	function insert_wrong_guess( $songid, $name, $type ) {
+		$songid = (int)$songid;
+		$name = mysql_real_escape_string(stripslashes($name));
+		
+		$query = 'INSERT INTO ';
+		if ( $type == 'g' ) {
+			$query .= 'music_wrong_games';
+		} else if ( $type == 'n' ) {
+			$query .= 'music_wrong_names';
+		} else {
+			return false;
+		}
+		$query .= ' (songid, name) VALUES ('.$songid.', "'.$name.'")';
 		
 		return mysql_query($query, $this->database);
 	}
