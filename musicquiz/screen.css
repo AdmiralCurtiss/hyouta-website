@@ -183,6 +183,10 @@ div.blogentry a {
 	color: #0077CC;
 }
 
+textarea {
+	font-family: Arial;
+}
+
  /* Runde Ecken */
 .corner_top-right {
  clear: both;

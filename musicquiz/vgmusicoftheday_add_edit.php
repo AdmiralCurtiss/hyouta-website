@@ -166,7 +166,7 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 	</tr>
 	<tr>
 		<td>Comment:</td>
-		<td><textarea name="comment" size="90"><?php if ( $editing ) echo $current_song->comment; else if ( isset($_POST['comment']) ) echo $_POST['comment']; ?></textarea></td>
+		<td><textarea name="comment" rows="7" cols="72"><?php if ( $editing ) echo $current_song->comment; else if ( isset($_POST['comment']) ) echo $_POST['comment']; ?></textarea></td>
 	</tr>
 	<tr>
 		<td></td>
