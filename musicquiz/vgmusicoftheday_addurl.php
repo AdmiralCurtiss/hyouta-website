@@ -72,11 +72,40 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 			if ( !isset( $_POST['url'] ) || trim($_POST['url']) == '' ) {
 				echo 'No URL provided. ';
 			} else {
-				$urlid = $db->add_vgmusicoftheday_url( $_GET['id'], $_POST['type'], trim($_POST['url']) );
-				if ( !$urlid ) {
-					echo 'Database entry failed! ';
-				} else {
-					echo 'Database updated! ';
+				if ( isset($_POST['type']) ) {
+					$url_replacement_successful = false;
+					if ( $_POST['type'] == 1 ) {
+						//convert url to youtube-v=-value
+						//search for the start of the video identifyer
+						$urlposition = strpos( $_POST['url'], '?v=' );
+						if ( $urlposition === false ) {
+							$urlposition = strpos( $_POST['url'], '&v=' );
+							if ( $urlposition === false ) {
+								echo 'Could not find Youtube video identifyer in the given URL!';
+							}
+						}
+						
+						if ( $urlposition !== false ) {
+							//remove till start, then search for the end of video identifyer
+							$_POST['url'] = substr( $_POST['url'], $urlposition+3 );
+							$urlposition = strpos( $_POST['url'], '&' );
+							if ( $urlposition !== false ) {
+								$_POST['url'] = substr( $_POST['url'], 0, $urlposition );
+							}
+							
+							$_POST['url'] = 'http://www.youtube.com/watch?v='.$_POST['url'];
+							$url_replacement_successful = true;
+						}
+					}
+					
+					if ( $_POST['type'] != 1 || $url_replacement_successful ) {
+						$urlid = $db->add_vgmusicoftheday_url( $_GET['id'], $_POST['type'], trim($_POST['url']) );
+						if ( !$urlid ) {
+							echo 'Database entry failed! ';
+						} else {
+							echo 'Database updated! ';
+						}
+					}
 				}
 			}
 		} else {
