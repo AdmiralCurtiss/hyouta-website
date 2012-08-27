@@ -111,7 +111,7 @@ if ( $session->logged_in && $session->user->is_admin() ) {
 	
 		$unavailable_songlist = array();
 		foreach ( $unavailable_songs as $usong ) {
-			$unavailable_songlist[$usong->songid] = $usong->games.' - '.$usong->names;
+			$unavailable_songlist[$usong->songid] = $usong->games.' - '.$usong->names.' { '.$usong->difficulty.' }';
 		}
 		asort($unavailable_songlist);
 		foreach ( $unavailable_songlist as $id => $song ) {
