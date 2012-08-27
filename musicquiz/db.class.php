@@ -742,7 +742,9 @@ class db {
 		$difficulty = (int)$difficulty;
 		$gameid = (int)$gameid;
 		$query = 'UPDATE music_songs SET url = \''.mysql_real_escape_string($url).'\', '
-				.'difficulty = '.$difficulty.', gameid = '.$gameid.', available = '.( $available ? 1 : 0 ).' WHERE songid = '.$songid;
+				.'difficulty = '.$difficulty
+				.( $gameid >= 0 ? ', gameid = '.$gameid : '' )
+				.', available = '.( $available ? 1 : 0 ).' WHERE songid = '.$songid;
 
 		return mysql_query($query, $this->database);
 	}

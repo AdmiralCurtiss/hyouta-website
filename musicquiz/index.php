@@ -39,6 +39,7 @@
 		$section['resulthide'] = 'hidefromall.php';
 		$section['edit']       = 'newsedit.php';
 		$section['newsadd']    = 'newsadd.php';
+		$section['changeyt']   = 'changeyturl.php';
 	}
 
 	if ( isset($_GET['section'], $section[$_GET['section']]) ) {
