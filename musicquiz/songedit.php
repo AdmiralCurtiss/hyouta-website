@@ -123,7 +123,7 @@ if ( $session->logged_in && $session->user->is_admin() ) {
 	
 	if ( isset( $editsong ) && $editsong != false ) {
 		require_once 'sgname.class.php';
-?><p><object width="640" height="385"><param name="movie" value="http://www.youtube-nocookie.com/v/<?php echo $editsong->url; ?>&hl=en_US&fs=1&rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube-nocookie.com/v/<?php echo $editsong->url; ?>&hl=en_US&fs=1&rel=0&hd=1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="25"></embed></object></p>
+?><p><object width="640" height="240"><param name="movie" value="http://www.youtube.com/v/<?php echo $editsong->url; ?>&version=3&showinfo=0&modestbranding=1&rel=0&autohide=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/<?php echo $editsong->url; ?>&version=3&showinfo=0&modestbranding=1&rel=0&autohide=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="240"></embed></object></p>
 <form action="index.php?section=songedit&songid=<?php echo $editsong->songid; ?>" method="post">
     <fieldset>
         <legend>Edit Song</legend>

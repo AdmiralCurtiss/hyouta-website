@@ -55,7 +55,7 @@ if ( !isset( $session ) ) {
 			if ( $guess_song_return ) {
 				if ( $gameguess ) {
 					if ( $gamecorrect ) {
-						echo '<p>Correctly guessed the game!</p>';
+						echo '<p>Correctly guessed the game! ('.$song->games[0].')</p>';
 					} else {
 						echo '<p>Incorrect game guess. The expected game was "'.$song->games[0].'".</p>';
 					}
@@ -71,7 +71,7 @@ if ( !isset( $session ) ) {
 				
 				if ( $songguess ) {
 					if ( $songcorrect ) {
-						echo '<p>Correctly guessed the songname!</p>';
+						echo '<p>Correctly guessed the songname! ('.$song->names[0].')</p>';
 					} else {
 						echo '<p>Incorrect song name guess. The expected name was "'.$song->names[0].'".</p>';
 					}
@@ -192,7 +192,7 @@ if ( !isset( $session ) ) {
 		return;
 	}
 
-?><p><object width="640" height="385"><param name="movie" value="http://www.youtube-nocookie.com/v/<?php echo $song->url; if ( $autoplay ) echo '&autoplay=1'; ?>"></param><param name="allowFullScreen" value="false"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube-nocookie.com/v/<?php echo $song->url; if ( $autoplay ) echo '&autoplay=1'; ?>" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="25"></embed></object></p><?php
+
 
 	$song_already_guessed = $db->song_already_guessed( $session->userid, $song->songid );
 
@@ -220,4 +220,6 @@ if ( $halfguessvalue == 1 ) echo '<tr><td>Song:</td><td><input name="song" type=
 			echo '<p>Already guessed this song.</p>';
 		}
 	}
-?>
+?><p><object width="640" height="240"><param name="movie" value="http://www.youtube.com/v/<?php echo $song->url; if ( $autoplay ) echo '&autoplay=1'; ?>&version=3&showinfo=0&modestbranding=1&rel=0&autohide=0"></param>
+<param name="allowFullScreen" value="false"></param>
+<param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/<?php echo $song->url; if ( $autoplay ) echo '&autoplay=1'; ?>&version=3&showinfo=0&modestbranding=1&rel=0&autohide=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="240"></embed></object></p><?php ?>
