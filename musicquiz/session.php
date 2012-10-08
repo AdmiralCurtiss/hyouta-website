@@ -47,9 +47,9 @@ class Session
 
 	function login($username, $password, $rememberme) {
 		$this->userid = $this->db->get_userid($username);
-		if ( $this->userid == false ) return false;
+		if ( $this->userid === false ) return false;
 		$this->user   = $this->db->get_user_and_confirm_password($this->userid, $password);
-		if ( $this->user == false ) return false;
+		if ( $this->user === false ) return false;
 
 		//username/password is correct
 		$_SESSION['userid']  = $this->user->userid;

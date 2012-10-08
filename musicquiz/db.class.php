@@ -2,6 +2,7 @@
 require_once 'user.class.php';
 require_once 'song.class.php';
 require_once 'url_container.class.php';
+require_once 'passbcrypt_holder.class.php';
 
 class db {
 
@@ -14,18 +15,66 @@ class db {
 	function gethash($password) {
 		return md5('nGWNrTdpmBBpNCce4#hWNvyYNum4f'.$password.'# umN3q3rbcP# HFpmzR6ExQMn7sZ');
 	}
+	function getbcrypt($password, $salt) {
+		$hash = crypt($password, $salt);
+		return new passbcrypt_holder($salt, $hash);
+	}
+	function createbcryptsalt() {
+		$salt = ''; 
+		for ($i = 0; $i < 22; $i++) { 
+			$salt .= substr("./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", mt_rand(0, 63), 1); 
+		}
+		return $salt;
+	}
 	function register($username, $password) {
-		$pwdhash = $this->gethash($password);
-		$query = 'INSERT INTO music_users (username, password) VALUES ( \''.mysql_real_escape_string($username).'\', \''.$pwdhash.'\')';
+		$pwdhash = $this->getbcrypt($password, '$2y$11$'.$this->createbcryptsalt().'$');
+		$query = 'INSERT INTO music_users (username, password, salt, passbcrypt) '
+				.' VALUES ( \''.mysql_real_escape_string($username).'\', \'\', \''.$pwdhash->salt.'\', \''.$pwdhash->hash.'\')';
 
 		return mysql_query($query, $this->database);
 	}
 	function editpassword( $userid, $password ) {
 		$userid = (int)$userid;
-		$pwdhash = $this->gethash($password);
-		$query = 'UPDATE music_users SET password = \''.$pwdhash.'\' WHERE userid = '.$userid;
+		$pwdhash = $this->getbcrypt($password, '$2y$11$'.$this->createbcryptsalt().'$');
+		$query = 'UPDATE music_users SET password = \'\', '
+				.' salt = \''.$pwdhash->salt.'\', passbcrypt = \''.$pwdhash->hash.'\' WHERE userid = '.$userid;
 
 		return mysql_query($query, $this->database);
+	}
+	function get_user_and_confirm_password($userid, $password) {
+		// grab salt from DB
+		$userid = (int)$userid;
+		$query = 'SELECT salt FROM music_users WHERE userid = '.$userid;
+		$resultset = mysql_query($query, $this->database);
+		$salt = null;
+		if ( $resultset ) {
+			$data = mysql_fetch_assoc($resultset);
+			$salt = $data['salt'];
+		}
+		
+		$updatepw = false;
+		if ( $salt ) {
+			// new password format
+			$pwdnew = $this->getbcrypt($password, $salt);
+			$query = 'SELECT userid, username, role, halfguess, guessorder FROM music_users WHERE '
+					.' userid = '.$userid.' AND passbcrypt = \''.$pwdnew->hash.'\'';
+		} else {
+			// old password format
+			$pwdhash = $this->gethash($password);
+			$query = 'SELECT userid, username, role, halfguess, guessorder FROM music_users WHERE userid = '.$userid.' AND password = \''.$pwdhash.'\'';
+			$updatepw = true;
+		}
+		
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			$data = mysql_fetch_assoc($resultset);
+			if ( $data == false ) return false;
+			if ( $data['role'] == 0 ) return false;
+			$user = new user($data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder']);
+			if ( $updatepw ) { $this->editpassword( $userid, $password ); }
+			return $user;
+		}
+		return false;
 	}
 	function get_userid($username) {
 		$query = 'SELECT userid FROM music_users WHERE username = \''.mysql_real_escape_string($username).'\'';
@@ -76,22 +125,6 @@ class db {
 				$users[(int)$data['userid']] = new user((int)$data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder'], $data['autoplay']);
 			}
 			return $users;
-		}
-		
-		return false;
-	}
-	function get_user_and_confirm_password($userid, $password) {
-		$userid = (int)$userid;
-		$pwdhash = $this->gethash($password);
-		$query = 'SELECT userid, username, role, halfguess, guessorder FROM music_users WHERE userid = '.$userid.' AND password = \''.$pwdhash.'\'';
-		
-		$resultset = mysql_query($query, $this->database);
-		if ( $resultset ) {
-			$data = mysql_fetch_assoc($resultset);
-			if ( $data == false ) return false;
-			if ( $data['role'] == 0 ) return false;
-			$user = new user($data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder']);
-			return $user;
 		}
 		
 		return false;
