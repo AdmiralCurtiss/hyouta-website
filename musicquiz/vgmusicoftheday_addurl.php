@@ -3,6 +3,44 @@ if ( !isset( $session ) ) {
 	die();
 }
 
+function getYoutubeIdentifier( $str ) {
+	$urlposition = strpos( $str, '?v=' );
+	if ( $urlposition !== false ) {
+		$urlposition += 3;
+	} else {
+		$urlposition = strpos( $str, '&v=' );
+		if ( $urlposition !== false ) {
+			$urlposition += 3;
+		} else {
+			$urlposition = strpos( $str, 'youtu.be/' );
+			if ( $urlposition !== false ) {
+				$urlposition += 9;
+			} else {
+				return null;
+			}
+		}
+	}
+	
+	if ( $urlposition !== false ) {
+		//remove till start, then search for the end of video identifyer
+		$str = substr( $str, $urlposition );
+		$urlposition = strpos( $str, '&' );
+		if ( $urlposition !== false ) {
+			$str = substr( $str, 0, $urlposition );
+		}
+		$urlposition = strpos( $str, '?' );
+		if ( $urlposition !== false ) {
+			$str = substr( $str, 0, $urlposition );
+		}
+		$urlposition = strpos( $str, '#' );
+		if ( $urlposition !== false ) {
+			$str = substr( $str, 0, $urlposition );
+		}
+		
+		return $str;
+	}
+}
+
 if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	$_GET['id'] = (int)$_GET['id'];
 	if ( $_GET['id'] <= 0 ) die();
@@ -76,25 +114,12 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 					$url_replacement_successful = false;
 					if ( $_POST['type'] == 1 ) {
 						//convert url to youtube-v=-value
-						//search for the start of the video identifyer
-						$urlposition = strpos( $_POST['url'], '?v=' );
-						if ( $urlposition === false ) {
-							$urlposition = strpos( $_POST['url'], '&v=' );
-							if ( $urlposition === false ) {
-								echo 'Could not find Youtube video identifyer in the given URL!';
-							}
-						}
-						
-						if ( $urlposition !== false ) {
-							//remove till start, then search for the end of video identifyer
-							$_POST['url'] = substr( $_POST['url'], $urlposition+3 );
-							$urlposition = strpos( $_POST['url'], '&' );
-							if ( $urlposition !== false ) {
-								$_POST['url'] = substr( $_POST['url'], 0, $urlposition );
-							}
-							
-							$_POST['url'] = 'http://www.youtube.com/watch?v='.$_POST['url'];
+						$ytId = getYoutubeIdentifier($_POST['url']);
+						if ( $ytId !== null ) {
+							$_POST['url'] = 'http://www.youtube.com/watch?v='.$ytId;
 							$url_replacement_successful = true;
+						} else {
+							echo 'Could not find Youtube video identifyer in the given URL!';
 						}
 					}
 					
