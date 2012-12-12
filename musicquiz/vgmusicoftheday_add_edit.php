@@ -192,7 +192,17 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 		foreach ($tags as &$tag) {
 			echo ' '.$tag;
 		}
-		echo '</div>';
+		echo '</div><br>';
+		
+		echo '<div>See Also:';
+		$seealso = $db->get_vgmusicoftheday_songs_youtubeonly( 0, 1000000, 'day ASC', $current_song->games );
+		foreach ($seealso as $s) {
+			if ( $s->songid === $current_song->songid ) { continue; }
+			if ( $s->games !== $current_song->games ) { continue; }
+			echo '<br>';
+			echo '<a href="index.php?section=vgmotd-add-edit&id='.$s->songid.'">Day '.$s->daynumber.'</a>: <a href="'.$s->url[0]->url.'">'.$s->url[0]->url.'</a>';
+		}
+		echo '<br><br><br><br></div>';
 	}
 
 } else {
