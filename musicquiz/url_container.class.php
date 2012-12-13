@@ -16,13 +16,15 @@ class url_container {
 	var $url;
 	var $url_type;
 	var $icon;
+	var $visible;
 	
 	static $types = null;
 
-	function __construct($urlid, $url, $url_type) {
+	function __construct($urlid, $url, $url_type, $visible) {
 		$this->urlid = (int)$urlid;
 		$this->url = $url;
 		$this->url_type = (int)$url_type;
+		$this->visible = (int)$visible;
 	}
 	
 	static function get_types($linktype = -1) {

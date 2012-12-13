@@ -138,6 +138,12 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		}
 	}
 	
+	if ( isset($_GET['urlid']) && isset($_GET['urlchangevisible']) ) {
+		$urlchangevisible_urlid = (int)$_GET['urlid'];
+		$urlchangevisible_visible = (int)$_GET['urlchangevisible'];
+		$db->edit_vgmusicoftheday_visibility( $urlchangevisible_urlid, $urlchangevisible_visible );
+	}
+	
 	$current_song = $db->get_vgmusicoftheday_song($_GET['id']);
 	
 	echo '<div>'
@@ -145,9 +151,15 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	
 	foreach ( $current_song->url as $url ) {
 		if ( $url->has_icon() ) {
-			echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
+			echo '<br><a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>&nbsp;';
 		} else {
-			echo '<a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
+			echo '<br><a href="'.$url->url.'">['.$url->get_typename().']</a>&nbsp;';
+		}
+		
+		if ( $url->visible ) {
+			echo '<a href="index.php?section=vgmotd-urladd&id='.$_GET['id'].'&urlid='.$url->urlid.'&urlchangevisible=0">(visible)</a>';
+		} else {
+			echo '<a href="index.php?section=vgmotd-urladd&id='.$_GET['id'].'&urlid='.$url->urlid.'&urlchangevisible=1">(hidden)</a>';;
 		}
 	}
 	

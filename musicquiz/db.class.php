@@ -922,6 +922,12 @@ class db {
 		
 		return mysql_query($query, $this->database);
 	}
+	function edit_vgmusicoftheday_visibility( $id, $visibility ) {
+		$id = (int)$id;
+		$visibility = (int)$visibility;
+		$query = 'UPDATE vgmusicoftheday_urls SET visible = '.$visibility.' WHERE id = '.$id;
+		return mysql_query($query, $this->database);
+	}
 	
 	function delete_vgmusicoftheday_url( $id ) {
 		$id = (int)$id;
@@ -993,12 +999,12 @@ class db {
 				$songs->comment = $data['comment'];
 				
 				// grab urls
-				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
+				$query_urls = 'SELECT id, url, url_type, visible FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
 				$resultset_urls = mysql_query($query_urls, $this->database);
 				if ( $resultset_urls ) {
 					$urls = array();
 					while ( $data_urls = mysql_fetch_assoc($resultset_urls) ) {
-						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type']);
+						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type'], $data_urls['visible']);
 					}
 					$songs->url = $urls;
 				}
@@ -1041,12 +1047,12 @@ class db {
 				$songs[$i]->comment = $data['comment'];
 				
 				// grab urls
-				$query_urls = 'SELECT id, url, url_type FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
+				$query_urls = 'SELECT id, url, url_type, visible FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' AND visible != 0 ORDER BY url_type ASC';
 				$resultset_urls = mysql_query($query_urls, $this->database);
 				if ( $resultset_urls ) {
 					$urls = array();
 					while ( $data_urls = mysql_fetch_assoc($resultset_urls) ) {
-						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type']);
+						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type'], $data_urls['visible']);
 					}
 					$songs[$i]->url = $urls;
 				}
@@ -1070,7 +1076,7 @@ class db {
 		$query = 'SELECT vgmusicoftheday.id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber, url, vgmusicoftheday_urls.id AS urlid FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id'
-				.' WHERE url_type = 1'
+				.' WHERE url_type = 1 AND vgmusicoftheday_urls.visible != 0'
 				.( $search_string === false ? '' :
 					' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )' )
 				.' ORDER BY '.$order
@@ -1091,7 +1097,7 @@ class db {
 				$songs[$i]->daynumber = $data['daynumber'];
 				
 				$urls = array();
-				$urls[] = new url_container($data['urlid'], $data['url'], 1);
+				$urls[] = new url_container($data['urlid'], $data['url'], 1, 1);
 				$songs[$i]->url = $urls;
 
 				$i++;

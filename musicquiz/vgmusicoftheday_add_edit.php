@@ -198,7 +198,7 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 		$seealso = $db->get_vgmusicoftheday_songs_youtubeonly( 0, 1000000, 'day ASC', $current_song->games );
 		foreach ($seealso as $s) {
 			if ( $s->songid === $current_song->songid ) { continue; }
-			if ( $s->games !== $current_song->games ) { continue; }
+			if ( strtolower($s->games) !== strtolower($current_song->games) ) { continue; }
 			echo '<br>';
 			echo '<a href="index.php?section=vgmotd-add-edit&id='.$s->songid.'">Day '.$s->daynumber.'</a>: <a href="'.$s->url[0]->url.'">'.$s->url[0]->url.'</a>';
 		}
