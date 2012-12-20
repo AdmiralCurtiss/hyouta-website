@@ -157,12 +157,14 @@ if ( !isset( $session ) ) {
 		.'<th><a href="'.$sorturl.'uploader'.( $currentorder == 'uploader' ? 'D' : '' ).'">Uploader</a></th>'
 		.'</tr>';
 
+	$current_vgm_day = $db->get_vgmusicoftheday_current_day();
 	foreach( $songs as $song ) {
-		if ( $song->comment ) {
-			echo '<tr class="normal rowwithcomment" onMouseOver="this.className=\'highlight rowwithcomment\'" onMouseOut="this.className=\'normal rowwithcomment\'" id="vgmotd_'.$song->id.'">';
-		} else {
-			echo '<tr onMouseOver="this.className=\'highlight\'" onMouseOut="this.className=\'normal\'" id="vgmotd_'.$song->id.'">';
-		}
+		$class = '';
+		if ( $song->comment ) { $class .= ' rowwithcomment'; }
+		if ( $song->daynumber < $current_vgm_day ) { $class .= ' past_day'; }
+		else if ( $song->daynumber == $current_vgm_day ) { $class .= ' current_day'; }
+		else { $class .= ' future_day'; }
+		echo '<tr class="normal'.$class.'" onMouseOver="this.className=\'highlight'.$class.'\'" onMouseOut="this.className=\'normal'.$class.'\'" id="vgmotd_'.$song->id.'">';
 		if ( $vgmotduser ) {
 			echo '<td align="center"><a href="index.php?section=vgmotd-add-edit&id='.$song->songid.'"><img src="pic/edit.png" title="Edit entry" border="0" /></a></td>';
 		}

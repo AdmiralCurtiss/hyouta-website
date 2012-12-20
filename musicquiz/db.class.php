@@ -1065,6 +1065,16 @@ class db {
 		
 		return false;
 	}
+	function get_vgmusicoftheday_current_day() {
+		$query = 'SELECT DATEDIFF(CURDATE(), \'2010-09-08\') AS daynumber';
+		$resultset = mysql_query($query, $this->database);
+		if ( $resultset ) {
+			if ( $data = mysql_fetch_assoc($resultset) ) {
+				return $data['daynumber'];
+			}
+		}
+		return false;
+	}
 
 	function get_vgmusicoftheday_songs_youtubeonly( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false ) {
 		$start_with = (int)$start_with;
