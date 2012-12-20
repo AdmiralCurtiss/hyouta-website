@@ -113,6 +113,9 @@ table.results tr td.percentage span.songstat:hover {
 	display: none;
 }
 
+/* table.results tr.past_day { background-color: #000000 } */
+table.results tr.current_day { background-color: #0C5C2F }
+table.results tr.future_day { background-color: #22223F }
 table.results tr.highlight { background-color: #0C0C5F }
 
 span.songavailable { color: lightgreen; }
