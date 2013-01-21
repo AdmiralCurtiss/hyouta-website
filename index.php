@@ -20,7 +20,7 @@ Just a small page I use to distribute video game saves.
 </p>
 <br><br><br>
 <h3>Other stuff</h3>
-<a href="/stuff/FaceCopy1.4.rar">FaceCopy (v1.4), a helper tool for Screenshot LPs with mugshots</a><br>
+<a href="/stuff/FaceCopy1.41.rar">FaceCopy (v1.41), a helper tool for Screenshot LPs with mugshots</a><br>
 <a href="/stuff/RightloadUrlAutoReplace.rar">RightloadUrlAutoReplace, a small tool for auto-inserting LPix URLs from Rightload into an LP update</a><br>
 <br>
 <a href="/stuff/RadiantHistoriaTextDump.rar">Radiant Historia Text Rip</a><br>
