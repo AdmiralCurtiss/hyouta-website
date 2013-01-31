@@ -2,6 +2,7 @@
 	header('Content-type: text/html; charset=iso-8859-1');
 ?><html>
 <head>
+	<!-- <title>Mystery Site</title> -->
 	<title>Video Game Music Quiz</title>
 	<link rel="stylesheet" type="text/css" href="layout.css" />
 	<link rel="stylesheet" type="text/css" href="styles.css" media="all">
