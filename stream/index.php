@@ -83,7 +83,7 @@ require_once 'config.php';
 	  */
 ?>
 <div id="wrapper">
-<h2>Board 8 Stickam</h2>
+<h2>Board 8 Streams</h2>
 <?php
         if ( (!is_array($channels)) && (!is_array($apis)) )
           die('Config not provided by config.php');

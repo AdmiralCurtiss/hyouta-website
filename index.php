@@ -12,7 +12,7 @@
 Probably the main thing here, the Video Game Music Quiz is a site where you get small clips of video game music and can guess what game the song is from, as well as the song's name. Check it out if you're interested and have some time to spare!</p>
 <br>
 <p><a href="/stream"><h3>The Stream</h3></a>
-A page me and a couple friends (the "Board 8 Stickam" group) use for streaming, with chatroom. It resulted from Stickam becoming completely awful to use.
+A page me and a couple friends use for streaming, with chatroom. It resulted from our old site becoming completely awful to use.
 </p>
 <br>
 <p><a href="/marioparty"><h3>The Savegame Archive</h3></a>
@@ -29,6 +29,6 @@ Just a small page I use to distribute video game saves.
 <a href="/artonelico/AT3_Event_dump.rar">Ar tonelico 3 Events Text Rip</a><br>
 <br>
 <a href="/zetaskin.html">Zetaboard Skin Helper</a><br>
-<a href="/zachnorn.htm">Old Stickam mirror page</a><br>
+<a href="/zachnorn.htm">Old Stream mirror page</a><br>
 </body>
 </html>
