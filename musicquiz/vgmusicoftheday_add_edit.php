@@ -187,13 +187,6 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 		
 		echo '<div>Game: '.$current_song->games.'<br>Title: '.$current_song->names.'<br>Composer: '.$current_song->artist.'<br>Uploaded by '.$current_song->username.'</div>';
 		
-		echo '<div>Tag Suggestions:';
-		$tags = $current_song->suggest_tags();
-		foreach ($tags as &$tag) {
-			echo ' '.$tag;
-		}
-		echo '</div><br>';
-		
 		echo '<div>See Also:';
 		$seealso = $db->get_vgmusicoftheday_songs_youtubeonly( 0, 1000000, 'day ASC', $current_song->games );
 		foreach ($seealso as $s) {
@@ -202,7 +195,14 @@ for ( $i = 2010; $i <= $year_until_list; $i++ ) {
 			echo '<br>';
 			echo '<a href="index.php?section=vgmotd-add-edit&id='.$s->songid.'">Day '.$s->daynumber.'</a>: <a href="'.$s->url[0]->url.'">'.$s->url[0]->url.'</a>';
 		}
-		echo '<br><br><br><br></div>';
+		echo '<br></div>';
+		
+		echo '<div>Tag Suggestions: ';
+		$tags = $current_song->suggest_tags();
+		foreach ($tags as &$tag) {
+			echo $tag.', ';
+		}
+		echo '</div><br><br><br><br>';
 	}
 
 } else {
