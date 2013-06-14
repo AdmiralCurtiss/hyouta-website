@@ -1087,6 +1087,7 @@ class db {
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id'
 				.' WHERE url_type = 1 AND vgmusicoftheday_urls.visible != 0'
+				.' AND day > DATE(\'2010-09-08\') AND day <= DATE(NOW())'
 				.( $search_string === false ? '' :
 					' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )' )
 				.' ORDER BY '.$order
