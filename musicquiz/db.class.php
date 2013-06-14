@@ -886,9 +886,10 @@ class db {
 			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1'
+				.' AND day > DATE(\'2010-09-08\') AND day <= DATE(NOW())'
 				.' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )';
 		} else {
-			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1';
+			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1 AND day > DATE(\'2010-09-08\') AND day <= DATE(NOW())';
 		}
 		
 		$resultset = mysql_query($query, $this->database);
