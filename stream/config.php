@@ -28,6 +28,9 @@ $apis = array(
 	"red13n" => "red13n",
 	"pika025" => "Pika025",
 //	"fuyukiosari" => "Fuyuki",
+	"bitthoven" => "Bitto",
+	"glitchiness" => "Glitchy",
+	"krazykeltik" => "Keltik",
   ),
 );
 
