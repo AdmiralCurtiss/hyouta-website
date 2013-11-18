@@ -864,14 +864,16 @@ class db {
 		}
 	}
 	
-	function get_vgmusicoftheday_songs_count($search_string = false) {
+	function get_vgmusicoftheday_songs_count($search_string = false, $limit_to_past = true) {
+				
 		if ( $search_string !== false ) {
 			$search_string = mysql_real_escape_string(stripslashes($search_string));
 			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
-				.' WHERE UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'")';
+				.' WHERE ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )'
+				.( $limit_to_past === true ? ' AND ( day <= DATE(NOW()) ) ' : '' );
 		} else {
-			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday';
+			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'.( $limit_to_past === true ? ' WHERE ( day <= DATE(NOW()) ) ' : '' );
 		}
 		
 		$resultset = mysql_query($query, $this->database);
@@ -1018,7 +1020,7 @@ class db {
 		
 		return false;
 	}
-	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false ) {
+	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false, $limit_to_past = true ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
 		if ( $search_string !== false ) {
@@ -1026,9 +1028,10 @@ class db {
 		}
 		
 		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, comment, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
-				.' LEFT JOIN music_users ON uploaderid = userid'
+				.' LEFT JOIN music_users ON uploaderid = userid WHERE 1=1 '
 				.( $search_string === false ? '' :
-					' WHERE UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'")' )
+					' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )' )
+				.( $limit_to_past === true ? ' AND ( day <= DATE(NOW()) ) ' : '' )
 				.' ORDER BY '.$order
 				.' LIMIT '.$start_with.', '.$amount;
 		

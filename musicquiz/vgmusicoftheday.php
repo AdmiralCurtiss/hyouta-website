@@ -28,6 +28,11 @@ if ( !isset( $session ) ) {
 			$searching = false;
 		}
 	}
+	if ( isset($_GET['past_only']) && ($_GET['past_only'] === 'false' ) ) {
+		$past_only = false;
+	} else {
+		$past_only = true;
+	}
 
 	$sorting_criteria = 'day DESC';
 
@@ -70,16 +75,16 @@ if ( !isset( $session ) ) {
 	
 	if ( $searching ) {
 		if ( $vgmotduser ) {
-			$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string );
-			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count($search_string);
+			$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string, $past_only );
+			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count($search_string, $past_only);
 		} else {
 			$songs = $db->get_vgmusicoftheday_songs_youtubeonly( $_GET['start'], $_GET['show'], $sorting_criteria, $search_string );
 			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_youtubeonly_count($search_string);
 		}
 	} else {
 		if ( $vgmotduser ) {
-			$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria );
-			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count();
+			$songs = $db->get_vgmusicoftheday_songs( $_GET['start'], $_GET['show'], $sorting_criteria, false, $past_only );
+			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_count(false, $past_only);
 		} else {
 			$songs = $db->get_vgmusicoftheday_songs_youtubeonly( $_GET['start'], $_GET['show'], $sorting_criteria );
 			$amount_guessed_pagecalc = $db->get_vgmusicoftheday_songs_youtubeonly_count();
@@ -90,6 +95,12 @@ if ( !isset( $session ) ) {
 	
 	if ( $vgmotduser ) {
 		echo '<div align="center"><a href="index.php?section=vgmotd-add-edit">Add a new song</a></div><br>';
+		
+		if ( $past_only ) {
+			echo '<div align="center">Future and undated entries are currently hidden. <a href="index.php?section=vgmoftheday&past_only=false&start='.$_GET['start'].'&show='.$_GET['show'].( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' ).( $searching ? '&search='.$search_string : '' ).'">Display them.</a></div><br>';
+		} else {
+			echo '<div align="center">Future and undated entries are currently shown. <a href="index.php?section=vgmoftheday&past_only=true&start='.$_GET['start'].'&show='.$_GET['show'].( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' ).( $searching ? '&search='.$search_string : '' ).'">Hide them.</a></div><br>';
+		}
 	}
 	
 	echo '<div align="center"><form action="index.php" method="get"><input type="hidden" name="section" value="vgmoftheday"/><input type="text" name="search" value="'.( $searching ? $search_string : '' ).'" size="65"/><input type="submit" value="Search"/></form></div>';
@@ -101,7 +112,7 @@ if ( !isset( $session ) ) {
 	
 	$pagestable = '<table width="100%"><tr><td width="20%">';
 	if ( $_GET['start'] > 0 ) { //previous page
-		$pagestable .= '<a href="index.php?section=vgmoftheday&start='.($_GET['start']-$_GET['show']).'&show='.$_GET['show']
+		$pagestable .= '<a href="index.php?section=vgmoftheday&past_only='.( $past_only ? 'true' : 'false' ).'&start='.($_GET['start']-$_GET['show']).'&show='.$_GET['show']
 			.( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' )
 			.( $searching ? '&search='.$search_string : '' )
 			.'">&lt;-- Previous Page</a>';
@@ -118,14 +129,14 @@ if ( !isset( $session ) ) {
 			if ( $pageshow == $_GET['start'] ) {
 				$pagestable .= '<u>'.$i.'</u> ';
 			} else {
-				$pagestable .= '<a href="index.php?section=vgmoftheday&start='.$pageshow.'&show='.$_GET['show'].$pagelinkend.'">'.$i.'</a> ';
+				$pagestable .= '<a href="index.php?section=vgmoftheday&past_only='.( $past_only ? 'true' : 'false' ).'&start='.$pageshow.'&show='.$_GET['show'].$pagelinkend.'">'.$i.'</a> ';
 			}
 		}
 	}
 	
 	$pagestable .= '</td><td align="right" width="20%">';
 	if ( ($_GET['start']+$_GET['show']) < $amount_guessed_pagecalc ) { //next page
-		$pagestable .= '<a href="index.php?section=vgmoftheday&start='.($_GET['start']+$_GET['show']).'&show='.$_GET['show']
+		$pagestable .= '<a href="index.php?section=vgmoftheday&past_only='.( $past_only ? 'true' : 'false' ).'&start='.($_GET['start']+$_GET['show']).'&show='.$_GET['show']
 			.( isset( $_GET['order'] ) ? '&order='.$_GET['order'] : '' )
 			.( $searching ? '&search='.$search_string : '' )
 			.'">Next Page --&gt;</a>';
@@ -134,7 +145,7 @@ if ( !isset( $session ) ) {
 	
 	echo $pagestable;
 
-	$sorturl = 'index.php?section=vgmoftheday&start='.$_GET['start'].'&show='.$_GET['show']
+	$sorturl = 'index.php?section=vgmoftheday&past_only='.( $past_only ? 'true' : 'false' ).'&start='.$_GET['start'].'&show='.$_GET['show']
 			.( $searching ? '&search='.$search_string : '' )
 			.'&order=';
 	
