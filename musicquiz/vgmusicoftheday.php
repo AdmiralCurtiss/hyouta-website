@@ -103,7 +103,7 @@ if ( !isset( $session ) ) {
 		}
 	}
 	
-	echo '<div align="center"><form action="index.php" method="get"><input type="hidden" name="section" value="vgmoftheday"/><input type="text" name="search" value="'.( $searching ? $search_string : '' ).'" size="65"/><input type="submit" value="Search"/></form></div>';
+	echo '<div align="center"><form action="index.php" method="get"><input type="hidden" name="section" value="vgmoftheday"/><input type="hidden" name="past_only" value="false"/><input type="text" name="search" value="'.( $searching ? $search_string : '' ).'" size="65"/><input type="submit" value="Search"/></form></div>';
 	
 	if ( !$songs ) {
 		echo 'Nothing found!';
@@ -193,7 +193,7 @@ if ( !isset( $session ) ) {
 			.'<td>'.$song->names.'</td>';
 		if ( $song->url != null ) {
 			if ( $vgmotduser ) {
-				$typelist = array( array(1), array(2), array(3), array(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20), array(255));
+				$typelist = array( array(1), array(2), array(3), array(4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35), array(255));
 				// this here is not really efficient (better would be throwing each "group" into a separate array and then looping over those, I assume), but whatever, it works well enough
 				foreach ( $typelist as $t ) {
 					echo '<td align="middle">';

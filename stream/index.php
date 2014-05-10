@@ -59,29 +59,53 @@ require_once 'config.php';
 <title>#B8Stickam Streams</title>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <link href="assets/style.css" type="text/css" rel="stylesheet" media="screen"/>
-<style type="text/css">div.entry { width: <?php echo $stream_width; ?>px; }</style>
+
+<style>
+.sidebysideactive {display:none;}
+#latest {display:none;}
+</style>
+
 </head>
 <body>
 <?php
-	  
+
 	  if ( $sidebyside ) {
 		echo '<div class="sidebysideactive" id="sidebysideinfo">yes</div>';
 	  } else {
 		echo '<div class="sidebysideactive" id="sidebysideinfo">no</div>';
 	  }
-	  
-	  /*
-      require_once 'latest_update.php';
-      $update = SDALatestUpdate::get()->results;
-<div id="latest"><a class="important" href="http://www.speeddemosarchive.com"><?php echo date('F jS', $update['date']); ?></a>:
+
+      require_once 'config.php';
+      foreach (SDAStream::$options as $var) if (!isset($$var)) $$var = null;
+      if ( (!is_array($channels)) && (!is_array($apis)) )
+        die('Config not provided by config.php');
+      $streams = SDAStream::get(array(
+        'channels'    => $channels,
+        'apis'        => $apis,
+        'ttl'         => $ttl,
+        'callback'    => $callback,
+        'include'     => $include,
+        'api'         => $api,
+        'default_api' => $default_api,
+        'single'      => $single,
+        'raw'         => $raw,
+        'post'        => $post,
+      ))
+        ->sort('return strcasecmp((isset($a["screenname"]) ? $a["screenname"] : $a["user_name"]), (isset($b["screenname"]) ? $b["screenname"] : $b["user_name"]))', true);
+      $online = $streams->filter('return ($a["online"])');
+      $online_ct = count($online);
+      $update = $output['sda'];
+    ?>
+<div id="latest"><a class="important date" href="http://www.speeddemosarchive.com"><?php echo date('F jS', $update['date']); ?></a>: <span class="games">
+<?php
       $games = array();
       foreach ($update['games'] as $g) {
         $games[] = "<a href=\"http://www.speeddemosarchive.com/{$g['path']}\">{$g['title']}</a>";
       }
       echo implode($games, ', ');
-</div>
-	  */
-?>
+    ?>
+    </span></div>
+    
 <div id="wrapper">
 <h2>Board 8 Streams</h2>
 <?php
@@ -112,21 +136,23 @@ if ( $sidebyside ) {
 }
       ?>
 <h2>Streams</h2>
-<div id="no1here"<?php if (count($online) > 0) echo ' class="hidden"'; ?>>
-No one is streaming right now.
+<div id="no1here"<?php if ($online_ct > 0) echo ' class="hidden"'; ?>>
+No-one streaming right now.
 </div>
-<div id="online"<?php if ($_COOKIE['hide_embed'] == 1) { ?> class="hidden"<?php } ?>>
+<div id="online"<?php if (!empty($_COOKIE['hide_embed'])) { ?> class="hidden"<?php } ?>>
 <?php
           foreach($online as $entry) {
+            if (empty($entry['screenname'])) $entry['screenname'] = $entry['user_name'];
             $entry['class'] = $entry['api'].'_'.str_replace("'", '-', $entry['channel_name']);
+            $entry['embed_id'] = ($entry['api'] == 'ustream') ? $entry['channel_id'] : $entry['channel_name'];
             print <<<HTML
-<div class="entry {$entry['class']}">
-<h3><a href="{$entry['channel_url']}">{$entry['synopsis']}</a> <a class="toggle" href="javascript:sda.toggle_embed('{$entry['class']}')" title="Show/Hide Embed">&#10063;</a></h3>
-{$entry['embed_stream']}
-</div>
+        <div class="entry {$entry['class']}">
+          <h3><a href="{$entry['channel_url']}">{$entry['screenname']}</a> <a class="icon toggle" href="javascript:sda.toggle_embed('{$entry['class']}')" title="Show/Hide Embed"></a><a class="icon popout" href="javascript:sda.popout('{$entry['api']}', '{$entry['embed_id']}')" title="Popout Stream/Chat"></a></h3>
+          {$entry['embed_stream']}
+          <div class="synopsis">{$entry['synopsis']}</div>
+        </div>
 HTML;
           }
-//<div class="synopsis">{$entry['user_name']}</div>
         ?>
 </div>
 
@@ -154,19 +180,21 @@ if ( $sidebyside ) {
 <div id="offline">
 <?php
           $content = $startup = array();
-          foreach ($all as $entry) {
+          foreach ($streams->results as $entry) {
+            if (empty($entry['screenname'])) $entry['screenname'] = $entry['user_name'];
             $entry['class'] = $entry['api'].'_'.str_replace("'", '-', $entry['channel_name']);
             $hidden = ($entry['online']) ? ' hidden' : '';
             $startup[$entry['class']] = ($entry['online']);
             print <<<HTML
-<span class="new entry {$entry['class']}{$hidden}"><a href="{$entry['channel_url']}" title="{$entry['user_name']}">{$entry['synopsis']}</a></span>
+<span class="entry {$entry['class']}{$hidden}"><a href="{$entry['channel_url']}" title="{$entry['synopsis']}">{$entry['screenname']}</a></span>
 HTML;
           }
         ?>
 </div>
 </div>
 <div id="toggle">
-<a href="javascript:sda.toggle_embed()" title="Show/Hide All Embeds">&#10063;</a>
+<a class="icon updates<?php if ($_COOKIE['no_updates'] == 1) { ?> disable<?php } ?>" href="javascript:sda.toggle_updates()" title="Enable/Disable Automatic Updates"></a>
+<a class="icon toggle" href="javascript:sda.toggle_embed()" title="Show/Hide All Embeds"></a>
 </div>
 
 <div id="about">
@@ -186,6 +214,15 @@ HTML;
 <?php endforeach ?>
 </div>
 </div>
+    <div id="debug">
+      <h1>Debug (<span id="timer"></span>)</h1>
+      <div class="full">
+        <p>Main Page Load:</p>
+        <?php foreach (SDAExceptions()->exceptions as $e): ?>
+          <p class="e<?php echo $e->getCode() ?>"><?php echo $e->getMessage() ?></p>
+        <?php endforeach ?>
+      </div>
+    </div>
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="assets/jquery.jsonp-2.1.4.min.js"></script>
@@ -196,6 +233,7 @@ HTML;
 <script type="text/javascript">
 sda = new sda_stream();
 sda.listed = <?php echo json_encode($startup); ?>;
+sda.update_sda_date = <?php echo $update['date']; ?>;
 </script>
 
 </body>
