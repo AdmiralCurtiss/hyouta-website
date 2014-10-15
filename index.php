@@ -20,15 +20,7 @@ Just a small page I use to distribute video game saves.
 </p>
 <br><br><br>
 <h3>Other stuff</h3>
-<a href="/stuff/FaceCopy1.42.7z">FaceCopy (v1.42), a helper tool for Screenshot LPs with mugshots</a><br>
-<a href="/stuff/RightloadUrlAutoReplace.rar">RightloadUrlAutoReplace, a small tool for auto-inserting LPix URLs from Rightload into an LP update</a><br>
-<br>
-<a href="/stuff/RadiantHistoriaTextDump.rar">Radiant Historia Text Rip</a><br>
-<a href="/stuff/DarkDawnMessageRipEUR.rar">Golden Sun Dark Dawn Text Rip</a><br>
-<a href="/artonelico/AT3.BIN.dmp.txt.rar">Ar tonelico 3 EBOOT.BIN Text Rip</a><br>
-<a href="/artonelico/AT3_Event_dump.rar">Ar tonelico 3 Events Text Rip</a><br>
-<br>
-<a href="/zetaskin.html">Zetaboard Skin Helper</a><br>
-<a href="/zachnorn.htm">Old Stream mirror page</a><br>
+<a href="https://github.com/AdmiralCurtiss/FaceCopy/releases">FaceCopy, a helper tool for Screenshot LPs with mugshots</a><br>
+<a href="https://github.com/AdmiralCurtiss/RightloadUrlAutoReplace/releases">RightloadUrlAutoReplace, a small tool for auto-inserting LPix URLs from Rightload into an LP update</a><br>
 </body>
 </html>

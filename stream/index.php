@@ -164,7 +164,7 @@ if ( $sidebyside ) {
 if ( $disablechat ) { } else {
 ?>
 <div class="irc">
-<iframe src="http://widget.mibbit.com/?server=irc.gamesurge.net&channel=%23B8Stickam" width="<?php echo $sidebyside ? '500' : '640'; ?>" height="<?php echo $sidebyside ? '550' : '400'; ?>"></iframe>
+<iframe src="http://webchat.gamesurge.net/?channels=B8Stickam&uio=d4" width="<?php echo $sidebyside ? '500' : '640'; ?>" height="<?php echo $sidebyside ? '550' : '400'; ?>"></iframe>
 </div>
 <?php
 }
