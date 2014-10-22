@@ -1,11 +1,20 @@
 <?php
 
+class ArteLearnReqs {
+	var $type;
+	var $value;
+	var $useCount;
+}
+
+class ArteAlteredReqs {
+	var $type;
+	var $value;
+}
+
 class Arte {
 	var $id;
 	var $gameId;
 	var $refString;
-	var $strDicName;
-	var $strDicDesc;
 	var $type;
 	var $character;
 	var $tpUsage;
@@ -20,6 +29,12 @@ class Arte {
 	
 	var $name;
 	var $desc;
+	
+	var $enemyIcon;
+	var $enemyName;
+	
+	var $learnReqs;
+	var $alteredReqs;
 }
 
 ?>
