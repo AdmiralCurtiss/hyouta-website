@@ -30,3 +30,4 @@ td.skilldata { width: 275px; }
 .strategychar { text-align: center; }
 table.settings td { vertical-align: middle; min-width: 90px; }
 .difficultyname { font-weight: bold; text-decoration: underline; }
+ul { list-style-type: none; padding: 0; margin: 0; }

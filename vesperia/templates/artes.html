@@ -14,7 +14,7 @@
 		{% endif %}
 	</td>
 	<td>
-		{% if arte.type in ArteIcons|keys %}
+		{% if arte.type in ArteIconIds|keys %}
 			<img src="menu-icons/artes-{{ ArteIconIds[arte.type] }}.png" width="32" height="32">
 		{% endif %}
 	</td>
@@ -31,34 +31,39 @@
 		{% if arte.light > 0 %}<img src="text-icons/icon-element-03.png" width="16" height="16">{% endif %}
 		{% if arte.dark > 0 %}<img src="text-icons/icon-element-06.png" width="16" height="16">{% endif %}
 		{# if icons inserted <br> #}
-		{% if arte.tpUsage > 0 %}TP usage: {{ arte.tpUsage }}{% endif %}
 		
-		{% for req in arte.learnReqs %}
-			{% if req.type == 1 %}
-				Level {{ req.value }}
-			{% endif %}
-			{% if req.type == 2 %}
-				{# var otherArte = arteIdDict[LearnRequirementsOtherArtesId[i]]; #}
-				{% if arte.gameId != req.value %}
-					<img src="menu-icons/artes-{# other icon #}.png" width="16" height="16"><a href="{# other id #}">arte</a>, 
-				{% else %}
-					Learn with 
+		<ul>
+			{% if arte.tpUsage > 0 %}<li>TP usage: {{ arte.tpUsage }}</li>{% endif %}
+			
+			{% for req in arte.learnReqs %}
+				{% if req.type == 1 %}
+					<li>Level {{ req.value }}</li>
 				{% endif %}
-				{{ req.useCount }} uses
-			{% endif %}
-		{% endfor %}
-		{% for req in arte.alteredReqs %}
-			{% if req.type == 1 %}
-				{# var otherArte = arteIdDict[AlteredArteRequirementId[i]]; #}
-				Alters from <img src="menu-icons/artes-{# other icon #}.png" width="16" height="16"><a href="{# other id #}">arte</a>
-			{% endif %}
-			{% if req.type == 3 %}
-				{# var skill = skills.SkillIdDict[AlteredArteRequirementId[i]]; #}
-				<img src="skill-icons/category-{# skill icon #}.png" width="16" height="16"><a href="{# skill id #}">skill</a>
-			{% endif %}
-		{% endfor %}
-		
-		{% if arte.usableInMenu > 0 %}Usable outside of battle.{% endif %}
+				{% if req.type == 2 %}
+					<li>
+					{% if arte.gameId != req.value %}
+						<img src="menu-icons/artes-{# other icon #}.png" width="16" height="16"><a href="{# other id #}">arte</a>, 
+					{% else %}
+						Learn with 
+					{% endif %}
+					{{ req.useCount }} uses</li>
+				{% endif %}
+			{% endfor %}
+			{% for req in arte.alteredReqs %}
+				<li>
+				{% if req.type == 1 %}
+					{# var otherArte = arteIdDict[AlteredArteRequirementId[i]]; #}
+					Alters from <img src="menu-icons/artes-{# other icon #}.png" width="16" height="16"><a href="{# other id #}">arte</a>
+				{% endif %}
+				{% if req.type == 3 %}
+					{# var skill = skills.SkillIdDict[AlteredArteRequirementId[i]]; #}
+					<img src="skill-icons/category-{# skill icon #}.png" width="16" height="16"><a href="{# skill id #}">skill</a>
+				{% endif %}
+				</li>
+			{% endfor %}
+			
+			{% if arte.usableInMenu > 0 %}<li>Usable outside of battle.</li>{% endif %}
+		</ul>
 		</td>
 	</tr>
 	<tr><td colspan="5"><hr></td></tr>
