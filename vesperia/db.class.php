@@ -10,11 +10,24 @@ class db {
 	function __construct( $connstr, $username, $password ) {
 		$this->conn = new PDO( $connstr, $username, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'") );
 		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->conn->beginTransaction();
 	}
 	
-	function GetArteLearnReqs( $arteId ) {
-		$stmt = $this->conn->prepare( 'SELECT `type`, value, useCount FROM Artes_LearnReqs WHERE arteId = :arteId ORDER BY id ASC' );
-		$stmt->execute( array('arteId' => $arteId) );
+	function __destruct() {
+		$this->conn->rollBack();
+	}
+	
+	function GetArteLearnReqs( $arteId = false ) {
+		$args = array();
+		$s = 'SELECT arteId, `type`, value, useCount FROM Artes_LearnReqs ';
+		if ( $arteId !== false ) {
+			$s .= 'WHERE arteId = :arteId ';
+			$args['arteId'] = $arteId;
+		}
+		$s .= 'ORDER BY id ASC';
+		$stmt = $this->conn->prepare( $s );
+		
+		$stmt->execute( $args );
 		
 		$reqs = array();
 		while( $r = $stmt->fetch() ) {
@@ -47,23 +60,31 @@ class db {
 			.'LEFT JOIN Enemies ON Artes.character = Enemies.gameId '
 			.'LEFT JOIN StringDic ename ON Enemies.strDicName = ename.gameId AND ename.language = :lang1 ';
 		if ( $id === false ) {
-			.'WHERE Artes.type > 0'
+			$s .= 'WHERE Artes.type > 0 ';
 		} else {
-			.'WHERE Artes.id = :searchId'
+			$s .= 'WHERE Artes.id = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
 		
+		$time_start = microtime(true);
 		$stmt = $this->conn->prepare( $s );
 		$stmt->execute( $args );
+		$time_end = microtime(true);
+		$time = $time_end - $time_start;
+		echo "it took $time seconds\n";
 		
 		$artes = array();
+		$learnReqs = $this->GetArteLearnReqs();
 		while( $r = $stmt->fetch() ) {
 			$a = new Arte( $r );
-			$a->learnReqs = $this->GetArteLearnReqs( $a->id );
-			$a->alteredReqs = $this->GetArteAlteredReqs( $a->id );
+			$a->learnReqs = array();
+			$a->alteredReqs = array();//$this->GetArteAlteredReqs( $a->id );
 			$artes[] = $a;
 		}
+		$time_end = microtime(true);
+		$time = $time_end - $time_start;
+		echo "it took $time seconds\n";
 		return $artes;
 	}
 }
