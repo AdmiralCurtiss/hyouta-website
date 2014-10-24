@@ -294,7 +294,7 @@ class db {
 		}
 		$s .= ' FROM NecropolisFloors ';
 		if ( $map !== false ) {
-			$s .= 'WHERE map = :searchMap ';
+			$s .= 'WHERE floorName = :searchMap ';
 			$args['searchMap'] = $map;
 		}
 		$s .= 'ORDER BY id ASC';

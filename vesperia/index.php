@@ -214,8 +214,9 @@ if ( $section === 'artes' ) {
 	if ( isset($_GET['map']) ) {
 		$map = $_GET['map'];
 		$map_letter = substr($map, 0, 1);
+		$map_letter_digit = ord($map_letter) - ord('A');
 		$map_number = (int)substr($map, 1);
-		$map = $map_letter.'-'.$map_number;
+		$map = 'BTL_XTM_AREA_'.( str_pad($map_letter_digit * 10 + $map_number, 2, '0', STR_PAD_LEFT) );
 	}
 	$enemies = false;
 	if ( isset($_GET['enemies']) ) {
