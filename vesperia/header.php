@@ -19,8 +19,8 @@ function print_menu( $version ) {
 <a href="?section=titles"><img src="menu-icons/main-07.png" title="Titles"></a>
 <a href="?section=synopsis"><img src="menu-icons/sub-09.png" title="Synopsis"></a>
 <a href="?section=battlebook"><img src="menu-icons/sub-14.png" title="Battle Book"></a>
-<a href="?section=enemies"><img src="menu-icons/sub-13.png" title="Monster Book"></a>
-<a href="?section=items"><img src="menu-icons/sub-11.png" title="Collector's Book"></a>
+<!--<a href="?section=enemies"><img src="menu-icons/sub-13.png" title="Monster Book"></a>-->
+<!--<a href="?section=items"><img src="menu-icons/sub-11.png" title="Collector's Book"></a>-->
 <a href="?section=locations"><img src="menu-icons/sub-10.png" title="World Map"></a>
 <a href="?section=records"><img src="menu-icons/sub-08.png" title="Records"></a>
 <a href="?section=settings"><img src="menu-icons/sub-07.png" title="Settings"></a>

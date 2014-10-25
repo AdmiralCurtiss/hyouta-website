@@ -13,6 +13,10 @@ if ( isset($_GET['section']) ) {
 }
 $id = false;
 if ( isset($_GET['id']) ) { $id = (int)$_GET['id']; }
+$category = false;
+if ( isset($_GET['category']) ) { $category = (int)$_GET['category']; }
+$icon = false;
+if ( isset($_GET['icon']) ) { $icon = (int)$_GET['icon']; }
 
 if ( $section === 'artes' ) {
 	print_top( $version, 'Artes' );
@@ -125,7 +129,7 @@ if ( $section === 'artes' ) {
 	print_top( $version, 'Enemies' );
 	echo '<table>';
 	
-	$items = $db->GetEnemiesHtml( $id );
+	$items = $db->GetEnemiesHtml( $id, $category );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -140,7 +144,7 @@ if ( $section === 'artes' ) {
 	print_top( $version, 'Items' );
 	echo '<table>';
 	
-	$items = $db->GetItemsHtml( $id );
+	$items = $db->GetItemsHtml( $id, $category, $icon );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -224,7 +228,21 @@ if ( $section === 'artes' ) {
 	}
 	
 	if ( $map === false ) {
-		echo 'Map?';
+		// output map list
+		echo '<div class="necropolis-select">';
+		echo '<table>';
+		for ( $letter = 'A'; $letter <= 'F'; ++$letter ) {
+			//echo $letter;
+			echo '<tr>';
+			for ( $number = 1; $number <= 10; ++$number ) {
+				echo '<td>';
+				echo '<a href="?section=necropolis&map='.$letter.$number.'">'.$letter.'-'.$number.'</a>';
+				echo '</td>';
+			}
+			echo '</tr>';
+		}
+		echo '</table>';
+		echo '</div>';
 	} else {
 		$items = $db->GetNecropolisHtml( $enemies, $map );
 		$first = true;
@@ -232,7 +250,25 @@ if ( $section === 'artes' ) {
 			if ( $first === true ) { $first = false; } else {
 				echo '<hr>';
 			}
+			
+			echo '<div id="'.$map_letter.$map_number.'">';
+			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$map_letter.'-'.$map_number.'</div></th></tr>';
+			echo '<tr><th colspan="6">';
+			if ( $enemies === true ) {
+				echo '<a href="?section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
+			} else {
+				echo 'General Info';
+			}
+			echo ' - ';
+			if ( $enemies !== true ) {
+				echo '<a href="?section=necropolis&map='.$map_letter.$map_number.'&enemies=true">Enemies</a>';
+			} else {
+				echo 'Enemies';
+			}
+			echo '</th></tr>';
 			echo $item;
+			echo '</table>';
+			echo '</div>';
 		}
 	}
 	

@@ -160,14 +160,17 @@ class db {
 		return $items;
 	}
 	
-	function GetEnemiesHtml( $id = false ) {
+	function GetEnemiesHtml( $id = false, $category = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Enemies ';
-		if ( $id === false ) {
-			$s .= 'WHERE id > 0 ';
-		} else {
+		if ( $id !== false ) {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
+		} elseif ( $category !== false ) {
+			$s .= 'WHERE category = :searchId AND id > 0 ';
+			$args['searchId'] = $category;
+		} else {
+			$s .= 'WHERE id > 0 ';
 		}
 		$s .= 'ORDER BY id ASC';
 		
@@ -181,14 +184,20 @@ class db {
 		return $items;
 	}
 	
-	function GetItemsHtml( $id = false ) {
+	function GetItemsHtml( $id = false, $category = false, $icon = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Items ';
-		if ( $id === false ) {
-			//$s .= 'WHERE id > 0 ';
-		} else {
+		if ( $id !== false ) {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
+		} elseif ( $icon !== false ) {
+			$s .= 'WHERE icon = :searchId ';
+			$args['searchId'] = $icon;
+		} elseif ( $category !== false ) {
+			$s .= 'WHERE category = :searchId ';
+			$args['searchId'] = $category;
+		} else {
+			//$s .= 'WHERE id > 0 ';
 		}
 		$s .= 'ORDER BY id ASC';
 		
@@ -206,7 +215,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Locations ';
 		if ( $id === false ) {
-			//$s .= 'WHERE id > 0 ';
+			$s .= 'WHERE category > 0 ';
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
