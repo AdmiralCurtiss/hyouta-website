@@ -80,9 +80,9 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Shops ';
 		if ( $id === false ) {
-			$s .= 'WHERE id > 1 ';
+			$s .= 'WHERE gameId > 1 ';
 		} else {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
@@ -101,7 +101,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Titles ';
 		if ( $id === false ) {
-			$s .= 'WHERE Titles.character > 0 ';
+			$s .= 'WHERE gameId > 0 ';
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -318,6 +318,46 @@ class db {
 		return $items;
 	}
 	
+	function GetStrategySetHtml( $id = false ) {
+		$args = array();
+		$s = 'SELECT html FROM StrategySet ';
+		if ( $id === false ) {
+			//$s .= 'WHERE id > 0 ';
+		} else {
+			$s .= 'WHERE id = :searchId ';
+			$args['searchId'] = $id;
+		}
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
 	
+	function GetStrategyOptionsHtml( $id = false ) {
+		$args = array();
+		$s = 'SELECT html FROM StrategyOptions ';
+		if ( $id === false ) {
+			//$s .= 'WHERE id > 0 ';
+		} else {
+			$s .= 'WHERE id = :searchId ';
+			$args['searchId'] = $id;
+		}
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
 }
 ?>

@@ -1,5 +1,12 @@
 <?php
+	//page generation time code
+		$time = explode(' ', microtime());
+		$pagegen_start_time = $time[1] + $time[0];
+	//page generation time code end
+
+
 header('Content-Type: text/html; charset=UTF-8');
+//$version = '360';
 $version = 'ps3';
 
 require_once 'db.class.php';
@@ -32,7 +39,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'skills' ) {
 	print_top( $version, 'Skills' );
 	echo '<table>';
@@ -47,7 +53,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'recipes' ) {
 	print_top( $version, 'Recipes' );
 	echo '<table>';
@@ -64,7 +69,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'shops' ) {
 	print_top( $version, 'Shops' );
 	echo '<table>';
@@ -79,7 +83,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'titles' ) {
 	print_top( $version, 'Titles' );
 	echo '<table>';
@@ -94,7 +97,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'synopsis' ) {
 	print_top( $version, 'Synopsis' );
 	
@@ -107,7 +109,6 @@ if ( $section === 'artes' ) {
 		echo $item;
 	}
 	
-	print_bottom();
 } elseif ( $section === 'battlebook' ) {
 	print_top( $version, 'Battle Book' );
 	echo '<table>';
@@ -124,7 +125,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'enemies' ) {
 	print_top( $version, 'Enemies' );
 	echo '<table>';
@@ -139,7 +139,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'items' ) {
 	print_top( $version, 'Items' );
 	echo '<table>';
@@ -154,7 +153,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'locations' ) {
 	print_top( $version, 'Locations' );
 	echo '<table>';
@@ -169,7 +167,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'records' ) {
 	print_top( $version, 'Records' );
 	echo '<table>';
@@ -180,7 +177,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'settings' ) {
 	print_top( $version, 'Settings' );
 	echo '<table>';
@@ -195,7 +191,6 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
 } elseif ( $section === 'gradeshop' ) {
 	print_top( $version, 'Grade Shop' );
 	echo '<table>';
@@ -210,7 +205,33 @@ if ( $section === 'artes' ) {
 	}
 	
 	echo '</table>';
-	print_bottom();
+} elseif ( $section === 'strategy' ) {
+	print_top( $version, 'Strategy' );
+	echo '<table>';
+	
+	$items = $db->GetStrategySetHtml( $id );
+	$first = true;
+	foreach ( $items as $item ) {
+		if ( $first === true ) { $first = false; } else {
+			echo '<tr><td colspan="10"><hr></td></tr>';
+		}
+		echo $item;
+	}
+	
+	echo '</table>';
+	echo '<hr>';
+	echo '<table>';
+	
+	$items = $db->GetStrategyOptionsHtml( $id );
+	$first = true;
+	foreach ( $items as $item ) {
+		if ( $first === true ) { $first = false; } else {
+			echo '<tr><td colspan="4"><hr></td></tr>';
+		}
+		echo $item;
+	}
+	
+	echo '</table>';
 } elseif ( $section === 'necropolis' ) {
 	print_top( $version, 'Necropolis of Nostalgia' );
 	
@@ -272,11 +293,17 @@ if ( $section === 'artes' ) {
 		}
 	}
 	
-	print_bottom();
 } else {
 	print_top( $version, false );
 	echo 'Undefined.';
-	print_bottom();
 }
 
+	//page generation time code
+		$time = explode(' ', microtime());
+		$totaltime = (($time[1] + $time[0]) - $pagegen_start_time);
+		echo '<div id="footer_time">Page generated in '.round($totaltime, 3).' seconds.</div>';
+	//page generation time code end
+
+echo '</body>';
+echo '</html>';
 ?>

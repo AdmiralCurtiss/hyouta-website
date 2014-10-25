@@ -109,9 +109,4 @@ function print_top( $version, $category ) {
 	echo '<hr>';
 }
 
-function print_bottom() {
-	echo '</body>';
-	echo '</html>';
-}
-
 ?>
