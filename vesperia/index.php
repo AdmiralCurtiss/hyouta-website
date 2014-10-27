@@ -6,8 +6,12 @@
 
 
 header('Content-Type: text/html; charset=UTF-8');
-//$version = '360';
 $version = 'ps3';
+if ( isset($_GET['version']) ) {
+	if ( $_GET['version'] == 'ps3' || $_GET['version'] == '360' ) {
+		$version = $_GET['version'];
+	}
+}
 
 require_once 'db.class.php';
 require_once 'header.php';
@@ -257,7 +261,7 @@ if ( $section === 'artes' ) {
 			echo '<tr>';
 			for ( $number = 1; $number <= 10; ++$number ) {
 				echo '<td>';
-				echo '<a href="?section=necropolis&map='.$letter.$number.'">'.$letter.'-'.$number.'</a>';
+				echo '<a href="?version='.$version.'&section=necropolis&map='.$letter.$number.'">'.$letter.'-'.$number.'</a>';
 				echo '</td>';
 			}
 			echo '</tr>';
@@ -276,13 +280,13 @@ if ( $section === 'artes' ) {
 			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$map_letter.'-'.$map_number.'</div></th></tr>';
 			echo '<tr><th colspan="6">';
 			if ( $enemies === true ) {
-				echo '<a href="?section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
+				echo '<a href="?version='.$version.'&section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
 			} else {
 				echo 'General Info';
 			}
 			echo ' - ';
 			if ( $enemies !== true ) {
-				echo '<a href="?section=necropolis&map='.$map_letter.$map_number.'&enemies=true">Enemies</a>';
+				echo '<a href="?version='.$version.'&section=necropolis&map='.$map_letter.$map_number.'&enemies=true">Enemies</a>';
 			} else {
 				echo 'Enemies';
 			}

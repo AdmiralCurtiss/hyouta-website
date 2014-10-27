@@ -18,7 +18,7 @@ class db {
 		if ( $id === false ) {
 			$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND Artes.character <= 9 ';
 		} else {
-			$s .= 'WHERE Artes.id = :searchId ';
+			$s .= 'WHERE Artes.gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
@@ -40,7 +40,7 @@ class db {
 		if ( $id === false ) {
 			$s .= 'WHERE id > 0 ';
 		} else {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
@@ -103,7 +103,7 @@ class db {
 		if ( $id === false ) {
 			$s .= 'WHERE gameId > 0 ';
 		} else {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
@@ -164,7 +164,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Enemies ';
 		if ( $id !== false ) {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		} elseif ( $category !== false ) {
 			$s .= 'WHERE category = :searchId AND id > 0 ';
@@ -188,7 +188,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Items ';
 		if ( $id !== false ) {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		} elseif ( $icon !== false ) {
 			$s .= 'WHERE icon = :searchId ';
@@ -217,7 +217,7 @@ class db {
 		if ( $id === false ) {
 			$s .= 'WHERE category > 0 ';
 		} else {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
@@ -280,7 +280,7 @@ class db {
 		if ( $id === false ) {
 			$s .= 'WHERE cost > 0 ';
 		} else {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
@@ -345,7 +345,7 @@ class db {
 		if ( $id === false ) {
 			//$s .= 'WHERE id > 0 ';
 		} else {
-			$s .= 'WHERE id = :searchId ';
+			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
 		$s .= 'ORDER BY id ASC';
