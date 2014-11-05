@@ -6,12 +6,14 @@
 
 
 header('Content-Type: text/html; charset=UTF-8');
-$version = 'ps3';
+$version = '360';
+/*
 if ( isset($_GET['version']) ) {
 	if ( $_GET['version'] == 'ps3' || $_GET['version'] == '360' ) {
 		$version = $_GET['version'];
 	}
 }
+*/
 
 require_once 'db.class.php';
 require_once 'header.php';
@@ -298,9 +300,12 @@ if ( $section === 'artes' ) {
 	}
 	
 } else {
-	print_top( $version, false );
-	echo 'Undefined.';
-}
+	print_top( $version, false );?>
+<div>
+	<h1>Tales of Vesperia</h1>
+	<h2>Online Data &amp; Translation Guide</h2>
+</div>
+<?php}
 
 	//page generation time code
 		$time = explode(' ', microtime());
