@@ -33,3 +33,4 @@ table.settings td { vertical-align: middle; min-width: 90px; }
 ul { list-style-type: none; padding: 0; margin: 0; }
 div.necropolis-select { width: 100%; }
 div.necropolis-select table { text-align: center; margin: 0px auto; font-size: 20; }
+#footer_time { display: none; }

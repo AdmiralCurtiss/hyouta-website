@@ -301,11 +301,14 @@ if ( $section === 'artes' ) {
 	
 } else {
 	print_top( $version, false );?>
-<div>
+<div style="text-align: center;">
 	<h1>Tales of Vesperia</h1>
-	<h2>Online Data &amp; Translation Guide</h2>
+	<h2>Menu Data &amp; Translation Guide</h2>
+	
+	<span>Part of the <a href="http://talesofvesperia.net/">PS3 fan-translation</a>.</span>
 </div>
-<?php}
+<?php
+}
 
 	//page generation time code
 		$time = explode(' ', microtime());
@@ -315,4 +318,6 @@ if ( $section === 'artes' ) {
 
 echo '</body>';
 echo '</html>';
+
+
 ?>
