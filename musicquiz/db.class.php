@@ -12,6 +12,7 @@ class db {
 		$this->database = $database;
 	}
 	
+	// no longer used, just to check & convert legacy passwords
 	function gethash($password) {
 		return md5('nGWNrTdpmBBpNCce4#hWNvyYNum4f'.$password.'# umN3q3rbcP# HFpmzR6ExQMn7sZ');
 	}
