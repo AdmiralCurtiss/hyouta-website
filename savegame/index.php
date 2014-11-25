@@ -29,7 +29,7 @@ function time_since($since) {
 
 <html>
 <head>
-<title>Mario Party 2</title>
+<title>Savegame Archive</title>
 </head>
 <body>
 <?php 

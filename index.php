@@ -15,7 +15,7 @@ Probably the main thing here, the Video Game Music Quiz is a site where you get 
 A page me and a couple friends use for streaming, with chatroom. It resulted from our old site becoming completely awful to use.
 </p>
 <br>
-<p><a href="/marioparty"><h3>The Savegame Archive</h3></a>
+<p><a href="/savegame"><h3>The Savegame Archive</h3></a>
 Just a small page I use to distribute video game saves.
 </p>
 <br><br><br>
