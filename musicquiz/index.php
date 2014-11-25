@@ -5,8 +5,9 @@
 		$pagegen_start_time = $time[1] + $time[0];
 	//page generation time code end
 	
-	$database = @mysql_connect('localhost', 'music', 'k3pK4vwUyTUT74pfXRJdhhXB') OR die(mysql_error());
-	@mysql_select_db('musicquiz') OR die(mysql_error());
+	include '../credentials.php';
+	$database = @mysql_connect($__db_hostname_music__, $__db_username_music__, $__db_password_music__) OR die(mysql_error());
+	@mysql_select_db($__db_database_music__ ) OR die(mysql_error());
 	include 'session.php';
 	$session = new Session($database);
 	

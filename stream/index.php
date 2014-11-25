@@ -1,4 +1,6 @@
 <?php
+// === !!! === REQUIRES https://github.com/bmn/sda_stream2 === !!! ===
+
 require_once 'config.php';
 
 	  require_once 'sda_stream2/sda_stream.php';

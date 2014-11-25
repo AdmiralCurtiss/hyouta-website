@@ -22,8 +22,9 @@ function time_since($since) {
     return $print;
 }
 
-	$database = @mysql_connect('localhost', 'stuff', 'Q8mLEfjS8UqpNmLj') OR die(mysql_error());
-	@mysql_select_db('stuff') OR die(mysql_error());
+	include '../credentials.php';
+	$database = @mysql_connect($__db_hostname_stuff__, $__db_username_stuff__, $__db_password_stuff__) OR die(mysql_error());
+	@mysql_select_db($__db_database_stuff__) OR die(mysql_error());
 ?>
 
 <html>

@@ -17,8 +17,8 @@ if ( isset($_GET['version']) ) {
 
 require_once 'db.class.php';
 require_once 'header.php';
-include 'credentials.php';
-$db = new db( $__db_connstr__[$version], $__db_username__, $__db_password__ );
+include '../credentials.php';
+$db = new db( $__db_connstr_vesperia__[$version], $__db_username_vesperia__, $__db_password_vesperia__ );
 
 $section = 'index';
 if ( isset($_GET['section']) ) {
