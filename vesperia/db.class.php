@@ -38,7 +38,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Skills ';
 		if ( $id === false ) {
-			$s .= 'WHERE id > 0 ';
+			$s .= 'WHERE id > 0 AND equipCost > 0 ';
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -101,7 +101,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Titles ';
 		if ( $id === false ) {
-			$s .= 'WHERE gameId > 0 ';
+			$s .= 'WHERE gameId > 0 AND points > 0 ';
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -122,7 +122,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Synopsis ';
 		if ( $id === false ) {
-			$s .= 'WHERE id > 0 ';
+			$s .= 'WHERE storyMax > 0 ';
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
