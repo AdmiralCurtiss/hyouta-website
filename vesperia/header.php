@@ -3,6 +3,7 @@ function print_header( $section = false, $version = false ) {
 ?>
 	<head>
 		<link rel="stylesheet" href="style.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 		<title><?php if ( $section !== false ) { echo $section.' - '; } ?>Tales of Vesperia</title>
 	</head>
 <?php
