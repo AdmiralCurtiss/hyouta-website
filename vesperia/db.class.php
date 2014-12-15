@@ -16,7 +16,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Artes ';
 		if ( $id === false ) {
-			$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND Artes.character <= 9 ';
+			$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character > 0 AND Artes.character <= 9 ) ';
 		} else {
 			$s .= 'WHERE Artes.gameId = :searchId ';
 			$args['searchId'] = $id;
