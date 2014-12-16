@@ -1,4 +1,6 @@
 <?php
+require_once 'scenario.class.php';
+
 class db {
 	var $conn;
 	
@@ -10,6 +12,23 @@ class db {
 	
 	function __destruct() {
 		$this->conn->rollBack();
+	}
+	
+	function GetScenario( $episodeId ) {
+		$args = array();
+		$s = 'SELECT type, jpName, jpText, enName, enText FROM ScenarioDat ';
+		$s .= 'WHERE episodeId = :searchId ';
+		$args['searchId'] = $episodeId;
+		$s .= 'ORDER BY displayOrder ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$sce = array();
+		while( $r = $stmt->fetch() ) {
+			$sce[] = new scenario( (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
+		}
+		return $sce;
 	}
 	
 	function GetArtesHtml( $id = false ) {

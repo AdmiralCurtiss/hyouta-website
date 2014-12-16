@@ -14,6 +14,7 @@ if ( isset($_GET['version']) ) {
 }
 
 require_once 'db.class.php';
+require_once 'scenario.class.php';
 require_once 'header.php';
 include '../credentials.php';
 $db = new db( $__db_connstr_vesperia__[$version], $__db_username_vesperia__, $__db_password_vesperia__ );
@@ -28,8 +29,41 @@ $category = false;
 if ( isset($_GET['category']) ) { $category = (int)$_GET['category']; }
 $icon = false;
 if ( isset($_GET['icon']) ) { $icon = (int)$_GET['icon']; }
+$name = '';
+if ( isset($_GET['name']) ) { $name = $_GET['name']; }
 
-if ( $section === 'artes' ) {
+if ( $section === 'scenario' && $version === 'ps3' ) {
+	print_top( $version, 'Scenario' );
+	
+	$sce = $db->GetScenario( $name );
+	foreach ( $sce as $s ) {
+	?>
+<div class="storyLine">
+	<div class="storyBlock">
+		<div class="storyText">
+			<div class="charaContainer">
+				<div class="charaSubContainer">
+					<div class="charaSubSubContainer"><?php echo $s->jpName ?></div>
+				</div>
+			</div>
+			<div class="textJP textContainerSub"><?php echo $s->jpText ?></div>
+		</div>
+	</div>
+	<div class="storyBlock">
+		<div class="storyText">
+			<div class="charaContainer">
+				<div class="charaSubContainer">
+					<div class="charaSubSubContainer"><?php echo $s->enName ?></div>
+				</div>
+			</div>
+			<div class="textContainerSub"><?php echo $s->enText ?></div>
+		</div>
+	</div>
+</div>
+	<?php
+	}
+	
+} elseif ( $section === 'artes' ) {
 	print_top( $version, 'Artes' );
 	echo '<table>';
 	

@@ -1,0 +1,100 @@
+.storyBlock {
+    display: inline-block;
+    vertical-align: top;
+    width: 550px;
+    padding-right: 50px;
+    text-align: center;
+}
+
+.skitBlock {
+    display: inline-block;
+    vertical-align: top;
+    width: 550px;
+    text-align: center;
+}
+
+.storyText {
+    /* font-family: "Baskerville",serif; */
+    position: relative;
+    padding-bottom: 20px;
+    color: #2f1f1b;
+}
+
+.storyTitleEN {
+    text-align: center;
+    color: #FCD18E;
+    font-size: 18px;
+    text-shadow: 0px 0px 2px #E48C36;
+    padding-bottom: 20px;
+}
+
+.storyTitleJP {
+    text-align: center;
+    color: #FCD18E;
+    font-size: 18px;
+    text-shadow: 0px 0px 2px #E48C36;
+}
+
+.charaContainer {
+    background-color: #184354;
+    border-radius: 12px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.storyText .charaContainer {
+    position: absolute;
+}
+
+.charaSubContainer {
+    background-color: #27576b;
+    border-radius: 12px;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.charaSubSubContainer {
+    font-size: 17px;
+    line-height: 25px;
+    vertical-align: middle;
+    background-color: #386b86;
+    color: #adcad8;
+    border-radius: 12px;
+    margin-left: 5px;
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.textContainerSub {
+    background-color: #FFFAE7;
+    border: 2px solid #8D7F76;
+    border-radius: 60px;
+    padding: 7px 40px;
+    font-size: 17px;
+    margin-top: 20px;
+    display: inline-block;
+    -moz-box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
+    -webkit-box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
+    min-width: 150px;
+}
+
+.textJP {
+    /* font-family: "Kozuka Gothic Pr6N"; */
+    font-size: 16px;
+}
+
+.textBlue {
+    color : #27576b;
+}
+
+.textGreen {
+    color: #16643a;
+}
+
+.textBlack {
+    color: #2f1f1b;
+}
