@@ -15,6 +15,7 @@ if ( isset($_GET['version']) ) {
 
 require_once 'db.class.php';
 require_once 'scenario.class.php';
+require_once 'skitLine.class.php';
 require_once 'header.php';
 include '../credentials.php';
 $db = new db( $__db_connstr_vesperia__[$version], $__db_username_vesperia__, $__db_password_vesperia__ );
@@ -54,6 +55,38 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 			<div class="charaContainer">
 				<div class="charaSubContainer">
 					<div class="charaSubSubContainer"><?php echo $s->enName ?></div>
+				</div>
+			</div>
+			<div class="textContainerSub"><?php echo $s->enText ?></div>
+		</div>
+	</div>
+</div>
+	<?php
+	}
+	
+} elseif ( $section === 'skit' && $version === 'ps3' ) {
+	print_top( $version, 'Skit' );
+	
+	$lines = $db->GetSkit( $name );
+	foreach ( $lines as $s ) {
+	?>
+<div class="storyLine">
+	<div class="storyBlock">
+		<div class="storyText">
+			<div class="charaContainer">
+				<div class="charaSubContainer">
+					<div class="charaSubSubContainer"><?php echo $s->GetJpName() ?></div>
+				</div>
+			</div>
+			<div class="textJP textContainerSub"><?php echo $s->jpText ?></div>
+		</div>
+	</div>
+	<div class="skitIcon"><img src="chara-icons/<?php echo substr( $s->character, 0, 3 ); ?>.png" /></div>
+	<div class="storyBlock">
+		<div class="storyText">
+			<div class="charaContainer">
+				<div class="charaSubContainer">
+					<div class="charaSubSubContainer"><?php echo $s->GetEnName() ?></div>
 				</div>
 			</div>
 			<div class="textContainerSub"><?php echo $s->enText ?></div>

@@ -1,5 +1,6 @@
 <?php
 require_once 'scenario.class.php';
+require_once 'skitLine.class.php';
 
 class db {
 	var $conn;
@@ -29,6 +30,23 @@ class db {
 			$sce[] = new scenario( (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
 		}
 		return $sce;
+	}
+	
+	function GetSkit( $skitId ) {
+		$args = array();
+		$s = 'SELECT `character`, jpText, enText FROM SkitText ';
+		$s .= 'WHERE skitId = :searchId ';
+		$args['searchId'] = $skitId;
+		$s .= 'ORDER BY displayOrder ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$lines = array();
+		while( $r = $stmt->fetch() ) {
+			$lines[] = new skitLine( $r['character'], $r['jpText'], $r['enText'] );
+		}
+		return $lines;
 	}
 	
 	function GetArtesHtml( $id = false ) {

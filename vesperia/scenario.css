@@ -98,3 +98,8 @@
 .textBlack {
     color: #2f1f1b;
 }
+
+.skitIcon {
+    display: inline-block;
+    padding-bottom: 20px;
+}
