@@ -41,23 +41,27 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	?>
 <div class="storyLine">
 	<div class="storyBlock">
-		<div class="storyText">
-			<div class="charaContainer">
-				<div class="charaSubContainer">
-					<div class="charaSubSubContainer"><?php echo $s->jpName ?></div>
+		<div class="storyText<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+		<div class="storyTextSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+			<div class="charaContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+				<div class="charaSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+					<div class="charaSubSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->jpName ?></div>
 				</div>
 			</div>
-			<div class="textJP textContainerSub"><?php echo $s->jpText ?></div>
+			<div class="textJP textContainerSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->jpText ?></div>
+		</div>
 		</div>
 	</div>
 	<div class="storyBlock">
-		<div class="storyText">
-			<div class="charaContainer">
-				<div class="charaSubContainer">
-					<div class="charaSubSubContainer"><?php echo $s->enName ?></div>
+		<div class="storyText<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+		<div class="storyTextSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+			<div class="charaContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+				<div class="charaSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
+					<div class="charaSubSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enName ?></div>
 				</div>
 			</div>
-			<div class="textContainerSub"><?php echo $s->enText ?></div>
+			<div class="textContainerSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enText ?></div>
+		</div>
 		</div>
 	</div>
 </div>
