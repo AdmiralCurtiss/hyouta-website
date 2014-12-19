@@ -12,7 +12,7 @@ function print_header( $section = false, $version = false ) {
 
 function print_menu( $version ) {
 ?>
-<div>
+<div id="topmenu">
 <a href="?version=<?php echo $version; ?>&section=artes"><img src="menu-icons/main-01.png" title="Artes"></a>
 <a href="?version=<?php echo $version; ?>&section=skills"><img src="menu-icons/main-04.png" title="Skills"></a>
 <a href="?version=<?php echo $version; ?>&section=strategy"><img src="menu-icons/main-05.png" title="Strategy"></a>
@@ -100,6 +100,10 @@ function print_menu( $version ) {
 <a href="?version=<?php echo $version; ?>&section=items&icon=39"><img src="item-icons/ICON39.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=3"><img src="item-icons/ICON3.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=40"><img src="item-icons/ICON40.png" height="16" width="16"></a>
+<br/>
+<a href="?version=<?php echo $version; ?>&section=scenario-index">Story</a> / 
+<a href="?version=<?php echo $version; ?>&section=scenario-index">Sidequests</a> / 
+<a href="?version=<?php echo $version; ?>&section=skit-index">Skits</a>
 </div>
 <?php
 }
@@ -109,6 +113,12 @@ function print_top( $version, $category ) {
 	echo '<body>';
 	print_menu( $version );
 	echo '<hr>';
+	echo '<div id="content">';
+}
+
+function print_bottom() {
+	echo '</div>';
+	echo '<div id="footer">All Tales of Vesperia game content &copy; 2008/2009 Bandai Namco Games Inc.</div>';
 }
 
 ?>

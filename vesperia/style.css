@@ -34,3 +34,7 @@ ul { list-style-type: none; padding: 0; margin: 0; }
 div.necropolis-select { width: 100%; }
 div.necropolis-select table { text-align: center; margin: 0px auto; font-size: 20; }
 #footer_time { display: none; }
+#topmenu { text-align: center; font-size: 22; }
+#content { text-align: center; }
+#content table { margin-left: auto; margin-right: auto; }
+#footer { text-align: center; font-size: 20; margin-top: 24px; }

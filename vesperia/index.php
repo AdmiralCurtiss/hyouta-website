@@ -370,14 +370,13 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	
 } else {
 	print_top( $version, false );?>
-<div style="text-align: center;">
 	<h1>Tales of Vesperia</h1>
 	<h2>Menu Data &amp; Translation Guide</h2>
 	
 	<span>Part of the <a href="http://talesofvesperia.net/">PS3 fan-translation</a>.</span>
-</div>
 <?php
 }
+print_bottom();
 
 	//page generation time code
 		$time = explode(' ', microtime());
