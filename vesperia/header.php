@@ -66,6 +66,7 @@ function print_menu( $version ) {
 <a href="?version=<?php echo $version; ?>&section=items&icon=7"><img src="item-icons/ICON7.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=52"><img src="item-icons/ICON52.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=51"><img src="item-icons/ICON51.png" height="16" width="16"></a>
+<?php if ( $version !== '360' ) { ?><a href="?version=<?php echo $version; ?>&section=items&icon=53"><img src="item-icons/ICON53.png" height="16" width="16"></a> <?php } ?>
 <a href="?version=<?php echo $version; ?>&section=items&icon=9"><img src="item-icons/ICON9.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=16"><img src="item-icons/ICON16.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=18"><img src="item-icons/ICON18.png" height="16" width="16"></a>
@@ -73,6 +74,7 @@ function print_menu( $version ) {
 <a href="?version=<?php echo $version; ?>&section=items&icon=17"><img src="item-icons/ICON17.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=19"><img src="item-icons/ICON19.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=10"><img src="item-icons/ICON10.png" height="16" width="16"></a>
+<?php if ( $version !== '360' ) { ?><a href="?version=<?php echo $version; ?>&section=items&icon=54"><img src="item-icons/ICON54.png" height="16" width="16"></a> <?php } ?>
 <a href="?version=<?php echo $version; ?>&section=items&icon=20"><img src="item-icons/ICON20.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=21"><img src="item-icons/ICON21.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&section=items&icon=22"><img src="item-icons/ICON22.png" height="16" width="16"></a>
