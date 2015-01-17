@@ -36,7 +36,22 @@ if ( isset($_GET['name']) ) { $name = $_GET['name']; }
 if ( $section === 'scenario' && $version === 'ps3' ) {
 	print_top( $version, 'Scenario' );
 	
+	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
+	$scenarioMetadata = null;
+	if ( $thisScenarioMeta !== null ) {
+		$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
+		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $name );
+	}
+	
+	echo '<div class="scenario-content">';
+	
+	if ( $scenarioMetadata !== null ) {
+		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name );
+	}
+	
 	$sce = $db->GetScenario( $name );
+
+	echo '<div class="storyBox">';
 	foreach ( $sce as $s ) {
 	?>
 <div class="storyLine">
@@ -68,10 +83,27 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	<?php
 	}
 	
+	echo '</div>';
+	
+	if ( $scenarioMetadata !== null ) {
+		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name );
+	}
+	
+	echo '</div>';
+	
 } elseif ( $section === 'skit' && $version === 'ps3' ) {
 	print_top( $version, 'Skit' );
 	
+	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
+	if ( $thisScenarioMeta !== null ) {
+		$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
+		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $name );
+	}
+	
 	$lines = $db->GetSkit( $name );
+	
+	echo '<div class="scenario-content">';
+	echo '<div class="storyBox">';
 	foreach ( $lines as $s ) {
 	?>
 <div class="storyLine">
@@ -100,6 +132,17 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	<?php
 	}
 	
+	echo '</div>';
+	echo '</div>';
+	
+} elseif ( $section === 'scenario-index' ) {
+	print_top( $version, 'Story Index' );
+	$scenarioMetadata = $db->GetScenarioIndex( 1 );
+	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
+} elseif ( $section === 'sidequest-index' ) {
+	print_top( $version, 'Sidequest Index' );
+	$scenarioMetadata = $db->GetScenarioIndex( 2 );
+	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
 } elseif ( $section === 'artes' ) {
 	print_top( $version, 'Artes' );
 	echo '<table>';

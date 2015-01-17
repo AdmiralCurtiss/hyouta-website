@@ -104,7 +104,7 @@ function print_menu( $version ) {
 <a href="?version=<?php echo $version; ?>&section=items&icon=40"><img src="item-icons/ICON40.png" height="16" width="16"></a>
 <br/>
 <a href="?version=<?php echo $version; ?>&section=scenario-index">Story</a> / 
-<a href="?version=<?php echo $version; ?>&section=scenario-index">Sidequests</a> / 
+<a href="?version=<?php echo $version; ?>&section=sidequest-index">Sidequests</a> / 
 <a href="?version=<?php echo $version; ?>&section=skit-index">Skits</a>
 </div>
 <?php

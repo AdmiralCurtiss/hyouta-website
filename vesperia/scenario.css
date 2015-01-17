@@ -1,8 +1,17 @@
+div.scenario-content {
+    overflow: hidden;
+}
+div.scenario-previous-next {
+}
+div.storyBox {
+    margin-top: 10px;
+}
+
 .storyBlock {
     display: inline-block;
     vertical-align: top;
-    width: 550px;
-    padding-right: 50px;
+    width: 480px;
+    padding-right: 20px;
     text-align: center;
 }
 
@@ -79,7 +88,7 @@
     -moz-box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
     -webkit-box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
     box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
-    min-width: 150px;
+    min-width: 50px;
 }
 
 /* info boxes */
@@ -101,6 +110,8 @@
 .textContainerSub1 {
 	padding-top: 2px;
 	padding-bottom: 3px;
+	padding-left: 4px;
+	padding-right: 4px;
 	font-size: 17px;
 	min-width: 150px;
 	background-color: #F1B36D;

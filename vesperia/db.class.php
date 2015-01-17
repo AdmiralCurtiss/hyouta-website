@@ -15,6 +15,57 @@ class db {
 		$this->conn->rollBack();
 	}
 	
+	function GetScenarioIndex( $type ) {
+		$args = array();
+		$s = 'SELECT id, sceneGroup, parent, episodeId, description FROM ScenarioMeta ';
+		$s .= 'WHERE type = :type ';
+		$args['type'] = $type;
+		$s .= 'ORDER BY id ASC'; // should be "sceneGroup ASC, id ASC" but due to how this table is generated gives the same result
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$sce = array();
+		while( $r = $stmt->fetch() ) {
+			$sce[] = new scenarioMeta( $r['id'], $type, $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'] );
+		}
+		return $sce;
+	}
+	
+	function GetScenarioMetaFromEpisodeId( $episodeId ) {
+		$args = array();
+		$s = 'SELECT id, type, sceneGroup, parent, description FROM ScenarioMeta ';
+		$s .= 'WHERE episodeId = :episodeId';
+		$args['episodeId'] = $episodeId;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		if( $r = $stmt->fetch() ) {
+			return new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $episodeId, $r['description'] );
+		}
+		return null;
+	}
+	
+	function GetScenarioMetaGroupRange( $type, $groupBegin, $groupEnd ) {
+		$args = array();
+		$s = 'SELECT id, type, sceneGroup, parent, episodeId, description FROM ScenarioMeta ';
+		$s .= 'WHERE type = :type AND sceneGroup >= :groupBegin AND sceneGroup <= :groupEnd ';
+		$args['type'] = $type;
+		$args['groupBegin'] = $groupBegin;
+		$args['groupEnd'] = $groupEnd;
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$sce = array();
+		while( $r = $stmt->fetch() ) {
+			$sce[] = new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'] );
+		}
+		return $sce;
+	}
+	
 	function GetScenario( $episodeId ) {
 		$args = array();
 		$s = 'SELECT type, jpName, jpText, enName, enText FROM ScenarioDat ';
