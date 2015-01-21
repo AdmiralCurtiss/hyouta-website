@@ -381,6 +381,15 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 } elseif ( $section === 'necropolis' ) {
 	print_top( $version, 'Necropolis of Nostalgia' );
 	
+	$stratumNames = array(
+		'A' => 'Firmament',
+		'B' => 'Existence',
+		'C' => 'Hegemony',
+		'D' => 'Fauna',
+		'E' => 'Fatality',
+		'F' => 'Abysm'
+	);
+	
 	$map = false;
 	if ( isset($_GET['map']) ) {
 		$map = $_GET['map'];
@@ -399,11 +408,13 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 		echo '<div class="necropolis-select">';
 		echo '<table>';
 		for ( $letter = 'A'; $letter <= 'F'; ++$letter ) {
-			//echo $letter;
 			echo '<tr>';
+			echo '<td>';
+			echo $stratumNames[$letter];
+			echo '</td>';
 			for ( $number = 1; $number <= 10; ++$number ) {
 				echo '<td>';
-				echo '<a href="?version='.$version.'&section=necropolis&map='.$letter.$number.'">'.$letter.'-'.$number.'</a>';
+				echo '<a href="?version='.$version.'&section=necropolis&map='.$letter.$number.'">'.$number.'</a>';
 				echo '</td>';
 			}
 			echo '</tr>';
@@ -419,7 +430,7 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 			}
 			
 			echo '<div id="'.$map_letter.$map_number.'">';
-			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$map_letter.'-'.$map_number.'</div></th></tr>';
+			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$stratumNames[$map_letter].' '.$map_number.'F ('.$map_letter.'-'.$map_number.')</div></th></tr>';
 			echo '<tr><th colspan="6">';
 			if ( $enemies === true ) {
 				echo '<a href="?version='.$version.'&section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
