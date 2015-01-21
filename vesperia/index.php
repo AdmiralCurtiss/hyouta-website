@@ -75,7 +75,7 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 					<div class="charaSubSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enName ?></div>
 				</div>
 			</div>
-			<div class="textContainerSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enText ?></div>
+			<div class="textEN textContainerSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enText ?></div>
 		</div>
 		</div>
 	</div>
@@ -107,25 +107,30 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	foreach ( $lines as $s ) {
 	?>
 <div class="storyLine">
-	<div class="storyBlock">
-		<div class="storyText">
-			<div class="charaContainer">
-				<div class="charaSubContainer">
-					<div class="charaSubSubContainer"><?php echo $s->GetJpName() ?></div>
+	<div class="skitIconAndText">
+		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $s->jpChar, 0, 3 ); ?>.png" /></div>
+		<div class="skitBlock">
+			<div class="skitText">
+				<div class="charaContainerSkit">
+					<div class="charaSubContainerSkit">
+						<div class="charaSubSubContainerSkit"><?php echo $s->GetJpName() ?></div>
+					</div>
 				</div>
+				<div class="textJP textContainerSubSkit"><?php echo $s->jpText ?></div>
 			</div>
-			<div class="textJP textContainerSub"><?php echo $s->jpText ?></div>
 		</div>
 	</div>
-	<div class="skitIcon"><img src="chara-icons/<?php echo substr( $s->character, 0, 3 ); ?>.png" /></div>
-	<div class="storyBlock">
-		<div class="storyText">
-			<div class="charaContainer">
-				<div class="charaSubContainer">
-					<div class="charaSubSubContainer"><?php echo $s->GetEnName() ?></div>
+	<div class="skitIconAndText">
+		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $s->enChar, 0, 3 ); ?>.png" /></div>
+		<div class="skitBlock">
+			<div class="skitText">
+				<div class="charaContainerSkit">
+					<div class="charaSubContainerSkit">
+						<div class="charaSubSubContainerSkit"><?php echo $s->GetEnName() ?></div>
+					</div>
 				</div>
+				<div class="textEN textContainerSubSkit"><?php echo $s->enText ?></div>
 			</div>
-			<div class="textContainerSub"><?php echo $s->enText ?></div>
 		</div>
 	</div>
 </div>

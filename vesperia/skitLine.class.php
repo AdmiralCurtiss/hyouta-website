@@ -1,17 +1,19 @@
 <?php
 class skitLine {
-	var $character;
+	var $jpChar;
+	var $enChar;
 	var $jpText;
 	var $enText;
 	
-	function __construct( $character, $jpText, $enText ) {
-		$this->character = $character;
+	function __construct( $jpChar, $jpText, $enChar, $enText ) {
+		$this->jpChar = $jpChar;
+		$this->enChar = $enChar;
 		$this->jpText = $jpText;
 		$this->enText = $enText;
 	}
 	
 	function GetEnName() {
-		switch ( $this->character ) {
+		switch ( $this->enChar ) {
 			case 'ALL':   return 'Everyone';
 			case 'BAU':   return 'Ba\'ul';
 			case 'EST':   return 'Estellise';
@@ -28,7 +30,7 @@ class skitLine {
 	}
 	
 	function GetJpName() {
-		switch ( $this->character ) {
+		switch ( $this->jpChar ) {
 			case 'ALL':   return 'みんな';
 			case 'BAU':   return 'バウル';
 			case 'EST':   return 'エステリーゼ';

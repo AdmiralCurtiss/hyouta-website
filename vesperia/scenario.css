@@ -18,8 +18,8 @@ div.storyBox {
 .skitBlock {
     display: inline-block;
     vertical-align: top;
-    width: 550px;
-    text-align: center;
+    width: 480px;
+    text-align: left;
 }
 
 .storyText {
@@ -158,11 +158,6 @@ div.storyBox {
     color: #FFFAE7;
 }
 
-.textJP {
-    /* font-family: "Kozuka Gothic Pr6N"; */
-    font-size: 16px;
-}
-
 .textBlue {
     color : #27576b;
 }
@@ -178,4 +173,76 @@ div.storyBox {
 .skitIcon {
     display: inline-block;
     padding-bottom: 20px;
+    width: 48px;
+}
+
+div.skit-name {
+    display: inline-block;
+    text-align: center;
+    width: 532px;
+    font-weight: bold;
+}
+
+div.skitIconAndText {
+    display: inline-block;
+}
+
+.textContainerSubSkit {
+    border-radius: 6px;
+    background-color: #2f1f1b;
+    padding: 6px 20px;
+    margin-left: 6px;
+    margin-top: 20px;
+    display: inline-block;
+    -moz-box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
+    -webkit-box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, .6);
+    min-width: 50px;
+}
+
+.skitText {
+    position: relative;
+    padding-bottom: 20px;
+    color: #FFFAE7;
+}
+
+.charaContainerSkit {
+    border-radius: 12px;
+    background-color: #2f1f1b;
+    display: inline-block;
+}
+
+.skitText .charaContainerSkit {
+    position: absolute;
+}
+
+.charaSubContainerSkit {
+    border-radius: 12px;
+    background-color: #2f1f1b;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.charaSubSubContainerSkit {
+    border-radius: 12px;
+    font-size: 17px;
+    line-height: 25px;
+    vertical-align: middle;
+    background-color: #2f1f1b;
+    color: #FFFAE7;
+    margin-left: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.textJP {
+    /* font-family: "Kozuka Gothic Pr6N"; */
+    font-size: 16px;
+}
+
+.textEN  {
+    font-size: 17px;
 }

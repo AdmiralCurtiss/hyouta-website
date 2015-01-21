@@ -85,7 +85,7 @@ class db {
 	
 	function GetSkit( $skitId ) {
 		$args = array();
-		$s = 'SELECT `character`, jpText, enText FROM SkitText ';
+		$s = 'SELECT jpChar, enChar, jpText, enText FROM SkitText ';
 		$s .= 'WHERE skitId = :searchId ';
 		$args['searchId'] = $skitId;
 		$s .= 'ORDER BY displayOrder ASC';
@@ -95,7 +95,7 @@ class db {
 		
 		$lines = array();
 		while( $r = $stmt->fetch() ) {
-			$lines[] = new skitLine( $r['character'], $r['jpText'], $r['enText'] );
+			$lines[] = new skitLine( $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'] );
 		}
 		return $lines;
 	}
