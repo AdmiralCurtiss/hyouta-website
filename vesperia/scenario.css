@@ -158,18 +158,6 @@ div.storyBox {
     color: #FFFAE7;
 }
 
-.textBlue {
-    color : #27576b;
-}
-
-.textGreen {
-    color: #16643a;
-}
-
-.textBlack {
-    color: #2f1f1b;
-}
-
 .skitIcon {
     display: inline-block;
     padding-bottom: 20px;
@@ -246,3 +234,9 @@ div.skitIconAndText {
 .textEN  {
     font-size: 17px;
 }
+
+span.textColorBlue { color: #558BEA; }
+span.textColorGreen { color: #05AA51; }
+span.textColorRed { color: #F5332F; }
+span.textColorWhite { color: #FFFAE7; }
+div.storyText span.textColorWhite { color: #AAAAAA; }
