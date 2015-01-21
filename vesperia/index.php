@@ -101,8 +101,21 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	}
 	
 	$lines = $db->GetSkit( $name );
+	$meta = $db->GetSkitMeta( $name );
 	
 	echo '<div class="scenario-content">';
+	
+	echo '<div>';
+	if ( $meta !== null ) {
+		echo '<div class="skit-name">';
+		echo $meta->jpName;
+		echo '</div>';
+		echo '<div class="skit-name">';
+		echo $meta->enName;
+		echo '</div>';
+	}
+	echo '</div>';
+	
 	echo '<div class="storyBox">';
 	foreach ( $lines as $s ) {
 	?>
@@ -148,6 +161,16 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	print_top( $version, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
 	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
+} elseif ( $section === 'skit-index' ) {
+	print_top( $version, 'Skit Index' );
+	echo '<table>';
+	
+	$skits = $db->GetSkitIndexHtml();
+	foreach ( $skits as $s ) {
+		echo $s;
+	}
+	
+	echo '</table>';
 } elseif ( $section === 'artes' ) {
 	print_top( $version, 'Artes' );
 	echo '<table>';

@@ -46,4 +46,22 @@ class skitLine {
 		}
 	}
 }
+
+class skitMeta {
+	var $category;
+	var $characterBitmask;
+	var $jpName;
+	var $enName;
+	var $jpCond;
+	var $enCond;
+	
+	function __construct( $category, $characterBitmask, $jpName, $enName, $jpCond, $enCond ) {
+		$this->category = $category;
+		$this->characterBitmask = $characterBitmask;
+		$this->jpName = $jpName;
+		$this->enName = $enName;
+		$this->jpCond = $jpCond;
+		$this->enCond = $enCond;
+	}
+}
 ?>

@@ -100,6 +100,37 @@ class db {
 		return $lines;
 	}
 	
+	function GetSkitIndexHtml() {
+		$args = array();
+		$s = 'SELECT html FROM SkitMeta ';
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$skit = array();
+		while( $r = $stmt->fetch() ) {
+			$skit[] = $r['html'];
+		}
+		return $skit;
+	}
+	
+	function GetSkitMeta( $skitId ) {
+		$args = array();
+		$s = 'SELECT category, characterBitmask, jpName, enName, jpCond, enCond FROM SkitMeta ';
+		$s .= 'WHERE skitId = :searchId ';
+		$args['searchId'] = $skitId;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		if ( $r = $stmt->fetch() ) {
+			$skit = new skitMeta( $r['category'], $r['characterBitmask'], $r['jpName'], $r['enName'], $r['jpCond'], $r['enCond'] );
+			return $skit;
+		}
+		return null;
+	}
+	
 	function GetArtesHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Artes ';
