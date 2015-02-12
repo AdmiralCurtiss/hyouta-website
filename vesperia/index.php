@@ -45,17 +45,32 @@ if ( $section === 'search' && $version === 'ps3' ) {
 		echo '<div class="scenario-content">';
 		echo '<div class="storyBox">';
 		
+		$previousId = '';
 		$sce = $db->SearchScenario( $query );
 		foreach ( $sce as $s ) {
+			if ( $previousId != $s->episodeId ) {
+				echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
+				$previousId = $s->episodeId;
+			}
 			$s->Render();
 		}
+		
+		$previousId = '';
 		$skit = $db->SearchSkit( $query );
 		foreach ( $skit as $s ) {
+			if ( $previousId != $s->skitId ) {
+				echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
+				$previousId = $s->skitId;
+			}
 			$s->Render();
 		}
+		
 		$entries = $db->SearchStringDic( $query );
-		foreach ( $entries as $e ) {
-			$e->Render();
+		if ( !empty($entries) ) {
+			echo '<div class="scenario-previous-next">Strings</div>';
+			foreach ( $entries as $e ) {
+				$e->Render();
+			}
 		}
 		
 		echo '</div>';
