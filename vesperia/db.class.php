@@ -9,11 +9,21 @@ class db {
 	function __construct( $connstr, $username, $password ) {
 		$this->conn = new PDO( $connstr, $username, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'") );
 		$this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$this->conn->beginTransaction();
 	}
 	
 	function __destruct() {
 		$this->conn->rollBack();
+	}
+	
+	function FoundRows() {
+		$s = 'SELECT FOUND_ROWS()';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute();
+		
+		return $stmt->fetchColumn();
 	}
 	
 	function GetScenarioIndex( $type ) {
@@ -84,17 +94,22 @@ class db {
 		return $sce;
 	}
 	
-	function SearchScenario( $query ) {
+	function SearchScenario( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT episodeId, type, jpName, jpText, enName, enText FROM ScenarioDat ';
+		$s = 'SELECT SQL_CALC_FOUND_ROWS episodeId, type, jpName, jpText, enName, enText FROM ScenarioDat ';
 		// this would be proper but doesn't work well with japanese, unfortunately...
 		//$s .= 'WHERE MATCH(jpSearchKanji, jpSearchFuri, enSearch) AGAINST (:search) ';
-		$s .= 'WHERE jpSearchKanji LIKE :search ';
-		$s .= 'OR jpSearchFuri LIKE :search ';
-		$s .= 'OR enSearch LIKE :search ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
 		//$args['search'] = $query;
-		$args['search'] = '%'.$query.'%';
-		$s .= 'ORDER BY episodeId ASC, displayOrder ASC';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY episodeId ASC, displayOrder ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
 		
 		$stmt = $this->conn->prepare( $s );
 		$stmt->execute( $args );
@@ -123,14 +138,19 @@ class db {
 		return $lines;
 	}
 	
-	function SearchSkit( $query ) {
+	function SearchSkit( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT skitId, jpChar, enChar, jpText, enText FROM SkitText ';
-		$s .= 'WHERE jpSearchKanji LIKE :search ';
-		$s .= 'OR jpSearchFuri LIKE :search ';
-		$s .= 'OR enSearch LIKE :search ';
-		$args['search'] = '%'.$query.'%';
-		$s .= 'ORDER BY skitId ASC, displayOrder ASC';
+		$s = 'SELECT SQL_CALC_FOUND_ROWS skitId, jpChar, enChar, jpText, enText FROM SkitText ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY skitId ASC, displayOrder ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
 		
 		$stmt = $this->conn->prepare( $s );
 		$stmt->execute( $args );
@@ -173,14 +193,19 @@ class db {
 		return null;
 	}
 	
-	function SearchStringDic( $query ) {
+	function SearchStringDic( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT gameId, jpText, enText FROM StringDic ';
-		$s .= 'WHERE jpSearchKanji LIKE :search ';
-		$s .= 'OR jpSearchFuri LIKE :search ';
-		$s .= 'OR enSearch LIKE :search ';
-		$args['search'] = '%'.$query.'%';
-		$s .= 'ORDER BY id ASC';
+		$s = 'SELECT SQL_CALC_FOUND_ROWS gameId, jpText, enText FROM StringDic ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
 		
 		$stmt = $this->conn->prepare( $s );
 		$stmt->execute( $args );

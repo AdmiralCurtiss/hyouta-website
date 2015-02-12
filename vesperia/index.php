@@ -37,40 +37,72 @@ $name = '';
 if ( isset($_GET['name']) ) { $name = $_GET['name']; }
 $query = '';
 if ( isset($_GET['query']) ) { $query = $_GET['query']; }
+$page = 1;
+if ( isset($_GET['page']) ) { $page = (int)$_GET['page']; if ( $page < 1 ) { $page = 1; } }
 
 if ( $section === 'search' && $version === 'ps3' ) {
 	print_top( $version, 'Search', $query );
+	$perPage = 15;
+	$globalOffset = ( $page - 1 ) * $perPage;
+	$entriesToGo = $perPage;
+	$totalEntriesPrinted = 0;
 	
 	if ( strlen( $query ) >= 3 ) {
 		echo '<div class="scenario-content">';
 		echo '<div class="storyBox">';
 		
+		$localOffset = $globalOffset;
+		
 		$previousId = '';
-		$sce = $db->SearchScenario( $query );
+		$sce = $db->SearchScenario( $query, $localOffset, $entriesToGo );
+		$sceRows = $db->FoundRows();
 		foreach ( $sce as $s ) {
 			if ( $previousId != $s->episodeId ) {
 				echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
 				$previousId = $s->episodeId;
 			}
 			$s->Render();
+			--$entriesToGo;
+			++$totalEntriesPrinted;
 		}
 		
-		$previousId = '';
-		$skit = $db->SearchSkit( $query );
-		foreach ( $skit as $s ) {
-			if ( $previousId != $s->skitId ) {
-				echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
-				$previousId = $s->skitId;
+		if ( $entriesToGo > 0 ) {
+			$localOffset -= $sceRows; if ( $localOffset < 0 ) { $localOffset = 0; }
+			
+			$previousId = '';
+			$skit = $db->SearchSkit( $query, $localOffset, $entriesToGo );
+			$skitRows = $db->FoundRows();
+			foreach ( $skit as $s ) {
+				if ( $previousId != $s->skitId ) {
+					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
+					$previousId = $s->skitId;
+				}
+				$s->Render();
+				--$entriesToGo;
+				++$totalEntriesPrinted;
 			}
-			$s->Render();
+			
+			if ( $entriesToGo > 0 ) {
+				$localOffset -= $skitRows; if ( $localOffset < 0 ) { $localOffset = 0; }
+				
+				$entries = $db->SearchStringDic( $query, $localOffset, $entriesToGo );
+				$stringRows = $db->FoundRows();
+				if ( !empty($entries) ) {
+					echo '<div class="scenario-previous-next">Strings</div>';
+					foreach ( $entries as $e ) {
+						$e->Render();
+					}
+					++$totalEntriesPrinted;
+				}
+				
+				$localOffset -= $stringRows;
+			}
 		}
 		
-		$entries = $db->SearchStringDic( $query );
-		if ( !empty($entries) ) {
-			echo '<div class="scenario-previous-next">Strings</div>';
-			foreach ( $entries as $e ) {
-				$e->Render();
-			}
+		// rather bad page detection, maybe fix later
+		// though this does less db queries since we don't check if skits/strings have stuff if we just ended a category with the last scenario/skit entry
+		if ( $totalEntriesPrinted == $perPage ) {
+			echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=search&query='.urlencode($query).'&page='.( $page + 1 ).'">Next Page</a></div>';
 		}
 		
 		echo '</div>';
