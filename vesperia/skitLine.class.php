@@ -1,11 +1,13 @@
 <?php
 class skitLine {
+	var $skitId;
 	var $jpChar;
 	var $enChar;
 	var $jpText;
 	var $enText;
 	
-	function __construct( $jpChar, $jpText, $enChar, $enText ) {
+	function __construct( $skitId, $jpChar, $jpText, $enChar, $enText ) {
+		$this->skitId = $skitId;
 		$this->jpChar = $jpChar;
 		$this->enChar = $enChar;
 		$this->jpText = $jpText;

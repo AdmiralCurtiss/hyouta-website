@@ -1,12 +1,14 @@
 <?php
 class scenario {
+	var $episodeId;
 	var $type;
 	var $jpName;
 	var $jpText;
 	var $enName;
 	var $enText;
 	
-	function __construct( $type, $jpName, $jpText, $enName, $enText ) {
+	function __construct( $episodeId, $type, $jpName, $jpText, $enName, $enText ) {
+		$this->episodeId = $episodeId;
 		$this->type = $type;
 		$this->jpName = $jpName;
 		$this->jpText = $jpText;

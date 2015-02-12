@@ -34,8 +34,29 @@ $icon = false;
 if ( isset($_GET['icon']) ) { $icon = (int)$_GET['icon']; }
 $name = '';
 if ( isset($_GET['name']) ) { $name = $_GET['name']; }
+$query = '';
+if ( isset($_GET['query']) ) { $query = $_GET['query']; }
 
-if ( $section === 'scenario' && $version === 'ps3' ) {
+if ( $section === 'search' && $version === 'ps3' ) {
+	print_top( $version, 'Search', $query );
+	
+	if ( strlen( $query ) >= 3 ) {
+		echo '<div class="scenario-content">';
+		echo '<div class="storyBox">';
+		
+		$sce = $db->SearchScenario( $query );
+		foreach ( $sce as $s ) {
+			$s->Render();
+		}
+		$skit = $db->SearchSkit( $query );
+		foreach ( $skit as $s ) {
+			$s->Render();
+		}
+		
+		echo '</div>';
+		echo '</div>';
+	}
+} elseif ( $section === 'scenario' && $version === 'ps3' ) {
 	print_top( $version, 'Scenario' );
 	
 	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );

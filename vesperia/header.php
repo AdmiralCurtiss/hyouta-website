@@ -110,11 +110,19 @@ function print_menu( $version ) {
 <?php
 }
 
-function print_top( $version, $category ) {
+function print_top( $version, $category, $query = '' ) {
 	print_header( $category );
 	echo '<body>';
 	print_menu( $version );
-	echo '<hr>';
+	echo '<div id="search">';
+	echo '<form method="get" action="index.php">';
+	echo '<input type="hidden" value="'.$version.'" name="version"></input>';
+	echo '<input type="hidden" value="search" name="section"></input>';
+	echo '<input type="text" size="40" value="'.htmlspecialchars($query).'" name="query"></input>';
+	echo '<input type="submit" value="Search"></input>';
+	echo '</form>';
+	echo '</div>';
+	echo '<hr/>';
 	echo '<div id="content">';
 }
 

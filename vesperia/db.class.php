@@ -78,7 +78,29 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenario( (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
+			$sce[] = new scenario( $episodeId, (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
+		}
+		return $sce;
+	}
+	
+	function SearchScenario( $query ) {
+		$args = array();
+		$s = 'SELECT episodeId, type, jpName, jpText, enName, enText FROM ScenarioDat ';
+		// this would be proper but doesn't work well with japanese, unfortunately...
+		//$s .= 'WHERE MATCH(jpSearchKanji, jpSearchFuri, enSearch) AGAINST (:search) ';
+		$s .= 'WHERE jpSearchKanji LIKE :search ';
+		$s .= 'OR jpSearchFuri LIKE :search ';
+		$s .= 'OR enSearch LIKE :search ';
+		//$args['search'] = $query;
+		$args['search'] = '%'.$query.'%';
+		$s .= 'ORDER BY episodeId ASC, displayOrder ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$sce = array();
+		while( $r = $stmt->fetch() ) {
+			$sce[] = new scenario( $r['episodeId'], (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
 		}
 		return $sce;
 	}
@@ -95,7 +117,26 @@ class db {
 		
 		$lines = array();
 		while( $r = $stmt->fetch() ) {
-			$lines[] = new skitLine( $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'] );
+			$lines[] = new skitLine( $skitId, $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'] );
+		}
+		return $lines;
+	}
+	
+	function SearchSkit( $query ) {
+		$args = array();
+		$s = 'SELECT skitId, jpChar, enChar, jpText, enText FROM SkitText ';
+		$s .= 'WHERE jpSearchKanji LIKE :search ';
+		$s .= 'OR jpSearchFuri LIKE :search ';
+		$s .= 'OR enSearch LIKE :search ';
+		$args['search'] = '%'.$query.'%';
+		$s .= 'ORDER BY skitId ASC, displayOrder ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$lines = array();
+		while( $r = $stmt->fetch() ) {
+			$lines[] = new skitLine( $r['skitId'], $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'] );
 		}
 		return $lines;
 	}
