@@ -18,6 +18,7 @@ if ( isset($_GET['version']) ) {
 require_once 'db.class.php';
 require_once 'scenario.class.php';
 require_once 'skitLine.class.php';
+require_once 'stringDic.class.php';
 require_once 'header.php';
 include '../credentials.php';
 $db = new db( $__db_connstr_vesperia__[$version], $__db_username_vesperia__, $__db_password_vesperia__ );
@@ -51,6 +52,10 @@ if ( $section === 'search' && $version === 'ps3' ) {
 		$skit = $db->SearchSkit( $query );
 		foreach ( $skit as $s ) {
 			$s->Render();
+		}
+		$entries = $db->SearchStringDic( $query );
+		foreach ( $entries as $e ) {
+			$e->Render();
 		}
 		
 		echo '</div>';

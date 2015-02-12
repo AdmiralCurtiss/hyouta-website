@@ -1,6 +1,7 @@
 <?php
 require_once 'scenario.class.php';
 require_once 'skitLine.class.php';
+require_once 'stringDic.class.php';
 
 class db {
 	var $conn;
@@ -170,6 +171,25 @@ class db {
 			return $skit;
 		}
 		return null;
+	}
+	
+	function SearchStringDic( $query ) {
+		$args = array();
+		$s = 'SELECT gameId, jpText, enText FROM StringDic ';
+		$s .= 'WHERE jpSearchKanji LIKE :search ';
+		$s .= 'OR jpSearchFuri LIKE :search ';
+		$s .= 'OR enSearch LIKE :search ';
+		$args['search'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$entries = array();
+		while( $r = $stmt->fetch() ) {
+			$entries[] = new stringDicEntry( $r['gameId'], $r['jpText'], $r['enText'] );
+		}
+		return $entries;
 	}
 	
 	function GetArtesHtml( $id = false ) {
