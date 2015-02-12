@@ -55,36 +55,8 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 
 	echo '<div class="storyBox">';
 	foreach ( $sce as $s ) {
-	?>
-<div class="storyLine">
-	<div class="storyBlock">
-		<div class="storyText<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-		<div class="storyTextSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-			<div class="charaContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-				<div class="charaSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-					<div class="charaSubSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->jpName ?></div>
-				</div>
-			</div>
-			<div class="textJP textContainerSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->jpText ?></div>
-		</div>
-		</div>
-	</div>
-	<div class="storyBlock">
-		<div class="storyText<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-		<div class="storyTextSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-			<div class="charaContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-				<div class="charaSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>">
-					<div class="charaSubSubContainer<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enName ?></div>
-				</div>
-			</div>
-			<div class="textEN textContainerSub<?php if ( $s->type > 0 ) { echo $s->type; } ?>"><?php echo $s->enText ?></div>
-		</div>
-		</div>
-	</div>
-</div>
-	<?php
+		$s->Render();
 	}
-	
 	echo '</div>';
 	
 	if ( $scenarioMetadata !== null ) {
@@ -120,39 +92,10 @@ if ( $section === 'scenario' && $version === 'ps3' ) {
 	
 	echo '<div class="storyBox">';
 	foreach ( $lines as $s ) {
-	?>
-<div class="storyLine">
-	<div class="skitIconAndText">
-		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $s->jpChar, 0, 3 ); ?>.png" /></div>
-		<div class="skitBlock">
-			<div class="skitText">
-				<div class="charaContainerSkit">
-					<div class="charaSubContainerSkit">
-						<div class="charaSubSubContainerSkit"><?php echo $s->GetJpName() ?></div>
-					</div>
-				</div>
-				<div class="textJP textContainerSubSkit"><?php echo $s->jpText ?></div>
-			</div>
-		</div>
-	</div>
-	<div class="skitIconAndText">
-		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $s->enChar, 0, 3 ); ?>.png" /></div>
-		<div class="skitBlock">
-			<div class="skitText">
-				<div class="charaContainerSkit">
-					<div class="charaSubContainerSkit">
-						<div class="charaSubSubContainerSkit"><?php echo $s->GetEnName() ?></div>
-					</div>
-				</div>
-				<div class="textEN textContainerSubSkit"><?php echo $s->enText ?></div>
-			</div>
-		</div>
-	</div>
-</div>
-	<?php
+		$s->Render();
 	}
-	
 	echo '</div>';
+	
 	echo '</div>';
 	
 } elseif ( $section === 'scenario-index' ) {

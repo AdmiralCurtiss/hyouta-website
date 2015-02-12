@@ -45,6 +45,39 @@ class skitLine {
 			case 'YUR':   return 'ユーリ';
 		}
 	}
+	
+	function Render() {
+	?>
+<div class="storyLine">
+	<div class="skitIconAndText">
+		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $this->jpChar, 0, 3 ); ?>.png" /></div>
+		<div class="skitBlock">
+			<div class="skitText">
+				<div class="charaContainerSkit">
+					<div class="charaSubContainerSkit">
+						<div class="charaSubSubContainerSkit"><?php echo $this->GetJpName() ?></div>
+					</div>
+				</div>
+				<div class="textJP textContainerSubSkit"><?php echo $this->jpText ?></div>
+			</div>
+		</div>
+	</div>
+	<div class="skitIconAndText">
+		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $this->enChar, 0, 3 ); ?>.png" /></div>
+		<div class="skitBlock">
+			<div class="skitText">
+				<div class="charaContainerSkit">
+					<div class="charaSubContainerSkit">
+						<div class="charaSubSubContainerSkit"><?php echo $this->GetEnName() ?></div>
+					</div>
+				</div>
+				<div class="textEN textContainerSubSkit"><?php echo $this->enText ?></div>
+			</div>
+		</div>
+	</div>
+</div>
+	<?php
+	}
 }
 
 class skitMeta {

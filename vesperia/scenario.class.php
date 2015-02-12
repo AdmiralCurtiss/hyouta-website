@@ -13,6 +13,37 @@ class scenario {
 		$this->enName = $enName;
 		$this->enText = $enText;
 	}
+	
+	function Render() {
+	?>
+<div class="storyLine">
+	<div class="storyBlock">
+		<div class="storyText<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+		<div class="storyTextSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+			<div class="charaContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+				<div class="charaSubContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+					<div class="charaSubSubContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->jpName ?></div>
+				</div>
+			</div>
+			<div class="textJP textContainerSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->jpText ?></div>
+		</div>
+		</div>
+	</div>
+	<div class="storyBlock">
+		<div class="storyText<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+		<div class="storyTextSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+			<div class="charaContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+				<div class="charaSubContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
+					<div class="charaSubSubContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->enName ?></div>
+				</div>
+			</div>
+			<div class="textEN textContainerSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->enText ?></div>
+		</div>
+		</div>
+	</div>
+</div>
+	<?php
+	}
 }
 
 class scenarioMeta {
