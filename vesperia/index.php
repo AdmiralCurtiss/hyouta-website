@@ -7,11 +7,13 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 $version = 'ps3';
+/*
 if ( isset($_GET['version']) ) {
 	if ( $_GET['version'] == 'ps3' || $_GET['version'] == '360' ) {
 		$version = $_GET['version'];
 	}
 }
+*/
 
 require_once 'db.class.php';
 require_once 'scenario.class.php';
