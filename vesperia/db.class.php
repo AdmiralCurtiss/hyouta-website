@@ -193,6 +193,28 @@ class db {
 		return null;
 	}
 	
+	function SearchSkitNamesHtml( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM SkitMeta ';
+		$s .= 'WHERE jpName LIKE :searchJ ';
+		$s .= 'OR enName LIKE :searchE ';
+		$args['searchJ'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$skit = array();
+		while( $r = $stmt->fetch() ) {
+			$skit[] = $r['html'];
+		}
+		return $skit;
+	}
+	
 	function SearchStringDic( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT SQL_CALC_FOUND_ROWS gameId, jpText, enText FROM StringDic ';

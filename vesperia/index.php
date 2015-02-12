@@ -53,29 +53,28 @@ if ( $section === 'search' && $version === 'ps3' ) {
 		
 		$localOffset = $globalOffset;
 		
-		$previousId = '';
-		$sce = $db->SearchScenario( $query, $localOffset, $entriesToGo );
-		$sceRows = $db->FoundRows();
-		foreach ( $sce as $s ) {
-			if ( $previousId != $s->episodeId ) {
-				echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
-				$previousId = $s->episodeId;
+		$skits = $db->SearchSkitNamesHtml( $query, $localOffset, $entriesToGo );
+		$skitCount = $db->FoundRows();
+		if ( !empty($skits) ) {
+			echo '<div class="scenario-previous-next">Skits</div>';
+			echo '<table>';
+			foreach ( $skits as $s ) {
+				echo $s;
+				--$entriesToGo;
+				++$totalEntriesPrinted;
 			}
-			$s->Render();
-			--$entriesToGo;
-			++$totalEntriesPrinted;
+			echo '</table>';
 		}
 		
 		if ( $entriesToGo > 0 ) {
-			$localOffset -= $sceRows; if ( $localOffset < 0 ) { $localOffset = 0; }
-			
+			$localOffset -= $skitCount; if ( $localOffset < 0 ) { $localOffset = 0; }
+			$sce = $db->SearchScenario( $query, $localOffset, $entriesToGo );
+			$sceRows = $db->FoundRows();
 			$previousId = '';
-			$skit = $db->SearchSkit( $query, $localOffset, $entriesToGo );
-			$skitRows = $db->FoundRows();
-			foreach ( $skit as $s ) {
-				if ( $previousId != $s->skitId ) {
-					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
-					$previousId = $s->skitId;
+			foreach ( $sce as $s ) {
+				if ( $previousId != $s->episodeId ) {
+					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
+					$previousId = $s->episodeId;
 				}
 				$s->Render();
 				--$entriesToGo;
@@ -83,19 +82,36 @@ if ( $section === 'search' && $version === 'ps3' ) {
 			}
 			
 			if ( $entriesToGo > 0 ) {
-				$localOffset -= $skitRows; if ( $localOffset < 0 ) { $localOffset = 0; }
+				$localOffset -= $sceRows; if ( $localOffset < 0 ) { $localOffset = 0; }
 				
-				$entries = $db->SearchStringDic( $query, $localOffset, $entriesToGo );
-				$stringRows = $db->FoundRows();
-				if ( !empty($entries) ) {
-					echo '<div class="scenario-previous-next">Strings</div>';
-					foreach ( $entries as $e ) {
-						$e->Render();
+				$previousId = '';
+				$skit = $db->SearchSkit( $query, $localOffset, $entriesToGo );
+				$skitRows = $db->FoundRows();
+				foreach ( $skit as $s ) {
+					if ( $previousId != $s->skitId ) {
+						echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
+						$previousId = $s->skitId;
 					}
+					$s->Render();
+					--$entriesToGo;
 					++$totalEntriesPrinted;
 				}
 				
-				$localOffset -= $stringRows;
+				if ( $entriesToGo > 0 ) {
+					$localOffset -= $skitRows; if ( $localOffset < 0 ) { $localOffset = 0; }
+					
+					$entries = $db->SearchStringDic( $query, $localOffset, $entriesToGo );
+					$stringRows = $db->FoundRows();
+					if ( !empty($entries) ) {
+						echo '<div class="scenario-previous-next">Strings</div>';
+						foreach ( $entries as $e ) {
+							$e->Render();
+						}
+						++$totalEntriesPrinted;
+					}
+					
+					$localOffset -= $stringRows;
+				}
 			}
 		}
 		
