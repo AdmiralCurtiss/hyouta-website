@@ -106,8 +106,9 @@ if ( $section === 'search' && $version === 'ps3' ) {
 						echo '<div class="scenario-previous-next">Strings</div>';
 						foreach ( $entries as $e ) {
 							$e->Render();
+							--$entriesToGo;
+							++$totalEntriesPrinted;
 						}
-						++$totalEntriesPrinted;
 					}
 					
 					$localOffset -= $stringRows;
@@ -117,7 +118,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 		
 		// rather bad page detection, maybe fix later
 		// though this does less db queries since we don't check if skits/strings have stuff if we just ended a category with the last scenario/skit entry
-		if ( $totalEntriesPrinted == $perPage ) {
+		if ( $totalEntriesPrinted === $perPage ) {
 			echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=search&query='.urlencode($query).'&page='.( $page + 1 ).'">Next Page</a></div>';
 		}
 		
