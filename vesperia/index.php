@@ -386,6 +386,20 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	}
 	
 	echo '</table>';
+} elseif ( $section === 'trophies' ) {
+	print_top( $version, 'Trophies' );
+	echo '<table>';
+	
+	$items = $db->GetTrophiesHtml( $id );
+	$first = true;
+	foreach ( $items as $item ) {
+		if ( $first === true ) { $first = false; } else {
+			echo '<tr><td colspan="3"><hr></td></tr>';
+		}
+		echo $item;
+	}
+	
+	echo '</table>';
 } elseif ( $section === 'strategy' ) {
 	print_top( $version, 'Strategy' );
 	echo '<table>';

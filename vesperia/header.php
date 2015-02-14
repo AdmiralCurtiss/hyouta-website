@@ -28,6 +28,7 @@ function print_menu( $version ) {
 <a href="?version=<?php echo $version; ?>&section=settings"><img src="menu-icons/sub-07.png" title="Settings"></a>
 <a href="?version=<?php echo $version; ?>&section=gradeshop"><img src="item-categories/cat-01.png" title="Grade Shop"></a>
 <?php if ( $version !== '360' ) { ?><a href="?version=<?php echo $version; ?>&section=necropolis"><img src="menu-icons/weather-4-64px.png" title="Necropolis of Nostalgia Maps"></a><?php } ?>
+<?php if ( $version !== '360' ) { ?> <a href="?version=<?php echo $version; ?>&section=trophies"><img src="trophies/gold.png" title="Trophies"></a><?php } ?>
 <br>
 <a href="?version=<?php echo $version; ?>&section=items&category=2"><img src="item-categories/cat-02.png" title="Tools" height="32"></a>
 <a href="?version=<?php echo $version; ?>&section=items&category=3"><img src="item-categories/cat-03.png" title="Main" height="32"></a>

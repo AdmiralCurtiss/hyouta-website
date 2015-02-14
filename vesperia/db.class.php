@@ -522,6 +522,25 @@ class db {
 		return $items;
 	}
 	
+	function GetTrophiesHtml( $id = false ) {
+		$args = array();
+		$s = 'SELECT html FROM Trophies ';
+		if ( $id !== false ) {
+			$s .= 'WHERE id = :searchId ';
+			$args['searchId'] = $id;
+		}
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+	
 	function GetNecropolisHtml( $enemies = false, $map = false ) {
 		$args = array();
 		$s = 'SELECT html';
