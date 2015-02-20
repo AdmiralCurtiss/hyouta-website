@@ -265,7 +265,7 @@ class db {
 		$args = array();
 		$s = 'SELECT html FROM Skills ';
 		if ( $id === false ) {
-			$s .= 'WHERE id > 0 AND equipCost > 0 ';
+			$s .= 'WHERE learnableBy > 0 ';
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
