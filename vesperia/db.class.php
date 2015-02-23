@@ -282,6 +282,23 @@ class db {
 		return $items;
 	}
 	
+	function GetSkillsByCharacterHtml( $character ) {
+		$args = array();
+		$s = 'SELECT html FROM Skills ';
+		$s .= 'WHERE ( learnableBy & ( 1 << ( :searchChar - 1 ) ) ) > 0 ';
+		$args['searchChar'] = $character;
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+	
 	function GetRecipesHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Recipes ';

@@ -132,4 +132,20 @@ function print_bottom() {
 	echo '<div id="footer">All Tales of Vesperia game content &copy; 2008/2009 Bandai Namco Games Inc.</div>';
 }
 
+function print_character_select( $version, $section ) {
+	echo '<div class="character-select">';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=1"><img title="Yuri" src="chara-icons/YUR.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=2"><img title="Estelle" src="chara-icons/EST.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=3"><img title="Karol" src="chara-icons/KAR.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=4"><img title="Rita" src="chara-icons/RIT.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=5"><img title="Raven" src="chara-icons/RAV.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=6"><img title="Judith" src="chara-icons/JUD.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=7"><img title="Repede" src="chara-icons/RAP.png"/></a>';
+	echo '<a href="?version='.$version.'&section='.$section.'&character=8"><img title="Flynn" src="chara-icons/FRE.png"/></a>';
+	if ( $version !== '360' ) {
+		echo '<a href="?version='.$version.'&section='.$section.'&character=9"><img title="Patty" src="chara-icons/PAT.png"/></a>';
+	}
+	echo '</div>';
+}
+
 ?>

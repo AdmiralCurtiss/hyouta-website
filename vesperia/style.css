@@ -34,6 +34,7 @@ div.necropolis-select { width: 100%; }
 div.necropolis-select table { text-align: center; margin: 0px auto; font-size: 20; }
 div.scenario-index { float: left; text-align: left; margin-right: 14px; width: 280px; }
 span.scenario-selected { font-weight: bold; }
+div.character-select { margin-bottom: 16px; }
 #footer_time { display: none; }
 #topmenu { text-align: center; font-size: 22; }
 #content { text-align: center; }

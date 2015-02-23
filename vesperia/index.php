@@ -33,6 +33,8 @@ $category = false;
 if ( isset($_GET['category']) ) { $category = (int)$_GET['category']; }
 $icon = false;
 if ( isset($_GET['icon']) ) { $icon = (int)$_GET['icon']; }
+$character = false;
+if ( isset($_GET['character']) ) { $character = (int)$_GET['character']; }
 $name = '';
 if ( isset($_GET['name']) ) { $name = $_GET['name']; }
 $query = '';
@@ -222,9 +224,14 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	echo '</table>';
 } elseif ( $section === 'skills' ) {
 	print_top( $version, 'Skills' );
+	print_character_select( $version, $section );
 	echo '<table>';
 	
-	$skills = $db->GetSkillsHtml( $id );
+	if ( $character === false ) {
+		$skills = $db->GetSkillsHtml( $id );
+	} else {
+		$skills = $db->GetSkillsByCharacterHtml( $character );
+	}
 	$first = true;
 	foreach ( $skills as $a ) {
 		if ( $first === true ) { $first = false; } else {
