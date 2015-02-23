@@ -509,9 +509,11 @@ if ( $section === 'search' && $version === 'ps3' ) {
 } else {
 	print_top( $version, false );?>
 	<h1>Tales of Vesperia</h1>
-	<h2>Menu Data &amp; Translation Guide</h2>
+	<h2>Data &amp; Translation Guide</h2>
 	
-	<span>Part of the <a href="http://talesofvesperia.net/">PS3 fan-translation</a>.</span>
+	<div>Part of the <a href="http://talesofvesperia.net/">PS3 fan-translation</a>.</div>
+	
+	<div>Inspired by and some layout provided by <a href="http://apps.lushu.org/vesperia/">apps.lushu.org</a>.</div>
 <?php
 }
 print_bottom();
