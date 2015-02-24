@@ -210,9 +210,14 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	echo '</table>';
 } elseif ( $section === 'artes' ) {
 	print_top( $version, 'Artes' );
+	print_character_select( $version, $section );
 	echo '<table>';
 	
-	$artes = $db->GetArtesHtml( $id );
+	if ( $character === false ) {
+		$artes = $db->GetArtesHtml( $id );
+	} else {
+		$artes = $db->GetArtesByCharacterHtml( $character );
+	}
 	$first = true;
 	foreach ( $artes as $a ) {
 		if ( $first === true ) { $first = false; } else {
@@ -273,9 +278,14 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	echo '</table>';
 } elseif ( $section === 'titles' ) {
 	print_top( $version, 'Titles' );
+	print_character_select( $version, $section );
 	echo '<table>';
 	
-	$items = $db->GetTitlesHtml( $id );
+	if ( $character === false ) {
+		$items = $db->GetTitlesHtml( $id );
+	} else {
+		$items = $db->GetTitlesByCharacterHtml( $character );
+	}
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {

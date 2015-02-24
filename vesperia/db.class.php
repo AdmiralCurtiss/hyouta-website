@@ -261,6 +261,23 @@ class db {
 		return $artes;
 	}
 	
+	function GetArtesByCharacterHtml( $character ) {
+		$args = array();
+		$s = 'SELECT html FROM Artes ';
+		$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character = :searchChar ) ';
+		$args['searchChar'] = $character;
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+	
 	function GetSkillsHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Skills ';
@@ -350,6 +367,23 @@ class db {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		}
+		$s .= 'ORDER BY id ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+	
+	function GetTitlesByCharacterHtml( $character ) {
+		$args = array();
+		$s = 'SELECT html FROM Titles ';
+		$s .= 'WHERE Titles.character = :searchChar AND points > 0 ';
+		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
 		
 		$stmt = $this->conn->prepare( $s );
