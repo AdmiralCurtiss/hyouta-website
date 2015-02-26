@@ -521,9 +521,12 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	<h1>Tales of Vesperia</h1>
 	<h2>Data &amp; Translation Guide</h2>
 	
+	<p>
 	<div>Part of the <a href="http://talesofvesperia.net/">PS3 fan-translation</a>.</div>
-	
 	<div>Inspired by and some layout provided by <a href="http://apps.lushu.org/vesperia/">apps.lushu.org</a>.</div>
+	</p>
+	
+	<p><div>This page uses <a href="http://en.wikipedia.org/wiki/Ruby_character#HTML_markup">Ruby HTML markup</a> to display Furigana. If it doesn't display properly, please update your browser and/or install a browser extension.</div></p>
 <?php
 }
 print_bottom();
