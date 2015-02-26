@@ -114,6 +114,7 @@ function print_menu( $version ) {
 function print_top( $version, $category, $query = '' ) {
 	print_header( $category );
 	echo '<body>';
+	echo '<div id="header-name"><a href=".">Tales of Vesperia - Data &amp; Translation Guide</a></div>';
 	print_menu( $version );
 	echo '<div id="search">';
 	echo '<form method="get" action="index.php">';

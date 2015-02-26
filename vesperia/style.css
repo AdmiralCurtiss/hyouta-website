@@ -36,6 +36,7 @@ div.scenario-index { float: left; text-align: left; margin-right: 14px; width: 2
 span.scenario-selected { font-weight: bold; }
 div.character-select { margin-bottom: 16px; }
 #footer_time { display: none; }
+#header-name { text-align: center; }
 #topmenu { text-align: center; font-size: 22; }
 #content { text-align: center; }
 #content table { margin-left: auto; margin-right: auto; }
