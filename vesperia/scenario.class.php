@@ -65,15 +65,13 @@ class scenarioMeta {
 		$this->description = $description;
 	}
 	
-	// TODO: THIS IS STILL BROKEN IN SOME WAY CAUSE THE FIRST UL AND THE LATTER ONES DON'T MATCH SOMEHOW
 	public static function RenderIndex( $version, $scenarioMetadata, $currentEpisodeId = null ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
 		$prevDepth = 0;
-		$shiftdown = false; // this is dumb but this nested HTML generation is far more complicated than it should be so fuck it, this works
 		
-		echo '<div class="scenario-index">';
+		echo '<div class="scenario-index'.( $currentEpisodeId !== null ? ' scenario-index-sub' : '' ).'">';
 		foreach ( $scenarioMetadata as $scene ) {
 			if ( $scene->parentId === null ) {
 				// category header
@@ -100,11 +98,10 @@ class scenarioMeta {
 					echo '</li></ul>';
 					$prevDepth--;
 				}
-				echo '<li>';
-				$shiftdown = true;
+				echo '</ul><ul><li>';
 			}
 			
-			if ( $currentEpisodeId === $scene->episodeId ) {
+			if ( $currentEpisodeId !== null && $currentEpisodeId === $scene->episodeId ) {
 				echo '<span class="scenario-selected">'.$scene->description.'</span>';
 			} else {
 				if ( $currDepth === 2 ) {
@@ -118,11 +115,6 @@ class scenarioMeta {
 				if ( $currDepth >= 2 ) {
 					echo '</a>';
 				}
-			}
-			
-			if ( $shiftdown ) {
-				echo '</li>';
-				$shiftdown = false;
 			}
 		}
 		

@@ -18,7 +18,7 @@ div.storyBox {
 .skitBlock {
     display: inline-block;
     vertical-align: top;
-    width: 480px;
+    width: 450px;
     text-align: left;
 }
 
@@ -232,6 +232,23 @@ div.skitIconAndText {
 
 .textEN  {
     font-size: 17px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+ul li {
+    padding-left: 15px;
+}
+ul li ul li ul li {
+    background-image: url(text-icons/PS3/button-Select.png);
+    background-size: 23px 16px;
+    padding-left: 25px;
+    background-repeat: no-repeat;
+    background-position: 1px 2px;
 }
 
 span.textColorBlue { color: #558BEA; }
