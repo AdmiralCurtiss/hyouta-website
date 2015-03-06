@@ -42,6 +42,8 @@ if ( isset($_GET['query']) ) { $query = $_GET['query']; }
 $page = 1;
 if ( isset($_GET['page']) ) { $page = (int)$_GET['page']; if ( $page < 1 ) { $page = 1; } }
 
+echo '<html>';
+
 if ( $section === 'search' && $version === 'ps3' ) {
 	print_top( $version, 'Search', $query );
 	$perPage = 15;
