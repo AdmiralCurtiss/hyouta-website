@@ -48,11 +48,20 @@ class skitLine {
 		}
 	}
 	
+	function RenderIcon( $char ) {
+		$c = substr( $char, 0, 3 );
+		if ( !( $c === 'ALL' || $c === 'BAU' ) ) {
+			echo '<img src="chara-icons/';
+			echo $c;
+			echo '.png" />';
+		}
+	}
+	
 	function Render() {
 	?>
 <div class="storyLine">
 	<div class="skitIconAndText">
-		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $this->jpChar, 0, 3 ); ?>.png" /></div>
+		<div class="skitIcon"><?php $this->RenderIcon( $this->jpChar ); ?></div>
 		<div class="skitBlock">
 			<div class="skitText">
 				<div class="charaContainerSkit">
@@ -65,7 +74,7 @@ class skitLine {
 		</div>
 	</div>
 	<div class="skitIconAndText">
-		<div class="skitIcon"><img src="chara-icons/<?php echo substr( $this->enChar, 0, 3 ); ?>.png" /></div>
+		<div class="skitIcon"><?php $this->RenderIcon( $this->enChar ); ?></div>
 		<div class="skitBlock">
 			<div class="skitText">
 				<div class="charaContainerSkit">
