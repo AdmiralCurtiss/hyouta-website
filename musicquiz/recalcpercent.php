@@ -3,9 +3,7 @@
 	echo 'Recalculating...'."\n";
 	
 	include '../credentials.php';
-	$database = @mysql_connect($__db_hostname_music__, $__db_username_music__, $__db_password_music__) OR die(mysql_error());
-	@mysql_select_db($__db_database_music__) OR die(mysql_error());
-	$db = new db($database);
+	$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 	$songs = $db->get_all_songs_percentage_for_recalc();
 
 	$series_amounts = array();

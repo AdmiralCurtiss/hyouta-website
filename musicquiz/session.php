@@ -9,7 +9,7 @@ class Session
 	var $db;
 	
 	function __construct($database) {
-		$this->db = new db($database);
+		$this->db = $database;
 		$this->startSession();
 	}
 

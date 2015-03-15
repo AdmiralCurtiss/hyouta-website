@@ -6,14 +6,12 @@
 	//page generation time code end
 	
 	include '../credentials.php';
-	$database = @mysql_connect($__db_hostname_music__, $__db_username_music__, $__db_password_music__) OR die(mysql_error());
-	@mysql_select_db($__db_database_music__ ) OR die(mysql_error());
 	include 'session.php';
-	$session = new Session($database);
+    $database = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
+	$session = new Session( $database );
 	
 	$section = array();
 	$section['main']     = 'main.php';
-	$section['news']     = 'news.php';
 	$section['faq']      = 'faq.php';
 	if ( $session->logged_in ) {
 		$section['guess']    = 'guess.php';
@@ -46,7 +44,7 @@
 	if ( isset($_GET['section'], $section[$_GET['section']]) ) {
 		$section_now = $_GET['section'];
 	} else {
-		$section_now = 'news';
+		$section_now = 'main';
 	}
 	
 	if ( !isset($section[$section_now]) ) {
@@ -68,7 +66,6 @@
 <!--<![endif]-->';
 	include 'userarea.php';
 	echo '</div>';
-	mysql_close($database);
 	
 	//page generation time code
 		$time = explode(' ', microtime());

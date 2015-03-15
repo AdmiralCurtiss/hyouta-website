@@ -6,7 +6,8 @@ if ( !isset( $session ) ) {
 	if ( $session->logged_in ) {
 	require_once 'db.class.php';
 
-	$db = new db($database);
+	include '../credentials.php';
+    $db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 	
 	if ( $session->user->is_admin() ) {
 		if ( isset( $_GET['userid'] ) ) {

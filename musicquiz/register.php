@@ -2,8 +2,8 @@
 if ( !isset( $session ) ) {
 	die();
 }
-	require_once 'db.class.php';
-	$db = new db($database);
+	include '../credentials.php';
+    $database = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 
 	if ('POST' == $_SERVER['REQUEST_METHOD']) {
 		if (!isset($_POST['user'], $_POST['pass1'], $_POST['formaction'])) {
@@ -17,7 +17,7 @@ if ( !isset( $session ) ) {
 			return EMPTY_FORM;
 		}
 		
-		$register_success = $db->register( $user, $pass );
+		$register_success = $database->register( $user, $pass );
 		
 		if ( $register_success === true ) {
 			return 'Successfully registered, you may log in now.';
