@@ -20,6 +20,7 @@ class scenario {
 	?>
 <div class="storyLine">
 	<div class="storyBlock">
+		<?php if ( $this->jpText !== '' ) { ?>
 		<div class="storyText<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
 		<div class="storyTextSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
 			<div class="charaContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
@@ -30,8 +31,10 @@ class scenario {
 			<div class="textJP textContainerSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->jpText ?></div>
 		</div>
 		</div>
+		<?php } ?>
 	</div>
 	<div class="storyBlock">
+		<?php if ( $this->enText !== '' ) { ?>
 		<div class="storyText<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
 		<div class="storyTextSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
 			<div class="charaContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
@@ -42,6 +45,7 @@ class scenario {
 			<div class="textEN textContainerSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->enText ?></div>
 		</div>
 		</div>
+		<?php } ?>
 	</div>
 </div>
 	<?php
