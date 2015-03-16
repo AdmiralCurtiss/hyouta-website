@@ -1,26 +1,22 @@
 <html>
 <head>
-	<title>Video Game Music Quiz</title>
-	<link rel="stylesheet" type="text/css" href="/musicquiz/layout.css" />
-	<link rel="stylesheet" type="text/css" href="/musicquiz/styles.css" media="all">
-	<link rel="stylesheet" type="text/css" href="/musicquiz/screen.css" media="screen">
-	<link rel="stylesheet" type="text/css" href="/musicquiz/print.css" media="print">
+	<title>Admiral Hyouta Curtiss</title>
+	<link rel="stylesheet" type="text/css" href="vesperia/style.css" />
 	<link rel="shortcut icon" type="image/x-icon" href="musicquiz/favicon.ico" />
 </head>
 <body>
-<p><a href="/musicquiz"><h3>The Video Game Music Quiz</h3></a>
-Probably the main thing here, the Video Game Music Quiz is a site where you get small clips of video game music and can guess what game the song is from, as well as the song's name. Check it out if you're interested and have some time to spare!</p>
-<br>
-<p><a href="/stream"><h3>The Stream</h3></a>
-A page me and a couple friends use for streaming, with chatroom. It resulted from our old site becoming completely awful to use.
-</p>
-<br>
-<p><a href="/savegame"><h3>The Savegame Archive</h3></a>
-Just a small page I use to distribute video game saves.
-</p>
-<br><br><br>
-<h3>Other stuff</h3>
-<a href="https://github.com/AdmiralCurtiss/FaceCopy/releases">FaceCopy, a helper tool for Screenshot LPs with mugshots</a><br>
-<a href="https://github.com/AdmiralCurtiss/RightloadUrlAutoReplace/releases">RightloadUrlAutoReplace, a small tool for auto-inserting LPix URLs from Rightload into an LP update</a><br>
+
+<p><a href="/vesperia"><h2>Tales of Vesperia Online Translation Guide</h2></a>
+An online menu and script reference for playing the Japanese version of Tales of Vesperia. Part of the <a href="http://talesofvesperia.net/">PS3 fan-translation</a>.</p>
+
+<p><a href="/musicquiz"><h2>Video Game Music Quiz</h2></a>
+The Video Game Music Quiz is a site where you get small clips of video game music and guess what song it is. Check it out if you're interested and have some time to spare!</p>
+
+<br/><br/><br/><br/>
+
+<h2>Other stuff</h2>
+<a href="https://github.com/AdmiralCurtiss/">My GitHub account</a><br/>
+<a href="/stream">#B8Stickam</a><br/>
+<a href="/savegame">My save files</a><br/>
 </body>
 </html>
