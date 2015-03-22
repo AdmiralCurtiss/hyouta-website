@@ -4,8 +4,25 @@
 		$pagegen_start_time = $time[1] + $time[0];
 	//page generation time code end
 
-
 header('Content-Type: text/html; charset=UTF-8');
+
+require_once 'db.class.php';
+require_once 'scenario.class.php';
+require_once 'skitLine.class.php';
+require_once 'stringDic.class.php';
+require_once 'header.php';
+
+$maintenance_mode = false;
+if ( $maintenance_mode ) {
+	echo '<html>';
+	print_header();
+	echo '<body>';
+	echo '<h1>Site is being updated, please check back in a minute!</h1>';
+	echo '</body>';
+	echo '</html>';
+	die();
+}
+
 $version = 'ps3';
 /*
 if ( isset($_GET['version']) ) {
@@ -15,11 +32,6 @@ if ( isset($_GET['version']) ) {
 }
 */
 
-require_once 'db.class.php';
-require_once 'scenario.class.php';
-require_once 'skitLine.class.php';
-require_once 'stringDic.class.php';
-require_once 'header.php';
 include '../credentials.php';
 $db = new db( $__db_connstr_vesperia__[$version], $__db_username_vesperia__, $__db_password_vesperia__ );
 
