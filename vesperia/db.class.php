@@ -462,7 +462,7 @@ class db {
 		return $items;
 	}
 	
-	function GetItemsHtml( $id = false, $category = false, $icon = false ) {
+	function GetItemsHtml( $id = false, $category = false, $icon = false, $rowOffset = 0, $rowCount = 250 ) {
 		$args = array();
 		$s = 'SELECT html FROM Items ';
 		if ( $id !== false ) {
@@ -477,7 +477,7 @@ class db {
 		} else {
 			//$s .= 'WHERE id > 0 ';
 		}
-		$s .= 'ORDER BY id ASC';
+		$s .= 'ORDER BY id ASC LIMIT '.$rowOffset.','.$rowCount;
 		
 		$stmt = $this->conn->prepare( $s );
 		$stmt->execute( $args );
@@ -487,6 +487,32 @@ class db {
 			$items[] = $r['html'];
 		}
 		return $items;
+	}
+	
+	function GetItemsCount( $id = false, $category = false, $icon = false ) {
+		$args = array();
+		$s = 'SELECT COUNT(1) AS cnt FROM Items ';
+		if ( $id !== false ) {
+			$s .= 'WHERE gameId = :searchId ';
+			$args['searchId'] = $id;
+		} elseif ( $icon !== false ) {
+			$s .= 'WHERE icon = :searchId ';
+			$args['searchId'] = $icon;
+		} elseif ( $category !== false ) {
+			$s .= 'WHERE category = :searchId ';
+			$args['searchId'] = $category;
+		} else {
+			//$s .= 'WHERE id > 0 ';
+		}
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		if( $r = $stmt->fetch() ) {
+			return (int)$r['cnt'];
+		}
+		return -1;
 	}
 	
 	function GetLocationsHtml( $id = false ) {

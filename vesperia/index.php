@@ -353,9 +353,25 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	echo '</table>';
 } elseif ( $section === 'items' ) {
 	print_top( $version, 'Items' );
-	echo '<table>';
 	
-	$items = $db->GetItemsHtml( $id, $category, $icon );
+	$itemcount = $db->GetItemsCount( $id, $category, $icon );
+	$itemsPerPage = 250;
+	$offset = ($page - 1) * $itemsPerPage;
+	$items = $db->GetItemsHtml( $id, $category, $icon, $offset, $itemsPerPage );
+	
+	$totalPages = $itemcount % $itemsPerPage == 0 ? $itemcount / $itemsPerPage : (int)($itemcount / $itemsPerPage) + 1;
+	$pageString = 'Page '.$page.' of '.$totalPages;
+	if ( $itemcount > $offset + $itemsPerPage ) {
+		$pageString .= ' - <a href="?version='.$version.'&section=items';
+		if ( $category !== false ) { $pageString .= '&category='.$category; }
+		if ( $icon !== false ) { $pageString .= '&icon='.$icon; }
+		$pageString .= '&page='.( $page + 1 ).'">Next Page</a>';
+	}
+	$isMultipage = $itemcount > $itemsPerPage;
+	
+	if ( $isMultipage ) { echo '<p>'.$pageString.'</p>'; }
+	
+	echo '<table>';
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -363,8 +379,9 @@ if ( $section === 'search' && $version === 'ps3' ) {
 		}
 		echo $item;
 	}
-	
 	echo '</table>';
+	
+	if ( $isMultipage ) { echo '<p>'.$pageString.'</p>'; }
 } elseif ( $section === 'locations' ) {
 	print_top( $version, 'Locations' );
 	echo '<table>';
