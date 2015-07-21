@@ -359,10 +359,13 @@ class db {
 	}
 	
 	function GetTitlesHtml( $id = false ) {
+		// gameId = 67 is an Estelle Title with 0 points that still shows up in-game in PS3
+		// consider checks for this a hack
+		
 		$args = array();
 		$s = 'SELECT html FROM Titles ';
 		if ( $id === false ) {
-			$s .= 'WHERE gameId > 0 AND points > 0 ';
+			$s .= 'WHERE gameId > 0 AND ( points > 0 OR gameId = 67 )';
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -382,7 +385,7 @@ class db {
 	function GetTitlesByCharacterHtml( $character ) {
 		$args = array();
 		$s = 'SELECT html FROM Titles ';
-		$s .= 'WHERE Titles.character = :searchChar AND points > 0 ';
+		$s .= 'WHERE Titles.character = :searchChar AND ( points > 0 OR gameId = 67 ) ';
 		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
 		
