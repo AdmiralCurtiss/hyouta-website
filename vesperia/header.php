@@ -111,10 +111,14 @@ function print_menu( $version ) {
 <?php
 }
 
-function print_top( $version, $category, $query = '' ) {
+function print_top( $version, $allowVersionSelect, $category, $query = '' ) {
 	print_header( $category );
 	echo '<body>';
-	echo '<div id="header-name"><a href=".">Tales of Vesperia - Data &amp; Translation Guide</a></div>';
+	if ( $allowVersionSelect ) {
+		echo '<div id="header-name">Tales of Vesperia - Data &amp; Translation Guide - <a href="?version=360">360</a> <a href="?version=ps3">PS3</a></div>';
+	} else {
+		echo '<div id="header-name"><a href=".">Tales of Vesperia - Data &amp; Translation Guide</a></div>';
+	}
 	print_menu( $version );
 	echo '<div id="search">';
 	echo '<form method="get" action="index.php">';

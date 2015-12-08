@@ -24,13 +24,12 @@ if ( $maintenance_mode ) {
 }
 
 $version = 'ps3';
-/*
-if ( isset($_GET['version']) ) {
+$allowVersionSelect = false;
+if ( $allowVersionSelect && isset($_GET['version']) ) {
 	if ( $_GET['version'] == 'ps3' || $_GET['version'] == '360' ) {
 		$version = $_GET['version'];
 	}
 }
-*/
 
 include '../credentials.php';
 $db = new db( $__db_connstr_vesperia__[$version], $__db_username_vesperia__, $__db_password_vesperia__ );
@@ -56,8 +55,8 @@ if ( isset($_GET['page']) ) { $page = (int)$_GET['page']; if ( $page < 1 ) { $pa
 
 echo '<html>';
 
-if ( $section === 'search' && $version === 'ps3' ) {
-	print_top( $version, 'Search', $query );
+if ( $section === 'search' ) {
+	print_top( $version, $allowVersionSelect, 'Search', $query );
 	$perPage = 15;
 	$globalOffset = ( $page - 1 ) * $perPage;
 	$entriesToGo = $perPage;
@@ -141,8 +140,8 @@ if ( $section === 'search' && $version === 'ps3' ) {
 		echo '</div>';
 		echo '</div>';
 	}
-} elseif ( $section === 'scenario' && $version === 'ps3' ) {
-	print_top( $version, 'Scenario' );
+} elseif ( $section === 'scenario' ) {
+	print_top( $version, $allowVersionSelect, 'Scenario' );
 	
 	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 	$scenarioMetadata = null;
@@ -171,8 +170,8 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</div>';
 	
-} elseif ( $section === 'skit' && $version === 'ps3' ) {
-	print_top( $version, 'Skit' );
+} elseif ( $section === 'skit' ) {
+	print_top( $version, $allowVersionSelect, 'Skit' );
 	
 	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 	if ( $thisScenarioMeta !== null ) {
@@ -205,15 +204,15 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	echo '</div>';
 	
 } elseif ( $section === 'scenario-index' ) {
-	print_top( $version, 'Story Index' );
+	print_top( $version, $allowVersionSelect, 'Story Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 1 );
 	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
 } elseif ( $section === 'sidequest-index' ) {
-	print_top( $version, 'Sidequest Index' );
+	print_top( $version, $allowVersionSelect, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
 	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
 } elseif ( $section === 'skit-index' ) {
-	print_top( $version, 'Skit Index' );
+	print_top( $version, $allowVersionSelect, 'Skit Index' );
 	echo '<table>';
 	
 	$skits = $db->GetSkitIndexHtml();
@@ -223,7 +222,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'artes' ) {
-	print_top( $version, 'Artes' );
+	print_top( $version, $allowVersionSelect, 'Artes' );
 	print_character_select( $version, $section );
 	echo '<table>';
 	
@@ -242,7 +241,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'skills' ) {
-	print_top( $version, 'Skills' );
+	print_top( $version, $allowVersionSelect, 'Skills' );
 	print_character_select( $version, $section );
 	echo '<table>';
 	
@@ -261,7 +260,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'recipes' ) {
-	print_top( $version, 'Recipes' );
+	print_top( $version, $allowVersionSelect, 'Recipes' );
 	echo '<table>';
 	
 	$items = $db->GetRecipesHtml( $id );
@@ -277,7 +276,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'shops' ) {
-	print_top( $version, 'Shops' );
+	print_top( $version, $allowVersionSelect, 'Shops' );
 	echo '<table>';
 	
 	$items = $db->GetShopsHtml( $id );
@@ -291,7 +290,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'titles' ) {
-	print_top( $version, 'Titles' );
+	print_top( $version, $allowVersionSelect, 'Titles' );
 	print_character_select( $version, $section );
 	echo '<table>';
 	
@@ -310,7 +309,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'synopsis' ) {
-	print_top( $version, 'Synopsis' );
+	print_top( $version, $allowVersionSelect, 'Synopsis' );
 	
 	$items = $db->GetSynopsisHtml( $id );
 	$first = true;
@@ -322,7 +321,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	}
 	
 } elseif ( $section === 'battlebook' ) {
-	print_top( $version, 'Battle Book' );
+	print_top( $version, $allowVersionSelect, 'Battle Book' );
 	echo '<table>';
 	
 	$items = $db->GetBattleBookHtml( $id );
@@ -338,7 +337,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'enemies' ) {
-	print_top( $version, 'Enemies' );
+	print_top( $version, $allowVersionSelect, 'Enemies' );
 	echo '<table>';
 	
 	$items = $db->GetEnemiesHtml( $id, $category );
@@ -352,7 +351,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'items' ) {
-	print_top( $version, 'Items' );
+	print_top( $version, $allowVersionSelect, 'Items' );
 	
 	$itemcount = $db->GetItemsCount( $id, $category, $icon );
 	$itemsPerPage = 250;
@@ -383,7 +382,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	if ( $isMultipage ) { echo '<p>'.$pageString.'</p>'; }
 } elseif ( $section === 'locations' ) {
-	print_top( $version, 'Locations' );
+	print_top( $version, $allowVersionSelect, 'Locations' );
 	echo '<table>';
 	
 	$items = $db->GetLocationsHtml( $id );
@@ -397,7 +396,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'records' ) {
-	print_top( $version, 'Records' );
+	print_top( $version, $allowVersionSelect, 'Records' );
 	echo '<table>';
 	
 	$items = $db->GetRecordsHtml( $id );
@@ -407,7 +406,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'settings' ) {
-	print_top( $version, 'Settings' );
+	print_top( $version, $allowVersionSelect, 'Settings' );
 	echo '<table>';
 	
 	$items = $db->GetSettingsHtml( $id );
@@ -421,7 +420,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'gradeshop' ) {
-	print_top( $version, 'Grade Shop' );
+	print_top( $version, $allowVersionSelect, 'Grade Shop' );
 	echo '<table>';
 	
 	$items = $db->GetGradeShopHtml( $id );
@@ -435,7 +434,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'trophies' ) {
-	print_top( $version, 'Trophies' );
+	print_top( $version, $allowVersionSelect, 'Trophies' );
 	echo '<table>';
 	
 	$items = $db->GetTrophiesHtml( $id );
@@ -449,7 +448,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'strategy' ) {
-	print_top( $version, 'Strategy' );
+	print_top( $version, $allowVersionSelect, 'Strategy' );
 	echo '<table>';
 	
 	$items = $db->GetStrategySetHtml( $id );
@@ -476,7 +475,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'necropolis' ) {
-	print_top( $version, 'Necropolis of Nostalgia' );
+	print_top( $version, $allowVersionSelect, 'Necropolis of Nostalgia' );
 	
 	$stratumNames = array(
 		'A' => 'Firmament',
@@ -548,7 +547,7 @@ if ( $section === 'search' && $version === 'ps3' ) {
 	}
 	
 } else {
-	print_top( $version, false );?>
+	print_top( $version, $allowVersionSelect, false );?>
 	<h1>Tales of Vesperia</h1>
 	<h2>Data &amp; Translation Guide</h2>
 	
