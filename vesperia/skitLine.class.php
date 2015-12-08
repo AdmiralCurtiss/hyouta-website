@@ -110,4 +110,23 @@ class skitMeta {
 		$this->enCond = $enCond;
 	}
 }
+
+class skitMetaForIndex {
+	var $skitId;
+	var $category;
+	var $jpName;
+	var $enName;
+	var $charHtml;
+	var $changeStatus;
+
+	function __construct( $skitId, $category, $jpName, $enName, $charHtml, $changeStatus ) {
+		$this->skitId = $skitId;
+		$this->category = $category;
+		$this->jpName = $jpName;
+		$this->enName = $enName;
+		$this->charHtml = $charHtml;
+		$this->changeStatus = $changeStatus;
+	}
+}
+
 ?>

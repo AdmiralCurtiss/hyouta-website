@@ -162,9 +162,9 @@ class db {
 		return $lines;
 	}
 	
-	function GetSkitIndexHtml() {
+	function GetSkitIndex() {
 		$args = array();
-		$s = 'SELECT html FROM SkitMeta ';
+		$s = 'SELECT skitId, categoryStr, jpName, enName, charHtml, changeStatus FROM SkitMeta ';
 		$s .= 'ORDER BY id ASC';
 		
 		$stmt = $this->conn->prepare( $s );
@@ -172,7 +172,7 @@ class db {
 		
 		$skit = array();
 		while( $r = $stmt->fetch() ) {
-			$skit[] = $r['html'];
+			$skit[] = new skitMetaForIndex( $r['skitId'], $r['categoryStr'], $r['jpName'], $r['enName'], $r['charHtml'], $r['changeStatus'] );
 		}
 		return $skit;
 	}
