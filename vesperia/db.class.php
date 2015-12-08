@@ -123,7 +123,7 @@ class db {
 	
 	function GetSkit( $skitId ) {
 		$args = array();
-		$s = 'SELECT jpChar, enChar, jpText, enText FROM SkitText ';
+		$s = 'SELECT jpChar, enChar, jpText, enText, changeStatus FROM SkitText ';
 		$s .= 'WHERE skitId = :searchId ';
 		$args['searchId'] = $skitId;
 		$s .= 'ORDER BY displayOrder ASC';
@@ -133,14 +133,14 @@ class db {
 		
 		$lines = array();
 		while( $r = $stmt->fetch() ) {
-			$lines[] = new skitLine( $skitId, $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'] );
+			$lines[] = new skitLine( $skitId, $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], $r['changeStatus'] );
 		}
 		return $lines;
 	}
 	
 	function SearchSkit( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT SQL_CALC_FOUND_ROWS skitId, jpChar, enChar, jpText, enText FROM SkitText ';
+		$s = 'SELECT SQL_CALC_FOUND_ROWS skitId, jpChar, enChar, jpText, enText, changeStatus FROM SkitText ';
 		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
 		$s .= 'OR jpSearchFuri LIKE :searchF ';
 		$s .= 'OR enSearch LIKE :searchE ';
@@ -157,7 +157,7 @@ class db {
 		
 		$lines = array();
 		while( $r = $stmt->fetch() ) {
-			$lines[] = new skitLine( $r['skitId'], $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'] );
+			$lines[] = new skitLine( $r['skitId'], $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], $r['changeStatus'] );
 		}
 		return $lines;
 	}

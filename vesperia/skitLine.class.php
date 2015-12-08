@@ -5,13 +5,15 @@ class skitLine {
 	var $enChar;
 	var $jpText;
 	var $enText;
+	var $changeStatus;
 	
-	function __construct( $skitId, $jpChar, $jpText, $enChar, $enText ) {
+	function __construct( $skitId, $jpChar, $jpText, $enChar, $enText, $changeStatus ) {
 		$this->skitId = $skitId;
 		$this->jpChar = $jpChar;
 		$this->enChar = $enChar;
 		$this->jpText = $jpText;
 		$this->enText = $enText;
+		$this->changeStatus = $changeStatus;
 	}
 	
 	function GetEnName() {
