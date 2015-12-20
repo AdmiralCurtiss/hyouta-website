@@ -6,17 +6,19 @@ class scenario {
 	var $jpText;
 	var $enName;
 	var $enText;
+	var $changeStatus;
 	
-	function __construct( $episodeId, $type, $jpName, $jpText, $enName, $enText ) {
+	function __construct( $episodeId, $type, $jpName, $jpText, $enName, $enText, $changeStatus ) {
 		$this->episodeId = $episodeId;
 		$this->type = $type;
 		$this->jpName = $jpName;
 		$this->jpText = $jpText;
 		$this->enName = $enName;
 		$this->enText = $enText;
+		$this->changeStatus = $changeStatus;
 	}
 	
-	function Render() {
+	function Render( $markVersionDifferences ) {
 	?>
 <div class="storyLine">
 	<div class="storyBlock">
@@ -59,17 +61,19 @@ class scenarioMeta {
 	var $parentId;
 	var $episodeId;
 	var $description;
+	var $changeStatus;
 	
-	function __construct( $id, $type, $sceneGroup, $parentId, $episodeId, $description ) {
-		$this->id          = $id;
-		$this->type        = $type;
-		$this->sceneGroup  = $sceneGroup;
-		$this->parentId    = $parentId;
-		$this->episodeId   = $episodeId;
-		$this->description = $description;
+	function __construct( $id, $type, $sceneGroup, $parentId, $episodeId, $description, $changeStatus ) {
+		$this->id             = $id;
+		$this->type           = $type;
+		$this->sceneGroup     = $sceneGroup;
+		$this->parentId       = $parentId;
+		$this->episodeId      = $episodeId;
+		$this->description    = $description;
+		$this->changeStatus   = $changeStatus;
 	}
 	
-	public static function RenderIndex( $version, $scenarioMetadata, $currentEpisodeId = null ) {
+	public static function RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $currentEpisodeId = null ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;

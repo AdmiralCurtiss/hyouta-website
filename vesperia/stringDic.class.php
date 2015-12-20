@@ -10,7 +10,7 @@ class stringDicEntry {
 		$this->enText = $enText;
 	}
 	
-	function Render() {
+	function Render( $markVersionDifferences ) {
 	?>
 <div class="storyLine">
 	<div class="storyBlock">

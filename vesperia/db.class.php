@@ -28,7 +28,7 @@ class db {
 	
 	function GetScenarioIndex( $type ) {
 		$args = array();
-		$s = 'SELECT id, sceneGroup, parent, episodeId, description FROM ScenarioMeta ';
+		$s = 'SELECT id, sceneGroup, parent, episodeId, description, changeStatus FROM ScenarioMeta ';
 		$s .= 'WHERE type = :type ';
 		$args['type'] = $type;
 		$s .= 'ORDER BY id ASC'; // should be "sceneGroup ASC, id ASC" but due to how this table is generated gives the same result
@@ -38,14 +38,14 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenarioMeta( $r['id'], $type, $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'] );
+			$sce[] = new scenarioMeta( $r['id'], $type, $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'], (int)$r['changeStatus'] );
 		}
 		return $sce;
 	}
 	
 	function GetScenarioMetaFromEpisodeId( $episodeId ) {
 		$args = array();
-		$s = 'SELECT id, type, sceneGroup, parent, description FROM ScenarioMeta ';
+		$s = 'SELECT id, type, sceneGroup, parent, description, changeStatus FROM ScenarioMeta ';
 		$s .= 'WHERE episodeId = :episodeId';
 		$args['episodeId'] = $episodeId;
 		
@@ -53,14 +53,14 @@ class db {
 		$stmt->execute( $args );
 		
 		if( $r = $stmt->fetch() ) {
-			return new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $episodeId, $r['description'] );
+			return new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $episodeId, $r['description'], (int)$r['changeStatus'] );
 		}
 		return null;
 	}
 	
 	function GetScenarioMetaGroupRange( $type, $groupBegin, $groupEnd ) {
 		$args = array();
-		$s = 'SELECT id, type, sceneGroup, parent, episodeId, description FROM ScenarioMeta ';
+		$s = 'SELECT id, type, sceneGroup, parent, episodeId, description, changeStatus FROM ScenarioMeta ';
 		$s .= 'WHERE type = :type AND sceneGroup >= :groupBegin AND sceneGroup <= :groupEnd ';
 		$args['type'] = $type;
 		$args['groupBegin'] = $groupBegin;
@@ -72,14 +72,14 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'] );
+			$sce[] = new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'], (int)$r['changeStatus'] );
 		}
 		return $sce;
 	}
 	
 	function GetScenario( $episodeId ) {
 		$args = array();
-		$s = 'SELECT type, jpName, jpText, enName, enText FROM ScenarioDat ';
+		$s = 'SELECT type, jpName, jpText, enName, enText, changeStatus FROM ScenarioDat ';
 		$s .= 'WHERE episodeId = :searchId ';
 		$args['searchId'] = $episodeId;
 		$s .= 'ORDER BY displayOrder ASC';
@@ -89,14 +89,14 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenario( $episodeId, (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
+			$sce[] = new scenario( $episodeId, (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'], (int)$r['changeStatus'] );
 		}
 		return $sce;
 	}
 	
 	function SearchScenario( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT SQL_CALC_FOUND_ROWS episodeId, type, jpName, jpText, enName, enText FROM ScenarioDat ';
+		$s = 'SELECT SQL_CALC_FOUND_ROWS episodeId, type, jpName, jpText, enName, enText, changeStatus FROM ScenarioDat ';
 		// this would be proper but doesn't work well with japanese, unfortunately...
 		//$s .= 'WHERE MATCH(jpSearchKanji, jpSearchFuri, enSearch) AGAINST (:search) ';
 		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
@@ -116,7 +116,7 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenario( $r['episodeId'], (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'] );
+			$sce[] = new scenario( $r['episodeId'], (int)$r['type'], $r['jpName'], $r['jpText'], $r['enName'], $r['enText'], (int)$r['changeStatus'] );
 		}
 		return $sce;
 	}
@@ -133,7 +133,7 @@ class db {
 		
 		$lines = array();
 		while( $r = $stmt->fetch() ) {
-			$lines[] = new skitLine( $skitId, $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], $r['changeStatus'] );
+			$lines[] = new skitLine( $skitId, $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], (int)$r['changeStatus'] );
 		}
 		return $lines;
 	}
@@ -157,7 +157,7 @@ class db {
 		
 		$lines = array();
 		while( $r = $stmt->fetch() ) {
-			$lines[] = new skitLine( $r['skitId'], $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], $r['changeStatus'] );
+			$lines[] = new skitLine( $r['skitId'], $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], (int)$r['changeStatus'] );
 		}
 		return $lines;
 	}
@@ -172,7 +172,7 @@ class db {
 		
 		$skit = array();
 		while( $r = $stmt->fetch() ) {
-			$skit[] = new skitMetaForIndex( $r['skitId'], $r['categoryStr'], $r['jpName'], $r['enName'], $r['charHtml'], $r['changeStatus'] );
+			$skit[] = new skitMetaForIndex( $r['skitId'], $r['categoryStr'], $r['jpName'], $r['enName'], $r['charHtml'], (int)$r['changeStatus'] );
 		}
 		return $skit;
 	}

@@ -59,7 +59,7 @@ class skitLine {
 		}
 	}
 	
-	function Render() {
+	function Render( $markVersionDifferences ) {
 	?>
 <div class="storyLine">
 	<div class="skitIconAndText">

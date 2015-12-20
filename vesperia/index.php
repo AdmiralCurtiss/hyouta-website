@@ -52,6 +52,8 @@ $query = '';
 if ( isset($_GET['query']) ) { $query = $_GET['query']; }
 $page = 1;
 if ( isset($_GET['page']) ) { $page = (int)$_GET['page']; if ( $page < 1 ) { $page = 1; } }
+$markVersionDifferences = false;
+if ( isset($_GET['diff']) && $_GET['diff'] === 'true' ) { $markVersionDifferences = true; }
 
 echo '<html>';
 
@@ -91,7 +93,7 @@ if ( $section === 'search' ) {
 					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
 					$previousId = $s->episodeId;
 				}
-				$s->Render();
+				$s->Render( $markVersionDifferences );
 				--$entriesToGo;
 				++$totalEntriesPrinted;
 			}
@@ -107,7 +109,7 @@ if ( $section === 'search' ) {
 						echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
 						$previousId = $s->skitId;
 					}
-					$s->Render();
+					$s->Render( $markVersionDifferences );
 					--$entriesToGo;
 					++$totalEntriesPrinted;
 				}
@@ -120,7 +122,7 @@ if ( $section === 'search' ) {
 					if ( !empty($entries) ) {
 						echo '<div class="scenario-previous-next">Strings</div>';
 						foreach ( $entries as $e ) {
-							$e->Render();
+							$e->Render( $markVersionDifferences );
 							--$entriesToGo;
 							++$totalEntriesPrinted;
 						}
@@ -147,7 +149,7 @@ if ( $section === 'search' ) {
 	$scenarioMetadata = null;
 	if ( $thisScenarioMeta !== null ) {
 		$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $name );
+		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
 	}
 	
 	echo '<div class="scenario-content">';
@@ -160,7 +162,7 @@ if ( $section === 'search' ) {
 
 	echo '<div class="storyBox">';
 	foreach ( $sce as $s ) {
-		$s->Render();
+		$s->Render( $markVersionDifferences );
 	}
 	echo '</div>';
 	
@@ -176,7 +178,7 @@ if ( $section === 'search' ) {
 	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 	if ( $thisScenarioMeta !== null ) {
 		$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $name );
+		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
 	}
 	
 	$lines = $db->GetSkit( $name );
@@ -197,7 +199,7 @@ if ( $section === 'search' ) {
 	
 	echo '<div class="storyBox">';
 	foreach ( $lines as $s ) {
-		$s->Render();
+		$s->Render( $markVersionDifferences );
 	}
 	echo '</div>';
 	
@@ -206,11 +208,11 @@ if ( $section === 'search' ) {
 } elseif ( $section === 'scenario-index' ) {
 	print_top( $version, $allowVersionSelect, 'Story Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 1 );
-	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
+	ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences );
 } elseif ( $section === 'sidequest-index' ) {
 	print_top( $version, $allowVersionSelect, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
-	ScenarioMeta::RenderIndex( $version, $scenarioMetadata );
+	ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences );
 } elseif ( $section === 'skit-index' ) {
 	print_top( $version, $allowVersionSelect, 'Skit Index' );
 	echo '<table>';
