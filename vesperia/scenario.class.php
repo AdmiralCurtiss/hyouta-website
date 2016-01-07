@@ -134,25 +134,25 @@ class scenarioMeta {
 		echo '</div>';
 	}
 	
-	public static function RenderPreviousNext( $version, $scenarioMetadata, $currentEpisodeId ) {
+	public static function RenderPreviousNext( $version, $scenarioMetadata, $currentEpisodeId, $top, $allowVersionSelect ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
 		$currentIndex = null;
 		$previousIndex = null;
 		
-		echo '<div class="scenario-previous-next">';
+		$previousNextText = '<div class="scenario-previous-next">';
 		foreach ( $scenarioMetadata as $index => $scene ) {
 			if ( $currentEpisodeId === $scene->episodeId ) {
 				// print previous scene if possible
 				if ( $previousIndex !== null ) {
 					$s = $scenarioMetadata[$previousIndex];
-					echo '<span class="scenario-previous"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->description.'</a></span>';
-					echo ' - ';
+					$previousNextText .= '<span class="scenario-previous"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->description.'</a></span>';
+					$previousNextText .= ' - ';
 				}
 				
 				// print current
-				echo '<span class="scenario-selected">'.$scene->description.'</span>';
+				$previousNextText .= '<span class="scenario-selected">'.$scene->description.'</span>';
 				$currentIndex = $index;
 				
 				$currentDepth = 2;
@@ -172,8 +172,8 @@ class scenarioMeta {
 					$previousIndex = $index;
 				} else {
 					// print next
-					echo ' - ';
-					echo '<span class="scenario-next"><a href="?version='.$version.'&section=scenario&name='.$scene->episodeId.'">'.$scene->description.'</a></span>';
+					$previousNextText .= ' - ';
+					$previousNextText .= '<span class="scenario-next"><a href="?version='.$version.'&section=scenario&name='.$scene->episodeId.'">'.$scene->description.'</a></span>';
 					break;
 				}
 			} else if ( $scene->parentId === $sceneId ) {
@@ -181,7 +181,25 @@ class scenarioMeta {
 				$currDepth = 3;
 			}
 		}
-		echo '</div>';
+		$previousNextText .= '</div>';
+
+		$versionSelect = '<div>';
+		if ( $allowVersionSelect ) {
+			$versionSelect .= '<a href="?version=360&section=scenario&name='.$currentEpisodeId.'&diff=true">360</a>';
+			$versionSelect .= ' ';
+			$versionSelect .= '<a href="?version=ps3&section=scenario&name='.$currentEpisodeId.'&diff=true">PS3</a>';
+		}
+		$versionSelect .= '</div>';
+
+		if ( $allowVersionSelect && $top ) {
+			echo $versionSelect;
+		}
+
+		echo $previousNextText;
+
+		if ( $allowVersionSelect && !$top ) {
+			echo $versionSelect;
+		}
 	}
 }
 ?>

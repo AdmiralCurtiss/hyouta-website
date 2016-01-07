@@ -155,7 +155,7 @@ if ( $section === 'search' ) {
 	echo '<div class="scenario-content">';
 	
 	if ( $scenarioMetadata !== null ) {
-		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name );
+		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name, true, $allowVersionSelect );
 	}
 	
 	$sce = $db->GetScenario( $name );
@@ -167,7 +167,7 @@ if ( $section === 'search' ) {
 	echo '</div>';
 	
 	if ( $scenarioMetadata !== null ) {
-		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name );
+		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name, false, $allowVersionSelect );
 	}
 	
 	echo '</div>';
