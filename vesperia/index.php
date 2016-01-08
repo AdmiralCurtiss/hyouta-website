@@ -76,7 +76,15 @@ if ( $section === 'search' ) {
 			echo '<div class="scenario-previous-next">Skits</div>';
 			echo '<table>';
 			foreach ( $skits as $s ) {
-				echo $s;
+				echo '<tr>';
+				if ( $markVersionDifferences ) {
+					echo '<td>['.$s->changeStatus.']</td>';
+				}
+				echo '<td>'.$s->category.'</td>';
+				echo '<td><a href="?version='.$version.'&section=skit&name='.$s->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$s->jpName.'</a></td>';
+				echo '<td><a href="?version='.$version.'&section=skit&name='.$s->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$s->enName.'</a></td>';
+				echo '<td>'.$s->charHtml.'</td>';
+				echo '</tr>';
 				--$entriesToGo;
 				++$totalEntriesPrinted;
 			}

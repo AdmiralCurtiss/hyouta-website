@@ -195,7 +195,7 @@ class db {
 	
 	function SearchSkitNamesHtml( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM SkitMeta ';
+		$s = 'SELECT skitId, categoryStr, jpName, enName, charHtml, changeStatus FROM SkitMeta ';
 		$s .= 'WHERE jpName LIKE :searchJ ';
 		$s .= 'OR enName LIKE :searchE ';
 		$args['searchJ'] = '%'.$query.'%';
@@ -210,7 +210,7 @@ class db {
 		
 		$skit = array();
 		while( $r = $stmt->fetch() ) {
-			$skit[] = $r['html'];
+			$skit[] = new skitMetaForIndex( $r['skitId'], $r['categoryStr'], $r['jpName'], $r['enName'], $r['charHtml'], (int)$r['changeStatus'] );
 		}
 		return $skit;
 	}
