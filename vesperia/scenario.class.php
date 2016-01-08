@@ -120,10 +120,22 @@ class scenarioMeta {
 			}
 			
 			if ( $currentEpisodeId !== null && $currentEpisodeId === $scene->episodeId ) {
-				echo '<span class="scenario-selected">'.$scene->description.'</span>';
+				echo '<span class="scenario-selected';
+				if ( $markVersionDifferences ) {
+					echo ' changeStatusIndex'.$scene->changeStatus;
+				}
+				echo '">'.$scene->description.'</span>';
 			} else {
 				if ( $currDepth === 2 ) {
-					echo '<a href="?version='.$version.'&section=scenario&name='.$scene->episodeId.'">';
+					echo '<a href="?version='.$version.'&section=scenario&name='.$scene->episodeId;
+					if ( $markVersionDifferences ) {
+						echo '&diff=true';
+					}
+					echo '"';
+					if ( $markVersionDifferences ) {
+						echo ' class="changeStatusIndex'.$scene->changeStatus.'"';
+					}
+					echo '>';
 				} else if ( $currDepth === 3 ) {
 					echo '<a href="?version='.$version.'&section=skit&name='.$scene->episodeId.'">';
 				}
@@ -144,7 +156,7 @@ class scenarioMeta {
 		echo '</div>';
 	}
 	
-	public static function RenderPreviousNext( $version, $scenarioMetadata, $currentEpisodeId, $top, $allowVersionSelect ) {
+	public static function RenderPreviousNext( $version, $scenarioMetadata, $currentEpisodeId, $top, $allowVersionSelect, $markVersionDifferences ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
@@ -157,12 +169,20 @@ class scenarioMeta {
 				// print previous scene if possible
 				if ( $previousIndex !== null ) {
 					$s = $scenarioMetadata[$previousIndex];
-					$previousNextText .= '<span class="scenario-previous"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->description.'</a></span>';
+					$previousNextText .= '<span class="scenario-previous';
+					if ( $markVersionDifferences ) {
+						$previousNextText .= ' changeStatusIndex'.$s->changeStatus;
+					}
+					$previousNextText .= '"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$s->description.'</a></span>';
 					$previousNextText .= ' - ';
 				}
 				
 				// print current
-				$previousNextText .= '<span class="scenario-selected">'.$scene->description.'</span>';
+				$previousNextText .= '<span class="scenario-selected';
+				if ( $markVersionDifferences ) {
+					$previousNextText .= ' changeStatusIndex'.$scene->changeStatus;
+				}
+				$previousNextText .= '">'.$scene->description.'</span>';
 				$currentIndex = $index;
 				
 				$currentDepth = 2;
@@ -183,7 +203,11 @@ class scenarioMeta {
 				} else {
 					// print next
 					$previousNextText .= ' - ';
-					$previousNextText .= '<span class="scenario-next"><a href="?version='.$version.'&section=scenario&name='.$scene->episodeId.'">'.$scene->description.'</a></span>';
+					$previousNextText .= '<span class="scenario-next';
+					if ( $markVersionDifferences ) {
+						$previousNextText .= ' changeStatusIndex'.$scene->changeStatus;
+					}
+					$previousNextText .= '"><a href="?version='.$version.'&section=scenario&name='.$scene->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$scene->description.'</a></span>';
 					break;
 				}
 			} else if ( $scene->parentId === $sceneId ) {
