@@ -71,7 +71,11 @@ class skitLine {
 						<div class="charaSubSubContainerSkit"><?php echo $this->GetJpName() ?></div>
 					</div>
 				</div>
-				<div class="textJP textContainerSubSkit"><?php echo $this->jpText ?></div>
+				<div class="textJP textContainerSubSkit<?php
+					if ( $markVersionDifferences ) { echo ' changeStatusSkit'.$this->changeStatus; }
+				?>"><?php
+					echo $this->jpText;
+				?></div>
 			</div>
 		</div>
 	</div>
@@ -84,7 +88,11 @@ class skitLine {
 						<div class="charaSubSubContainerSkit"><?php echo $this->GetEnName() ?></div>
 					</div>
 				</div>
-				<div class="textEN textContainerSubSkit"><?php echo $this->enText ?></div>
+				<div class="textEN textContainerSubSkit<?php
+					if ( $markVersionDifferences ) { echo ' changeStatusSkit'.$this->changeStatus; }
+				?>"><?php
+					echo $this->enText;
+				?></div>
 			</div>
 		</div>
 	</div>

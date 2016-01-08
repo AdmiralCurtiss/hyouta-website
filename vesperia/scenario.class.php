@@ -30,7 +30,12 @@ class scenario {
 					<div class="charaSubSubContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->jpName ?></div>
 				</div>
 			</div>
-			<div class="textJP textContainerSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->jpText ?></div>
+			<div class="textJP textContainerSub<?php
+				if ( $this->type > 0 ) { echo $this->type; }
+				if ( $markVersionDifferences ) { echo ' changeStatus'.$this->changeStatus; }
+			?>"><?php
+				echo $this->jpText;
+			?></div>
 		</div>
 		</div>
 		<?php } ?>
@@ -44,7 +49,12 @@ class scenario {
 					<div class="charaSubSubContainer<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->enName ?></div>
 				</div>
 			</div>
-			<div class="textEN textContainerSub<?php if ( $this->type > 0 ) { echo $this->type; } ?>"><?php echo $this->enText ?></div>
+			<div class="textEN textContainerSub<?php
+				if ( $this->type > 0 ) { echo $this->type; }
+				if ( $markVersionDifferences ) { echo ' changeStatus'.$this->changeStatus; }
+			?>"><?php
+				echo $this->enText;
+			?></div>
 		</div>
 		</div>
 		<?php } ?>
