@@ -135,6 +135,18 @@ class skitMetaForIndex {
 		$this->charHtml = $charHtml;
 		$this->changeStatus = $changeStatus;
 	}
+
+	function RenderTableRow( $version, $markVersionDifferences ) {
+		echo '<tr>';
+		if ( $markVersionDifferences ) {
+			echo '<td>['.$this->changeStatus.']</td>';
+		}
+		echo '<td>'.$this->category.'</td>';
+		echo '<td><a href="?version='.$version.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->jpName.'</a></td>';
+		echo '<td><a href="?version='.$version.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->enName.'</a></td>';
+		echo '<td>'.$this->charHtml.'</td>';
+		echo '</tr>';
+	}
 }
 
 ?>
