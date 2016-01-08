@@ -194,7 +194,11 @@ if ( $section === 'search' ) {
 		echo '</div>';
 	}
 	
-	echo '<div>';
+	echo '<div';
+	if ( $markVersionDifferences ) {
+		echo ' class="changeStatusIndex'.$meta->changeStatus.'"';
+	}
+	echo '>';
 	if ( $meta !== null ) {
 		echo '<div class="skit-name">';
 		echo $meta->jpName;

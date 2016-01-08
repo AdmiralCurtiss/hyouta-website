@@ -108,14 +108,16 @@ class skitMeta {
 	var $enName;
 	var $jpCond;
 	var $enCond;
-	
-	function __construct( $category, $characterBitmask, $jpName, $enName, $jpCond, $enCond ) {
+	var $changeStatus;
+
+	function __construct( $category, $characterBitmask, $jpName, $enName, $jpCond, $enCond, $changeStatus ) {
 		$this->category = $category;
 		$this->characterBitmask = $characterBitmask;
 		$this->jpName = $jpName;
 		$this->enName = $enName;
 		$this->jpCond = $jpCond;
 		$this->enCond = $enCond;
+		$this->changeStatus = $changeStatus;
 	}
 }
 
@@ -137,10 +139,11 @@ class skitMetaForIndex {
 	}
 
 	function RenderTableRow( $version, $markVersionDifferences ) {
-		echo '<tr>';
+		echo '<tr';
 		if ( $markVersionDifferences ) {
-			echo '<td>['.$this->changeStatus.']</td>';
+			echo ' class="changeStatusIndex'.$this->changeStatus.'"';
 		}
+		echo '>';
 		echo '<td>'.$this->category.'</td>';
 		echo '<td><a href="?version='.$version.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->jpName.'</a></td>';
 		echo '<td><a href="?version='.$version.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->enName.'</a></td>';

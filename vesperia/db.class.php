@@ -179,7 +179,7 @@ class db {
 	
 	function GetSkitMeta( $skitId ) {
 		$args = array();
-		$s = 'SELECT category, characterBitmask, jpName, enName, jpCond, enCond FROM SkitMeta ';
+		$s = 'SELECT category, characterBitmask, jpName, enName, jpCond, enCond, changeStatus FROM SkitMeta ';
 		$s .= 'WHERE skitId = :searchId ';
 		$args['searchId'] = $skitId;
 		
@@ -187,7 +187,7 @@ class db {
 		$stmt->execute( $args );
 		
 		if ( $r = $stmt->fetch() ) {
-			$skit = new skitMeta( $r['category'], $r['characterBitmask'], $r['jpName'], $r['enName'], $r['jpCond'], $r['enCond'] );
+			$skit = new skitMeta( $r['category'], $r['characterBitmask'], $r['jpName'], $r['enName'], $r['jpCond'], $r['enCond'], (int)$r['changeStatus'] );
 			return $skit;
 		}
 		return null;
