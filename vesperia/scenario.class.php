@@ -128,6 +128,10 @@ class scenarioMeta {
 			} else {
 				if ( $currDepth === 2 ) {
 					echo '<a href="?version='.$version.'&section=scenario&name='.$scene->episodeId;
+				} else if ( $currDepth === 3 ) {
+					echo '<a href="?version='.$version.'&section=skit&name='.$scene->episodeId;
+				}
+				if ( $currDepth === 2 || $currDepth === 3 ) {
 					if ( $markVersionDifferences ) {
 						echo '&diff=true';
 					}
@@ -136,8 +140,6 @@ class scenarioMeta {
 						echo ' class="changeStatusIndex'.$scene->changeStatus.'"';
 					}
 					echo '>';
-				} else if ( $currDepth === 3 ) {
-					echo '<a href="?version='.$version.'&section=skit&name='.$scene->episodeId.'">';
 				}
 				
 				echo $scene->description;
