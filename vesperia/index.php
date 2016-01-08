@@ -194,6 +194,14 @@ if ( $section === 'search' ) {
 	
 	echo '<div class="scenario-content">';
 	
+	if ( $allowVersionSelect ) {
+		echo '<div>';
+		echo '<a href="?version=360&section=skit&name='.$name.'&diff=true">360</a>';
+		echo ' ';
+		echo '<a href="?version=ps3&section=skit&name='.$name.'&diff=true">PS3</a>';
+		echo '</div>';
+	}
+	
 	echo '<div>';
 	if ( $meta !== null ) {
 		echo '<div class="skit-name">';
