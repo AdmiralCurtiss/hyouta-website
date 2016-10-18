@@ -39,7 +39,7 @@ function print_menu( $version ) {
 <a href="?version=<?php echo $version; ?>&section=items&category=8"><img src="item-categories/cat-08.png" title="Ingredients" height="32"></a>
 <a href="?version=<?php echo $version; ?>&section=items&category=9"><img src="item-categories/cat-09.png" title="Synthesis materials" height="32"></a>
 <a href="?version=<?php echo $version; ?>&section=items&category=10"><img src="item-categories/cat-10.png" title="Valuables" height="32"></a>
-<a href="?version=<?php echo $version; ?>&section=items&category=11"><img src="item-categories/cat-11.png" title="Xbox LIVE" height="32"></a>
+<a href="?version=<?php echo $version; ?>&section=items&category=11"><img src="item-categories/cat-11.png" title="DLC" height="32"></a>
 
 <a href="?version=<?php echo $version; ?>&section=enemies&category=0"><img src="monster-categories/cat-0.png" title="Human Type" height="32"></a>
 <a href="?version=<?php echo $version; ?>&section=enemies&category=1"><img src="monster-categories/cat-1.png" title="Beast Type" height="32"></a>
