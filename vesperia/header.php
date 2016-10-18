@@ -24,6 +24,7 @@ function print_menu( $version ) {
 <!--<a href="?version=<?php echo $version; ?>&section=enemies"><img src="menu-icons/sub-13.png" title="Monster Book"></a>-->
 <!--<a href="?version=<?php echo $version; ?>&section=items"><img src="menu-icons/sub-11.png" title="Collector's Book"></a>-->
 <a href="?version=<?php echo $version; ?>&section=locations"><img src="menu-icons/sub-10.png" title="World Map"></a>
+<a href="?version=<?php echo $version; ?>&section=searchpoint"><img src="etc/U_ITEM_IRIKIAGRASS-64px.png" title="Search Points"></a>
 <a href="?version=<?php echo $version; ?>&section=records"><img src="menu-icons/sub-08.png" title="Records"></a>
 <a href="?version=<?php echo $version; ?>&section=settings"><img src="menu-icons/sub-07.png" title="Settings"></a>
 <a href="?version=<?php echo $version; ?>&section=gradeshop"><img src="item-categories/cat-01.png" title="Grade Shop"></a>

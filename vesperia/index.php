@@ -409,6 +409,22 @@ if ( $section === 'search' ) {
 	}
 	
 	echo '</table>';
+} elseif ( $section === 'searchpoint' ) {
+	print_top( $version, $allowVersionSelect, 'Search Points' );
+	echo '<img src="etc/'.$version.'/SearchPoint.jpg">';
+	echo '<hr>';
+	echo '<table>';
+	
+	$items = $db->GetSearchPointsHtml( $id );
+	$first = true;
+	foreach ( $items as $item ) {
+		if ( $first === true ) { $first = false; } else {
+			echo '<tr><td colspan="5"><hr></td></tr>';
+		}
+		echo $item;
+	}
+	
+	echo '</table>';
 } elseif ( $section === 'records' ) {
 	print_top( $version, $allowVersionSelect, 'Records' );
 	echo '<table>';

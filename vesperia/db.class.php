@@ -539,6 +539,27 @@ class db {
 		return $items;
 	}
 	
+	function GetSearchPointsHtml( $id = false ) {
+		$args = array();
+		$s = 'SELECT html FROM SearchPoints ';
+		if ( $id === false ) {
+			$s .= 'WHERE displayId >= 0 ';
+		} else {
+			$s .= 'WHERE gameId = :searchId ';
+			$args['searchId'] = $id;
+		}
+		$s .= 'ORDER BY displayId ASC';
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+	
 	function GetRecordsHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Records ';
