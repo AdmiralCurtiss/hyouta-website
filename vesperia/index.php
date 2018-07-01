@@ -54,6 +54,8 @@ $page = 1;
 if ( isset($_GET['page']) ) { $page = (int)$_GET['page']; if ( $page < 1 ) { $page = 1; } }
 $markVersionDifferences = false;
 if ( isset($_GET['diff']) && $_GET['diff'] === 'true' ) { $markVersionDifferences = true; }
+$showScenarioJumper = true;
+if ( isset($_GET['jump']) && $_GET['jump'] === 'false' ) { $showScenarioJumper = false; }
 
 echo '<html>';
 
@@ -145,11 +147,13 @@ if ( $section === 'search' ) {
 } elseif ( $section === 'scenario' ) {
 	print_top( $version, $allowVersionSelect, 'Scenario' );
 	
-	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 	$scenarioMetadata = null;
-	if ( $thisScenarioMeta !== null ) {
-		$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
+	if ( $showScenarioJumper ) {
+		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
+		if ( $thisScenarioMeta !== null ) {
+			$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
+			ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
+		}
 	}
 	
 	echo '<div class="scenario-content">';
@@ -175,10 +179,12 @@ if ( $section === 'search' ) {
 } elseif ( $section === 'skit' ) {
 	print_top( $version, $allowVersionSelect, 'Skit' );
 	
-	$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
-	if ( $thisScenarioMeta !== null ) {
-		$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-		ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
+	if ( $showScenarioJumper ) {
+		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
+		if ( $thisScenarioMeta !== null ) {
+			$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
+			ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
+		}
 	}
 	
 	$lines = $db->GetSkit( $name );
