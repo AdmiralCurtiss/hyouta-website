@@ -26,7 +26,7 @@ if ( $maintenance_mode ) {
 $version = 'ps3';
 $allowVersionSelect = false;
 if ( $allowVersionSelect && isset($_GET['version']) ) {
-	if ( $_GET['version'] == 'ps3' || $_GET['version'] == '360' ) {
+	if ( $_GET['version'] === 'ps3' || $_GET['version'] === '360' ) {
 		$version = $_GET['version'];
 	}
 }
@@ -126,7 +126,7 @@ if ( $section === 'search' ) {
 			$sceRows = $db->FoundRows();
 			$previousId = '';
 			foreach ( $sce as $s ) {
-				if ( $previousId != $s->episodeId ) {
+				if ( $previousId !== $s->episodeId ) {
 					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
 					$previousId = $s->episodeId;
 				}
@@ -140,7 +140,7 @@ if ( $section === 'search' ) {
 			$skitRows = $db->FoundRows();
 			$previousId = '';
 			foreach ( $skit as $s ) {
-				if ( $previousId != $s->skitId ) {
+				if ( $previousId !== $s->skitId ) {
 					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
 					$previousId = $s->skitId;
 				}
