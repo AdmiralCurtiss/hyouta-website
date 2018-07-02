@@ -56,38 +56,73 @@ $markVersionDifferences = false;
 if ( isset($_GET['diff']) && $_GET['diff'] === 'true' ) { $markVersionDifferences = true; }
 $showScenarioJumper = true;
 if ( isset($_GET['jump']) && $_GET['jump'] === 'false' ) { $showScenarioJumper = false; }
+$perPage = 0;
+if ( isset($_GET['perpage']) ) { $perPage = (int)$_GET['perpage']; }
 
 echo '<html>';
 
+function shouldSearch( $begin, $end, $offset, $count ) {
+	// need to check if range [begin, end[ includes any of [offset, (offset+count)[, so, uh...
+	return max( $begin, $offset ) - ( min( $end, ($offset+$count) ) - 1 ) <= 0;
+}
+
+function paginate( $pageNum, $itemsPerPage, $itemsTotal, $baseLink ) {
+	$totalPages = (int)ceil($itemsTotal / $itemsPerPage);
+
+	if ( $totalPages > 1 ) {
+		$pageString = '';
+		if ( $pageNum > 1 ) {
+			$pageString .= '<a href="'.$baseLink.'&page='.( $pageNum - 1 ).'&perpage='.$itemsPerPage.'">Previous Page</a> - ';
+		}
+		$pageString .= 'Page '.$pageNum.' of '.$totalPages;
+		if ( $pageNum < $totalPages ) {
+			$pageString .= ' - <a href="'.$baseLink.'&page='.( $pageNum + 1 ).'&perpage='.$itemsPerPage.'">Next Page</a>';
+		}
+		echo '<p>'.$pageString.'</p>';
+	}
+}
+
 if ( $section === 'search' ) {
 	print_top( $version, $allowVersionSelect, 'Search', $query );
-	$perPage = 15;
+	if ( $perPage <=   0 ) { $perPage =  50; }
+	if ( $perPage >  500 ) { $perPage = 500; }
 	$globalOffset = ( $page - 1 ) * $perPage;
 	$entriesToGo = $perPage;
-	$totalEntriesPrinted = 0;
-	
-	if ( strlen( $query ) >= 3 ) {
+
+	if ( strlen( $query ) >= 2 ) {
 		echo '<div class="scenario-content">';
 		echo '<div class="storyBox">';
-		
-		$localOffset = $globalOffset;
-		
-		$skits = $db->SearchSkitNamesHtml( $query, $localOffset, $entriesToGo );
-		$skitCount = $db->FoundRows();
-		if ( !empty($skits) ) {
+
+		$totalOffsetBegin = $globalOffset;
+		$totalOffsetEnd = $totalOffsetBegin + $perPage;
+
+		$totalSkitNameCount  = $db->SearchSkitNamesCount( $query );
+		$totalScenarioCount  = $db->SearchScenarioCount( $query );
+		$totalSkitCount      = $db->SearchSkitCount( $query );
+		$totalStringDicCount = $db->SearchStringDicCount( $query );
+
+		$indexOffsetSkitName  = 0;
+		$indexOffsetScenario  = $indexOffsetSkitName  + $totalSkitNameCount;
+		$indexOffsetSkit      = $indexOffsetScenario  + $totalScenarioCount;
+		$indexOffsetStringDic = $indexOffsetSkit      + $totalSkitCount;
+		$totalFoundEntries    = $indexOffsetStringDic + $totalStringDicCount;
+
+		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&section=search&query='.urlencode($query) );
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkitName, $totalSkitNameCount ) ) {
+			$skits = $db->SearchSkitNamesHtml( $query, max( 0, $totalOffsetBegin - $indexOffsetSkitName ), $entriesToGo );
+			$skitCount = $db->FoundRows();
 			echo '<div class="scenario-previous-next">Skits</div>';
 			echo '<table>';
 			foreach ( $skits as $s ) {
 				$s->RenderTableRow( $version, $markVersionDifferences );
 				--$entriesToGo;
-				++$totalEntriesPrinted;
 			}
 			echo '</table>';
 		}
-		
-		if ( $entriesToGo > 0 ) {
-			$localOffset -= $skitCount; if ( $localOffset < 0 ) { $localOffset = 0; }
-			$sce = $db->SearchScenario( $query, $localOffset, $entriesToGo );
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetScenario, $totalScenarioCount ) ) {
+			$sce = $db->SearchScenario( $query, max( 0, $totalOffsetBegin - $indexOffsetScenario ), $entriesToGo );
 			$sceRows = $db->FoundRows();
 			$previousId = '';
 			foreach ( $sce as $s ) {
@@ -97,50 +132,37 @@ if ( $section === 'search' ) {
 				}
 				$s->Render( $markVersionDifferences );
 				--$entriesToGo;
-				++$totalEntriesPrinted;
 			}
-			
-			if ( $entriesToGo > 0 ) {
-				$localOffset -= $sceRows; if ( $localOffset < 0 ) { $localOffset = 0; }
-				
-				$previousId = '';
-				$skit = $db->SearchSkit( $query, $localOffset, $entriesToGo );
-				$skitRows = $db->FoundRows();
-				foreach ( $skit as $s ) {
-					if ( $previousId != $s->skitId ) {
-						echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
-						$previousId = $s->skitId;
-					}
-					$s->Render( $markVersionDifferences );
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkit, $totalSkitCount ) ) {
+			$skit = $db->SearchSkit( $query, max( 0, $totalOffsetBegin - $indexOffsetSkit ), $entriesToGo );
+			$skitRows = $db->FoundRows();
+			$previousId = '';
+			foreach ( $skit as $s ) {
+				if ( $previousId != $s->skitId ) {
+					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
+					$previousId = $s->skitId;
+				}
+				$s->Render( $markVersionDifferences );
+				--$entriesToGo;
+			}
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetStringDic, $totalStringDicCount ) ) {
+			$entries = $db->SearchStringDic( $query, max( 0, $totalOffsetBegin - $indexOffsetStringDic ), $entriesToGo );
+			$stringRows = $db->FoundRows();
+			if ( !empty($entries) ) {
+				echo '<div class="scenario-previous-next">Strings</div>';
+				foreach ( $entries as $e ) {
+					$e->Render( $markVersionDifferences );
 					--$entriesToGo;
-					++$totalEntriesPrinted;
-				}
-				
-				if ( $entriesToGo > 0 ) {
-					$localOffset -= $skitRows; if ( $localOffset < 0 ) { $localOffset = 0; }
-					
-					$entries = $db->SearchStringDic( $query, $localOffset, $entriesToGo );
-					$stringRows = $db->FoundRows();
-					if ( !empty($entries) ) {
-						echo '<div class="scenario-previous-next">Strings</div>';
-						foreach ( $entries as $e ) {
-							$e->Render( $markVersionDifferences );
-							--$entriesToGo;
-							++$totalEntriesPrinted;
-						}
-					}
-					
-					$localOffset -= $stringRows;
 				}
 			}
 		}
-		
-		// rather bad page detection, maybe fix later
-		// though this does less db queries since we don't check if skits/strings have stuff if we just ended a category with the last scenario/skit entry
-		if ( $totalEntriesPrinted === $perPage ) {
-			echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=search&query='.urlencode($query).'&page='.( $page + 1 ).'">Next Page</a></div>';
-		}
-		
+
+		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&section=search&query='.urlencode($query) );
+
 		echo '</div>';
 		echo '</div>';
 	}
@@ -372,24 +394,20 @@ if ( $section === 'search' ) {
 	echo '</table>';
 } elseif ( $section === 'items' ) {
 	print_top( $version, $allowVersionSelect, 'Items' );
-	
+
+	if ( $perPage <=   0 ) { $perPage = 120; }
+	if ( $perPage >  500 ) { $perPage = 500; }
+
 	$itemcount = $db->GetItemsCount( $id, $category, $icon );
-	$itemsPerPage = 250;
-	$offset = ($page - 1) * $itemsPerPage;
-	$items = $db->GetItemsHtml( $id, $category, $icon, $offset, $itemsPerPage );
-	
-	$totalPages = $itemcount % $itemsPerPage == 0 ? $itemcount / $itemsPerPage : (int)($itemcount / $itemsPerPage) + 1;
-	$pageString = 'Page '.$page.' of '.$totalPages;
-	if ( $itemcount > $offset + $itemsPerPage ) {
-		$pageString .= ' - <a href="?version='.$version.'&section=items';
-		if ( $category !== false ) { $pageString .= '&category='.$category; }
-		if ( $icon !== false ) { $pageString .= '&icon='.$icon; }
-		$pageString .= '&page='.( $page + 1 ).'">Next Page</a>';
-	}
-	$isMultipage = $itemcount > $itemsPerPage;
-	
-	if ( $isMultipage ) { echo '<p>'.$pageString.'</p>'; }
-	
+	$offset = ($page - 1) * $perPage;
+	$items = $db->GetItemsHtml( $id, $category, $icon, $offset, $perPage );
+
+	$baselink = '?version='.$version.'&section=items';
+	if ( $category !== false ) { $baselink .= '&category='.$category; }
+	if ( $icon !== false ) { $baselink .= '&icon='.$icon; }
+
+	paginate( $page, $perPage, $itemcount, $baselink );
+
 	echo '<table>';
 	$first = true;
 	foreach ( $items as $item ) {
@@ -399,8 +417,8 @@ if ( $section === 'search' ) {
 		echo $item;
 	}
 	echo '</table>';
-	
-	if ( $isMultipage ) { echo '<p>'.$pageString.'</p>'; }
+
+	paginate( $page, $perPage, $itemcount, $baselink );
 } elseif ( $section === 'locations' ) {
 	print_top( $version, $allowVersionSelect, 'Locations' );
 	echo '<table>';

@@ -17,6 +17,15 @@ class db {
 		$this->conn->rollBack();
 	}
 	
+	function ExecuteAndReturnFirstValueAsInteger( $s, $args ) {
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		if ( $r = $stmt->fetch() ) {
+			return (int)$r[0];
+		}
+		return 0;
+	}
+
 	function FoundRows() {
 		$s = 'SELECT FOUND_ROWS()';
 		
@@ -96,7 +105,7 @@ class db {
 	
 	function SearchScenario( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT SQL_CALC_FOUND_ROWS episodeId, type, jpName, jpText, enName, enText, changeStatus FROM ScenarioDat ';
+		$s = 'SELECT episodeId, type, jpName, jpText, enName, enText, changeStatus FROM ScenarioDat ';
 		// this would be proper but doesn't work well with japanese, unfortunately...
 		//$s .= 'WHERE MATCH(jpSearchKanji, jpSearchFuri, enSearch) AGAINST (:search) ';
 		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
@@ -120,7 +129,19 @@ class db {
 		}
 		return $sce;
 	}
-	
+
+	function SearchScenarioCount( $query ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM ScenarioDat ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetSkit( $skitId ) {
 		$args = array();
 		$s = 'SELECT jpChar, enChar, jpText, enText, changeStatus FROM SkitText ';
@@ -140,7 +161,7 @@ class db {
 	
 	function SearchSkit( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT SQL_CALC_FOUND_ROWS skitId, jpChar, enChar, jpText, enText, changeStatus FROM SkitText ';
+		$s = 'SELECT skitId, jpChar, enChar, jpText, enText, changeStatus FROM SkitText ';
 		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
 		$s .= 'OR jpSearchFuri LIKE :searchF ';
 		$s .= 'OR enSearch LIKE :searchE ';
@@ -160,6 +181,18 @@ class db {
 			$lines[] = new skitLine( $r['skitId'], $r['jpChar'], $r['jpText'], $r['enChar'], $r['enText'], (int)$r['changeStatus'] );
 		}
 		return $lines;
+	}
+	
+	function SearchSkitCount( $query ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM SkitText ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 	
 	function GetSkitIndex() {
@@ -214,10 +247,20 @@ class db {
 		}
 		return $skit;
 	}
+
+	function SearchSkitNamesCount( $query ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM SkitMeta ';
+		$s .= 'WHERE jpName LIKE :searchJ ';
+		$s .= 'OR enName LIKE :searchE ';
+		$args['searchJ'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
 	
 	function SearchStringDic( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT SQL_CALC_FOUND_ROWS gameId, jpText, enText FROM StringDic ';
+		$s = 'SELECT gameId, jpText, enText FROM StringDic ';
 		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
 		$s .= 'OR jpSearchFuri LIKE :searchF ';
 		$s .= 'OR enSearch LIKE :searchE ';
@@ -237,6 +280,18 @@ class db {
 			$entries[] = new stringDicEntry( $r['gameId'], $r['jpText'], $r['enText'] );
 		}
 		return $entries;
+	}
+	
+	function SearchStringDicCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM StringDic ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 	
 	function GetArtesHtml( $id = false ) {
