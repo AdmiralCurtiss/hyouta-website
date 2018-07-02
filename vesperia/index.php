@@ -97,21 +97,39 @@ if ( $section === 'search' ) {
 		$totalOffsetEnd = $totalOffsetBegin + $perPage;
 
 		$totalSkitNameCount  = $db->SearchSkitNamesCount( $query );
+		$totalItemCount      = $db->SearchItemsCount( $query );
+		$totalEnemyCount     = $db->SearchEnemiesCount( $query );
+		$totalArteCount      = $db->SearchArtesCount( $query );
+		$totalSkillCount     = $db->SearchSkillsCount( $query );
+		$totalRecipeCount    = $db->SearchRecipesCount( $query );
+		$totalTitleCount     = $db->SearchTitlesCount( $query );
+		$totalSynopsisCount  = $db->SearchSynopsisCount( $query );
+		$totalBtlBookCount   = $db->SearchBattleBookCount( $query );
 		$totalScenarioCount  = $db->SearchScenarioCount( $query );
 		$totalSkitCount      = $db->SearchSkitCount( $query );
 		$totalStringDicCount = $db->SearchStringDicCount( $query );
 
 		$indexOffsetSkitName  = 0;
-		$indexOffsetScenario  = $indexOffsetSkitName  + $totalSkitNameCount;
+		$indexOffsetItem      = $indexOffsetSkitName  + $totalSkitNameCount;
+		$indexOffsetEnemy     = $indexOffsetItem      + $totalItemCount;
+		$indexOffsetArte      = $indexOffsetEnemy     + $totalEnemyCount;
+		$indexOffsetSkill     = $indexOffsetArte      + $totalArteCount;
+		$indexOffsetRecipe    = $indexOffsetSkill     + $totalSkillCount;
+		$indexOffsetTitle     = $indexOffsetRecipe    + $totalRecipeCount;
+		$indexOffsetSynopsis  = $indexOffsetTitle     + $totalTitleCount;
+		$indexOffsetBtlBook   = $indexOffsetSynopsis  + $totalSynopsisCount;
+		$indexOffsetScenario  = $indexOffsetBtlBook   + $totalBtlBookCount;
 		$indexOffsetSkit      = $indexOffsetScenario  + $totalScenarioCount;
 		$indexOffsetStringDic = $indexOffsetSkit      + $totalSkitCount;
 		$totalFoundEntries    = $indexOffsetStringDic + $totalStringDicCount;
 
 		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&section=search&query='.urlencode($query) );
 
+		echo '<div>Found '.$totalFoundEntries.' entries.</div>';
+
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkitName, $totalSkitNameCount ) ) {
 			$skits = $db->SearchSkitNamesHtml( $query, max( 0, $totalOffsetBegin - $indexOffsetSkitName ), $entriesToGo );
-			$skitCount = $db->FoundRows();
+			echo '<hr>';
 			echo '<div class="scenario-previous-next">Skits</div>';
 			echo '<table>';
 			foreach ( $skits as $s ) {
@@ -121,9 +139,131 @@ if ( $section === 'search' ) {
 			echo '</table>';
 		}
 
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetItem, $totalItemCount ) ) {
+			$items = $db->SearchItems( $query, max( 0, $totalOffsetBegin - $indexOffsetItem ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $items as $item ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="5"><hr></td></tr>';
+				}
+				echo $item;
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetEnemy, $totalEnemyCount ) ) {
+			$items = $db->SearchEnemies( $query, max( 0, $totalOffsetBegin - $indexOffsetEnemy ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $items as $item ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="7"><hr></td></tr>';
+				}
+				echo $item;
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetArte, $totalArteCount ) ) {
+			$artes = $db->SearchArtes( $query, max( 0, $totalOffsetBegin - $indexOffsetArte ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $artes as $a ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="5"><hr></td></tr>';
+				}
+				echo $a;
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkill, $totalSkillCount ) ) {
+			$items = $db->SearchSkills( $query, max( 0, $totalOffsetBegin - $indexOffsetSkill ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $items as $a ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="4"><hr></td></tr>';
+				}
+				echo $a;
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetRecipe, $totalRecipeCount ) ) {
+			$items = $db->SearchRecipes( $query, max( 0, $totalOffsetBegin - $indexOffsetRecipe ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $items as $item ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="4"><hr></td></tr>';
+				}
+				echo '<tr>';
+				echo $item;
+				echo '</tr>';
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetTitle, $totalTitleCount ) ) {
+			$items = $db->SearchTitles( $query, max( 0, $totalOffsetBegin - $indexOffsetTitle ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $items as $item ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="4"><hr></td></tr>';
+				}
+				echo $item;
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSynopsis, $totalSynopsisCount ) ) {
+			$items = $db->SearchSynopsis( $query, max( 0, $totalOffsetBegin - $indexOffsetSynopsis ), $entriesToGo );
+			echo '<hr>';
+			$first = true;
+			foreach ( $items as $item ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<hr>';
+				}
+				echo $item;
+				--$entriesToGo;
+			}
+		}
+
+		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetBtlBook, $totalBtlBookCount ) ) {
+			$items = $db->SearchBattleBook( $query, max( 0, $totalOffsetBegin - $indexOffsetBtlBook ), $entriesToGo );
+			echo '<hr>';
+			echo '<table>';
+			$first = true;
+			foreach ( $items as $item ) {
+				if ( $first === true ) { $first = false; } else {
+					echo '<tr><td colspan="2"><hr></td></tr>';
+				}
+				echo '<tr>';
+				echo $item;
+				echo '</tr>';
+				--$entriesToGo;
+			}
+			echo '</table>';
+		}
+
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetScenario, $totalScenarioCount ) ) {
+			echo '<hr>';
 			$sce = $db->SearchScenario( $query, max( 0, $totalOffsetBegin - $indexOffsetScenario ), $entriesToGo );
-			$sceRows = $db->FoundRows();
 			$previousId = '';
 			foreach ( $sce as $s ) {
 				if ( $previousId !== $s->episodeId ) {
@@ -136,8 +276,8 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkit, $totalSkitCount ) ) {
+			echo '<hr>';
 			$skit = $db->SearchSkit( $query, max( 0, $totalOffsetBegin - $indexOffsetSkit ), $entriesToGo );
-			$skitRows = $db->FoundRows();
 			$previousId = '';
 			foreach ( $skit as $s ) {
 				if ( $previousId !== $s->skitId ) {
@@ -150,8 +290,8 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetStringDic, $totalStringDicCount ) ) {
+			echo '<hr>';
 			$entries = $db->SearchStringDic( $query, max( 0, $totalOffsetBegin - $indexOffsetStringDic ), $entriesToGo );
-			$stringRows = $db->FoundRows();
 			if ( !empty($entries) ) {
 				echo '<div class="scenario-previous-next">Strings</div>';
 				foreach ( $entries as $e ) {

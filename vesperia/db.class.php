@@ -315,7 +315,44 @@ class db {
 		}
 		return $artes;
 	}
-	
+
+	function SearchArtes( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Artes ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$artes = array();
+		while( $r = $stmt->fetch() ) {
+			$a = $r['html'];
+			$artes[] = $a;
+		}
+		return $artes;
+	}
+
+	function SearchArtesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Artes ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetArtesByCharacterHtml( $character ) {
 		$args = array();
 		$s = 'SELECT html FROM Artes ';
@@ -353,7 +390,43 @@ class db {
 		}
 		return $items;
 	}
-	
+
+	function SearchSkills( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Skills ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchSkillsCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Skills ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetSkillsByCharacterHtml( $character ) {
 		$args = array();
 		$s = 'SELECT html FROM Skills ';
@@ -391,7 +464,43 @@ class db {
 		}
 		return $items;
 	}
-	
+
+	function SearchRecipes( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Recipes ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchRecipesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Recipes ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetShopsHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Shops ';
@@ -436,7 +545,43 @@ class db {
 		}
 		return $items;
 	}
-	
+
+	function SearchTitles( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Titles ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchTitlesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Titles ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetTitlesByCharacterHtml( $character ) {
 		$args = array();
 		$s = 'SELECT html FROM Titles ';
@@ -474,7 +619,43 @@ class db {
 		}
 		return $items;
 	}
-	
+
+	function SearchSynopsis( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Synopsis ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchSynopsisCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Synopsis ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetBattleBookHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM BattleBook ';
@@ -495,7 +676,43 @@ class db {
 		}
 		return $items;
 	}
-	
+
+	function SearchBattleBook( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM BattleBook ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchBattleBookCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM BattleBook ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetEnemiesHtml( $id = false, $category = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Enemies ';
@@ -519,7 +736,43 @@ class db {
 		}
 		return $items;
 	}
-	
+
+	function SearchEnemies( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Enemies ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchEnemiesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Enemies ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetItemsHtml( $id = false, $category = false, $icon = false, $rowOffset = 0, $rowCount = 250 ) {
 		$args = array();
 		$s = 'SELECT html FROM Items ';
@@ -546,7 +799,7 @@ class db {
 		}
 		return $items;
 	}
-	
+
 	function GetItemsCount( $id = false, $category = false, $icon = false ) {
 		$args = array();
 		$s = 'SELECT COUNT(1) AS cnt FROM Items ';
@@ -572,7 +825,43 @@ class db {
 		}
 		return -1;
 	}
-	
+
+	function SearchItems( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT html FROM Items ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		$s .= 'ORDER BY id ASC ';
+		$s .= 'LIMIT :offset, :rowcnt';
+		$args['offset'] = $offset;
+		$args['rowcnt'] = $rowcount;
+		
+		$stmt = $this->conn->prepare( $s );
+		$stmt->execute( $args );
+		
+		$items = array();
+		while( $r = $stmt->fetch() ) {
+			$items[] = $r['html'];
+		}
+		return $items;
+	}
+
+	function SearchItemsCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT COUNT(0) FROM Items ';
+		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+		$s .= 'OR jpSearchFuri LIKE :searchF ';
+		$s .= 'OR enSearch LIKE :searchE ';
+		$args['searchK'] = '%'.$query.'%';
+		$args['searchF'] = '%'.$query.'%';
+		$args['searchE'] = '%'.$query.'%';
+		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
+	}
+
 	function GetLocationsHtml( $id = false ) {
 		$args = array();
 		$s = 'SELECT html FROM Locations ';
