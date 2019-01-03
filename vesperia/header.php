@@ -26,12 +26,12 @@ function print_menu( $version, $locale, $compare ) {
 <!--<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies"><img src="menu-icons/sub-13.png" title="Monster Book"></a>-->
 <!--<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items"><img src="menu-icons/sub-11.png" title="Collector's Book"></a>-->
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=locations"><img src="menu-icons/sub-10.png" title="World Map"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=searchpoint"><img src="etc/U_ITEM_IRIKIAGRASS-64px.png" title="Search Points"></a>
+<?php if ( GameVersionLocale::HasSearchPoints( $version ) ) { ?> <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=searchpoint"><img src="etc/U_ITEM_IRIKIAGRASS-64px.png" title="Search Points"></a><?php } ?>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=records"><img src="menu-icons/sub-08.png" title="Records"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=settings"><img src="menu-icons/sub-07.png" title="Settings"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=gradeshop"><img src="item-categories/cat-01.png" title="Grade Shop"></a>
-<?php if ( $version !== '360' ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=necropolis"><img src="menu-icons/weather-4-64px.png" title="Necropolis of Nostalgia Maps"></a><?php } ?>
-<?php if ( $version !== '360' ) { ?> <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=trophies"><img src="trophies/gold.png" title="Trophies"></a><?php } ?>
+<?php if ( GameVersionLocale::HasNecropolis( $version ) ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=necropolis"><img src="menu-icons/weather-4-64px.png" title="Necropolis of Nostalgia Maps"></a><?php } ?>
+<?php if ( GameVersionLocale::HasTrophies( $version ) ) { ?> <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=trophies"><img src="trophies/gold.png" title="Trophies"></a><?php } ?>
 <br>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=2"><img src="item-categories/cat-02.png" title="Tools" height="32"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=3"><img src="item-categories/cat-03.png" title="Main" height="32"></a>
@@ -70,7 +70,7 @@ function print_menu( $version, $locale, $compare ) {
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=7"><img src="item-icons/ICON7.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=52"><img src="item-icons/ICON52.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=51"><img src="item-icons/ICON51.png" height="16" width="16"></a>
-<?php if ( $version !== '360' ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=53"><img src="item-icons/ICON53.png" height="16" width="16"></a> <?php } ?>
+<?php if ( GameVersionLocale::HasPatty( $version ) ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=53"><img src="item-icons/ICON53.png" height="16" width="16"></a> <?php } ?>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=9"><img src="item-icons/ICON9.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=16"><img src="item-icons/ICON16.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=18"><img src="item-icons/ICON18.png" height="16" width="16"></a>
@@ -78,7 +78,7 @@ function print_menu( $version, $locale, $compare ) {
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=17"><img src="item-icons/ICON17.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=19"><img src="item-icons/ICON19.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=10"><img src="item-icons/ICON10.png" height="16" width="16"></a>
-<?php if ( $version !== '360' ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=54"><img src="item-icons/ICON54.png" height="16" width="16"></a> <?php } ?>
+<?php if ( GameVersionLocale::HasPatty( $version )  ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=54"><img src="item-icons/ICON54.png" height="16" width="16"></a> <?php } ?>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=20"><img src="item-icons/ICON20.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=21"><img src="item-icons/ICON21.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=22"><img src="item-icons/ICON22.png" height="16" width="16"></a>
@@ -114,14 +114,10 @@ function print_menu( $version, $locale, $compare ) {
 <?php
 }
 
-function print_top( $version, $locale, $compare, $allowVersionSelect, $category, $query = '' ) {
+function print_top( $version, $locale, $compare, $category, $query = '' ) {
 	print_header( $category );
 	echo '<body>';
-	if ( $allowVersionSelect ) {
-		echo '<div id="header-name">Tales of Vesperia - Data &amp; Translation Guide - <a href="?version=360">360</a> <a href="?version=ps3">PS3</a></div>';
-	} else {
-		echo '<div id="header-name"><a href=".">Tales of Vesperia - Data &amp; Translation Guide</a></div>';
-	}
+	echo '<div id="header-name"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'">Tales of Vesperia - Reference Guide</a></div>';
 	print_menu( $version, $locale, $compare );
 	echo '<div id="search">';
 	echo '<form method="get" action="index.php">';
@@ -152,7 +148,7 @@ function print_character_select( $version, $locale, $compare, $section ) {
 	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section='.$section.'&character=6"><img title="Judith" src="chara-icons/JUD.png"/></a>';
 	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section='.$section.'&character=7"><img title="Repede" src="chara-icons/RAP.png"/></a>';
 	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section='.$section.'&character=8"><img title="Flynn" src="chara-icons/FRE.png"/></a>';
-	if ( $version !== '360' ) {
+	if ( GameVersionLocale::HasPatty( $version ) ) {
 		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section='.$section.'&character=9"><img title="Patty" src="chara-icons/PAT.png"/></a>';
 	}
 	echo '</div>';

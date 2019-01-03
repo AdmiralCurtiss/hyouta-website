@@ -182,7 +182,7 @@ class scenarioMeta {
 		echo '</div>';
 	}
 	
-	public static function RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $currentEpisodeId, $top, $allowVersionSelect, $markVersionDifferences ) {
+	public static function RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $currentEpisodeId, $top, $markVersionDifferences ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
@@ -243,23 +243,7 @@ class scenarioMeta {
 		}
 		$previousNextText .= '</div>';
 
-		$versionSelect = '<div>';
-		if ( $allowVersionSelect ) {
-			$versionSelect .= '<a href="?version=360&section=scenario&name='.$currentEpisodeId.'&diff=true">360</a>';
-			$versionSelect .= ' ';
-			$versionSelect .= '<a href="?version=ps3&section=scenario&name='.$currentEpisodeId.'&diff=true">PS3</a>';
-		}
-		$versionSelect .= '</div>';
-
-		if ( $allowVersionSelect && $top ) {
-			echo $versionSelect;
-		}
-
 		echo $previousNextText;
-
-		if ( $allowVersionSelect && !$top ) {
-			echo $versionSelect;
-		}
 	}
 }
 ?>
