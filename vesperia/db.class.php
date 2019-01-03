@@ -2,6 +2,7 @@
 require_once 'scenario.class.php';
 require_once 'skitLine.class.php';
 require_once 'stringDic.class.php';
+require_once 'util.php';
 
 class db {
 	var $conn;
@@ -37,7 +38,7 @@ class db {
 	
 	function GetScenarioIndex( $type ) {
 		$args = array();
-		$s = 'SELECT id, sceneGroup, parent, episodeId, description, changeStatus FROM ScenarioMeta ';
+		$s = 'SELECT id, sceneGroup, parent, episodeId, descriptionJ, descriptionE, changeStatus FROM ScenarioMeta ';
 		$s .= 'WHERE type = :type ';
 		$args['type'] = $type;
 		$s .= 'ORDER BY id ASC'; // should be "sceneGroup ASC, id ASC" but due to how this table is generated gives the same result
@@ -47,14 +48,14 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenarioMeta( $r['id'], $type, $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'], (int)$r['changeStatus'] );
+			$sce[] = new scenarioMeta( $r['id'], $type, $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['descriptionJ'], $r['descriptionE'], (int)$r['changeStatus'] );
 		}
 		return $sce;
 	}
 	
 	function GetScenarioMetaFromEpisodeId( $episodeId ) {
 		$args = array();
-		$s = 'SELECT id, type, sceneGroup, parent, description, changeStatus FROM ScenarioMeta ';
+		$s = 'SELECT id, type, sceneGroup, parent, descriptionJ, descriptionE, changeStatus FROM ScenarioMeta ';
 		$s .= 'WHERE episodeId = :episodeId';
 		$args['episodeId'] = $episodeId;
 		
@@ -62,14 +63,14 @@ class db {
 		$stmt->execute( $args );
 		
 		if( $r = $stmt->fetch() ) {
-			return new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $episodeId, $r['description'], (int)$r['changeStatus'] );
+			return new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $episodeId, $r['descriptionJ'], $r['descriptionE'], (int)$r['changeStatus'] );
 		}
 		return null;
 	}
 	
 	function GetScenarioMetaGroupRange( $type, $groupBegin, $groupEnd ) {
 		$args = array();
-		$s = 'SELECT id, type, sceneGroup, parent, episodeId, description, changeStatus FROM ScenarioMeta ';
+		$s = 'SELECT id, type, sceneGroup, parent, episodeId, descriptionJ, descriptionE, changeStatus FROM ScenarioMeta ';
 		$s .= 'WHERE type = :type AND sceneGroup >= :groupBegin AND sceneGroup <= :groupEnd ';
 		$args['type'] = $type;
 		$args['groupBegin'] = $groupBegin;
@@ -81,7 +82,7 @@ class db {
 		
 		$sce = array();
 		while( $r = $stmt->fetch() ) {
-			$sce[] = new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['description'], (int)$r['changeStatus'] );
+			$sce[] = new scenarioMeta( $r['id'], $r['type'], $r['sceneGroup'], $r['parent'], $r['episodeId'], $r['descriptionJ'], $r['descriptionE'], (int)$r['changeStatus'] );
 		}
 		return $sce;
 	}
@@ -103,18 +104,31 @@ class db {
 		return $sce;
 	}
 	
-	function SearchScenario( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
-		$args = array();
-		$s = 'SELECT episodeId, type, jpName, jpText, enName, enText, changeStatus FROM ScenarioDat ';
+	function AppendSearchArgs( $compare, &$s, &$args, $query ) {
 		// this would be proper but doesn't work well with japanese, unfortunately...
 		//$s .= 'WHERE MATCH(jpSearchKanji, jpSearchFuri, enSearch) AGAINST (:search) ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
 		//$args['search'] = $query;
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		if ( WantsJp($compare) ) {
+			$s .= 'WHERE jpSearchKanji LIKE :searchK ';
+			$s .= 'OR jpSearchFuri LIKE :searchF ';
+			$args['searchK'] = '%'.$query.'%';
+			$args['searchF'] = '%'.$query.'%';
+		}
+		if ( WantsEn($compare) ) {
+			if ( WantsJp($compare) ) {
+				$s .= 'OR';
+			} else {
+				$s .= 'WHERE';
+			}
+			$s .= ' enSearch LIKE :searchE ';
+			$args['searchE'] = '%'.$query.'%';
+		}
+	}
+	
+	function SearchScenario( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+		$args = array();
+		$s = 'SELECT episodeId, type, jpName, jpText, enName, enText, changeStatus FROM ScenarioDat ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY episodeId ASC, displayOrder ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -130,15 +144,10 @@ class db {
 		return $sce;
 	}
 
-	function SearchScenarioCount( $query ) {
+	function SearchScenarioCount( $compare, $query ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM ScenarioDat ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
@@ -159,15 +168,10 @@ class db {
 		return $lines;
 	}
 	
-	function SearchSkit( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchSkit( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT skitId, jpChar, enChar, jpText, enText, changeStatus FROM SkitText ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY skitId ASC, displayOrder ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -183,15 +187,10 @@ class db {
 		return $lines;
 	}
 	
-	function SearchSkitCount( $query ) {
+	function SearchSkitCount( $compare, $query ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM SkitText ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 	
@@ -226,13 +225,26 @@ class db {
 		return null;
 	}
 	
-	function SearchSkitNamesHtml( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function AppendSearchArgsNoKanjiFuriName( $compare, &$s, &$args, $query ) {
+		if ( WantsJp($compare) ) {
+			$s .= 'WHERE jpName LIKE :searchJ ';
+			$args['searchJ'] = '%'.$query.'%';
+		}
+		if ( WantsEn($compare) ) {
+			if ( WantsJp($compare) ) {
+				$s .= 'OR';
+			} else {
+				$s .= 'WHERE';
+			}
+			$s .= ' enName LIKE :searchE ';
+			$args['searchE'] = '%'.$query.'%';
+		}
+	}
+
+	function SearchSkitNamesHtml( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT skitId, categoryStr, jpName, enName, charHtml, changeStatus FROM SkitMeta ';
-		$s .= 'WHERE jpName LIKE :searchJ ';
-		$s .= 'OR enName LIKE :searchE ';
-		$args['searchJ'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgsNoKanjiFuriName( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -248,25 +260,17 @@ class db {
 		return $skit;
 	}
 
-	function SearchSkitNamesCount( $query ) {
+	function SearchSkitNamesCount( $compare, $query ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM SkitMeta ';
-		$s .= 'WHERE jpName LIKE :searchJ ';
-		$s .= 'OR enName LIKE :searchE ';
-		$args['searchJ'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgsNoKanjiFuriName( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 	
-	function SearchStringDic( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchStringDic( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT gameId, jpText, enText FROM StringDic ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -282,21 +286,24 @@ class db {
 		return $entries;
 	}
 	
-	function SearchStringDicCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchStringDicCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM StringDic ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 	
-	function GetArtesHtml( $id = false ) {
+	function GetHtmlColumnPostfix( $compare ) {
+		if ( $compare === '1' ) { return 'J'; }
+		if ( $compare === '2' ) { return 'E'; }
+		if ( $compare === 'c1' ) { return 'CJ'; }
+		if ( $compare === 'c2' ) { return 'CE'; }
+		die();
+	}
+	
+	function GetArtesHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Artes ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Artes ';
 		if ( $id === false ) {
 			$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character > 0 AND Artes.character <= 9 ) ';
 		} else {
@@ -316,15 +323,10 @@ class db {
 		return $artes;
 	}
 
-	function SearchArtes( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchArtes( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Artes ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Artes ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -341,21 +343,16 @@ class db {
 		return $artes;
 	}
 
-	function SearchArtesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchArtesCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Artes ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetArtesByCharacterHtml( $character ) {
+	function GetArtesByCharacterHtml( $compare, $character ) {
 		$args = array();
-		$s = 'SELECT html FROM Artes ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Artes ';
 		$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character = :searchChar ) ';
 		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
@@ -370,9 +367,9 @@ class db {
 		return $items;
 	}
 	
-	function GetSkillsHtml( $id = false ) {
+	function GetSkillsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Skills ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Skills ';
 		if ( $id === false ) {
 			$s .= 'WHERE learnableBy > 0 ';
 		} else {
@@ -391,15 +388,10 @@ class db {
 		return $items;
 	}
 
-	function SearchSkills( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchSkills( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Skills ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Skills ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -415,21 +407,16 @@ class db {
 		return $items;
 	}
 
-	function SearchSkillsCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchSkillsCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Skills ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetSkillsByCharacterHtml( $character ) {
+	function GetSkillsByCharacterHtml( $compare, $character ) {
 		$args = array();
-		$s = 'SELECT html FROM Skills ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Skills ';
 		$s .= 'WHERE ( learnableBy & ( 1 << ( :searchChar - 1 ) ) ) > 0 ';
 		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
@@ -444,9 +431,9 @@ class db {
 		return $items;
 	}
 	
-	function GetRecipesHtml( $id = false ) {
+	function GetRecipesHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Recipes ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Recipes ';
 		if ( $id === false ) {
 			$s .= 'WHERE id > 0 ';
 		} else {
@@ -465,15 +452,10 @@ class db {
 		return $items;
 	}
 
-	function SearchRecipes( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchRecipes( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Recipes ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Recipes ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -489,21 +471,16 @@ class db {
 		return $items;
 	}
 
-	function SearchRecipesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchRecipesCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Recipes ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetShopsHtml( $id = false ) {
+	function GetShopsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Shops ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Shops ';
 		if ( $id === false ) {
 			$s .= 'WHERE gameId > 1 ';
 		} else {
@@ -522,12 +499,12 @@ class db {
 		return $items;
 	}
 	
-	function GetTitlesHtml( $id = false ) {
+	function GetTitlesHtml( $compare, $id = false ) {
 		// gameId = 67 is an Estelle Title with 0 points that still shows up in-game in PS3
 		// consider checks for this a hack
 		
 		$args = array();
-		$s = 'SELECT html FROM Titles ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Titles ';
 		if ( $id === false ) {
 			$s .= 'WHERE gameId > 0 AND ( points > 0 OR gameId = 67 )';
 		} else {
@@ -546,15 +523,10 @@ class db {
 		return $items;
 	}
 
-	function SearchTitles( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchTitles( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Titles ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Titles ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -570,21 +542,16 @@ class db {
 		return $items;
 	}
 
-	function SearchTitlesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchTitlesCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Titles ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetTitlesByCharacterHtml( $character ) {
+	function GetTitlesByCharacterHtml( $compare, $character ) {
 		$args = array();
-		$s = 'SELECT html FROM Titles ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Titles ';
 		$s .= 'WHERE Titles.character = :searchChar AND ( points > 0 OR gameId = 67 ) ';
 		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
@@ -599,9 +566,9 @@ class db {
 		return $items;
 	}
 	
-	function GetSynopsisHtml( $id = false ) {
+	function GetSynopsisHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Synopsis ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Synopsis ';
 		if ( $id === false ) {
 			$s .= 'WHERE storyMax > 0 ';
 		} else {
@@ -620,15 +587,10 @@ class db {
 		return $items;
 	}
 
-	function SearchSynopsis( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchSynopsis( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Synopsis ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Synopsis ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -644,21 +606,16 @@ class db {
 		return $items;
 	}
 
-	function SearchSynopsisCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchSynopsisCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Synopsis ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetBattleBookHtml( $id = false ) {
+	function GetBattleBookHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM BattleBook ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM BattleBook ';
 		if ( $id === false ) {
 			$s .= 'WHERE id > 1 ';
 		} else {
@@ -677,15 +634,10 @@ class db {
 		return $items;
 	}
 
-	function SearchBattleBook( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchBattleBook( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM BattleBook ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM BattleBook ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -701,21 +653,16 @@ class db {
 		return $items;
 	}
 
-	function SearchBattleBookCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchBattleBookCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM BattleBook ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetEnemiesHtml( $id = false, $category = false ) {
+	function GetEnemiesHtml( $compare, $id = false, $category = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Enemies ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Enemies ';
 		if ( $id !== false ) {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -737,15 +684,10 @@ class db {
 		return $items;
 	}
 
-	function SearchEnemies( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchEnemies( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Enemies ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Enemies ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -761,21 +703,16 @@ class db {
 		return $items;
 	}
 
-	function SearchEnemiesCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchEnemiesCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Enemies ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetItemsHtml( $id = false, $category = false, $icon = false, $rowOffset = 0, $rowCount = 250 ) {
+	function GetItemsHtml( $compare, $id = false, $category = false, $icon = false, $rowOffset = 0, $rowCount = 250 ) {
 		$args = array();
-		$s = 'SELECT html FROM Items ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Items ';
 		if ( $id !== false ) {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -826,15 +763,10 @@ class db {
 		return -1;
 	}
 
-	function SearchItems( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchItems( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
-		$s = 'SELECT html FROM Items ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Items ';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		$s .= 'ORDER BY id ASC ';
 		$s .= 'LIMIT :offset, :rowcnt';
 		$args['offset'] = $offset;
@@ -850,21 +782,16 @@ class db {
 		return $items;
 	}
 
-	function SearchItemsCount( $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
+	function SearchItemsCount( $compare, $query, $offset = 0, $rowcount = PHP_INT_MAX ) {
 		$args = array();
 		$s = 'SELECT COUNT(0) FROM Items ';
-		$s .= 'WHERE jpSearchKanji LIKE :searchK ';
-		$s .= 'OR jpSearchFuri LIKE :searchF ';
-		$s .= 'OR enSearch LIKE :searchE ';
-		$args['searchK'] = '%'.$query.'%';
-		$args['searchF'] = '%'.$query.'%';
-		$args['searchE'] = '%'.$query.'%';
+		$this->AppendSearchArgs( $compare, $s, $args, $query );
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetLocationsHtml( $id = false ) {
+	function GetLocationsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Locations ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Locations ';
 		if ( $id === false ) {
 			$s .= 'WHERE category > 0 ';
 		} else {
@@ -883,9 +810,9 @@ class db {
 		return $items;
 	}
 	
-	function GetSearchPointsHtml( $id = false ) {
+	function GetSearchPointsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM SearchPoints ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM SearchPoints ';
 		if ( $id === false ) {
 			$s .= 'WHERE displayId >= 0 ';
 		} else {
@@ -904,9 +831,9 @@ class db {
 		return $items;
 	}
 	
-	function GetRecordsHtml( $id = false ) {
+	function GetRecordsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Records ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Records ';
 		if ( $id === false ) {
 			//$s .= 'WHERE id > 0 ';
 		} else {
@@ -925,9 +852,9 @@ class db {
 		return $items;
 	}
 	
-	function GetSettingsHtml( $id = false ) {
+	function GetSettingsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Settings ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Settings ';
 		if ( $id === false ) {
 			//$s .= 'WHERE id > 0 ';
 		} else {
@@ -946,9 +873,9 @@ class db {
 		return $items;
 	}
 	
-	function GetGradeShopHtml( $id = false ) {
+	function GetGradeShopHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM GradeShop ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM GradeShop ';
 		if ( $id === false ) {
 			$s .= 'WHERE cost > 0 ';
 		} else {
@@ -967,9 +894,9 @@ class db {
 		return $items;
 	}
 	
-	function GetTrophiesHtml( $id = false ) {
+	function GetTrophiesHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM Trophies ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Trophies ';
 		if ( $id !== false ) {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -986,11 +913,13 @@ class db {
 		return $items;
 	}
 	
-	function GetNecropolisHtml( $enemies = false, $map = false ) {
+	function GetNecropolisHtml( $compare, $enemies = false, $map = false ) {
 		$args = array();
-		$s = 'SELECT html';
+		$s = 'SELECT ';
 		if ( $enemies === true ) { 
-			$s .= 'Enemies AS html';
+			$s .= 'htmlEnemy'.$this->GetHtmlColumnPostfix($compare).' as html';
+		} else {
+			$s .= 'html'.$this->GetHtmlColumnPostfix($compare).' as html';
 		}
 		$s .= ' FROM NecropolisFloors ';
 		if ( $map !== false ) {
@@ -1009,9 +938,9 @@ class db {
 		return $items;
 	}
 	
-	function GetStrategySetHtml( $id = false ) {
+	function GetStrategySetHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM StrategySet ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM StrategySet ';
 		if ( $id === false ) {
 			//$s .= 'WHERE id > 0 ';
 		} else {
@@ -1030,9 +959,9 @@ class db {
 		return $items;
 	}
 	
-	function GetStrategyOptionsHtml( $id = false ) {
+	function GetStrategyOptionsHtml( $compare, $id = false ) {
 		$args = array();
-		$s = 'SELECT html FROM StrategyOptions ';
+		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM StrategyOptions ';
 		if ( $id === false ) {
 			//$s .= 'WHERE id > 0 ';
 		} else {

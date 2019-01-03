@@ -1,4 +1,6 @@
 <?php
+require_once 'util.php';
+
 class scenario {
 	var $episodeId;
 	var $type;
@@ -18,9 +20,10 @@ class scenario {
 		$this->changeStatus = $changeStatus;
 	}
 	
-	function Render( $markVersionDifferences ) {
+	function Render( $version, $locale, $compare, $markVersionDifferences ) {
 	?>
 <div class="storyLine">
+<?php if ( WantsJp($compare) ) { ?>
 	<div class="storyBlock">
 		<?php if ( $this->jpText !== '' ) { ?>
 		<div class="storyText<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
@@ -40,6 +43,8 @@ class scenario {
 		</div>
 		<?php } ?>
 	</div>
+<?php } ?>
+<?php if ( WantsEn($compare) ) { ?>
 	<div class="storyBlock">
 		<?php if ( $this->enText !== '' ) { ?>
 		<div class="storyText<?php if ( $this->type > 0 ) { echo $this->type; } ?>">
@@ -59,6 +64,7 @@ class scenario {
 		</div>
 		<?php } ?>
 	</div>
+<?php } ?>
 </div>
 	<?php
 	}
@@ -70,20 +76,38 @@ class scenarioMeta {
 	var $sceneGroup;
 	var $parentId;
 	var $episodeId;
-	var $description;
+	var $descriptionJ;
+	var $descriptionE;
 	var $changeStatus;
 	
-	function __construct( $id, $type, $sceneGroup, $parentId, $episodeId, $description, $changeStatus ) {
+	function __construct( $id, $type, $sceneGroup, $parentId, $episodeId, $descriptionJ, $descriptionE, $changeStatus ) {
 		$this->id             = $id;
 		$this->type           = $type;
 		$this->sceneGroup     = $sceneGroup;
 		$this->parentId       = $parentId;
 		$this->episodeId      = $episodeId;
-		$this->description    = $description;
+		$this->descriptionJ   = $descriptionJ;
+		$this->descriptionE   = $descriptionE;
 		$this->changeStatus   = $changeStatus;
 	}
 	
-	public static function RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $currentEpisodeId = null ) {
+	function GetDescriptionShort( $compare ) {
+		if ( $compare === '1' ) { return $this->descriptionJ; }
+		if ( $compare === '2' ) { return $this->descriptionE; }
+		if ( $compare === 'c1' ) { return $this->descriptionJ; }
+		if ( $compare === 'c2' ) { return $this->descriptionE; }
+		die();
+	}
+	function GetDescriptionLong( $compare ) {
+		if ( $compare === '1' ) { return $this->descriptionJ; }
+		if ( $compare === '2' ) { return $this->descriptionE; }
+		if ( $this->descriptionJ === $this->descriptionE ) { return $this->descriptionJ; }
+		if ( $compare === 'c1' ) { return $this->descriptionJ.' ('.$this->descriptionE.')'; }
+		if ( $compare === 'c2' ) { return $this->descriptionE.' ('.$this->descriptionJ.')'; }
+		die();
+	}
+	
+	public static function RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences, $currentEpisodeId = null ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
@@ -124,12 +148,12 @@ class scenarioMeta {
 				if ( $markVersionDifferences ) {
 					echo ' changeStatusIndex'.$scene->changeStatus;
 				}
-				echo '">'.$scene->description.'</span>';
+				echo '">'.$scene->GetDescriptionLong($compare).'</span>';
 			} else {
 				if ( $currDepth === 2 ) {
-					echo '<a href="?version='.$version.'&section=scenario&name='.$scene->episodeId;
+					echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$scene->episodeId;
 				} else if ( $currDepth === 3 ) {
-					echo '<a href="?version='.$version.'&section=skit&name='.$scene->episodeId;
+					echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$scene->episodeId;
 				}
 				if ( $currDepth === 2 || $currDepth === 3 ) {
 					if ( $markVersionDifferences ) {
@@ -142,7 +166,7 @@ class scenarioMeta {
 					echo '>';
 				}
 				
-				echo $scene->description;
+				echo $scene->GetDescriptionLong($compare);
 				
 				if ( $currDepth >= 2 ) {
 					echo '</a>';
@@ -158,7 +182,7 @@ class scenarioMeta {
 		echo '</div>';
 	}
 	
-	public static function RenderPreviousNext( $version, $scenarioMetadata, $currentEpisodeId, $top, $allowVersionSelect, $markVersionDifferences ) {
+	public static function RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $currentEpisodeId, $top, $allowVersionSelect, $markVersionDifferences ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
@@ -175,7 +199,7 @@ class scenarioMeta {
 					if ( $markVersionDifferences ) {
 						$previousNextText .= ' changeStatusIndex'.$s->changeStatus;
 					}
-					$previousNextText .= '"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$s->description.'</a></span>';
+					$previousNextText .= '"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$s->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$s->GetDescriptionShort($compare).'</a></span>';
 					$previousNextText .= ' - ';
 				}
 				
@@ -184,7 +208,7 @@ class scenarioMeta {
 				if ( $markVersionDifferences ) {
 					$previousNextText .= ' changeStatusIndex'.$scene->changeStatus;
 				}
-				$previousNextText .= '">'.$scene->description.'</span>';
+				$previousNextText .= '">'.$scene->GetDescriptionShort($compare).'</span>';
 				$currentIndex = $index;
 				
 				$currentDepth = 2;
@@ -209,7 +233,7 @@ class scenarioMeta {
 					if ( $markVersionDifferences ) {
 						$previousNextText .= ' changeStatusIndex'.$scene->changeStatus;
 					}
-					$previousNextText .= '"><a href="?version='.$version.'&section=scenario&name='.$scene->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$scene->description.'</a></span>';
+					$previousNextText .= '"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$scene->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$scene->GetDescriptionShort($compare).'</a></span>';
 					break;
 				}
 			} else if ( $scene->parentId === $sceneId ) {

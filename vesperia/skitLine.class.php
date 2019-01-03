@@ -1,4 +1,6 @@
 <?php
+require_once 'util.php';
+
 class skitLine {
 	var $skitId;
 	var $jpChar;
@@ -59,9 +61,10 @@ class skitLine {
 		}
 	}
 	
-	function Render( $markVersionDifferences ) {
+	function Render( $version, $locale, $compare, $markVersionDifferences ) {
 	?>
 <div class="storyLine">
+<?php if ( WantsJp($compare) ) { ?>
 	<div class="skitIconAndText">
 		<div class="skitIcon"><?php $this->RenderIcon( $this->jpChar ); ?></div>
 		<div class="skitBlock">
@@ -79,6 +82,8 @@ class skitLine {
 			</div>
 		</div>
 	</div>
+<?php } ?>
+<?php if ( WantsEn($compare) ) { ?>
 	<div class="skitIconAndText">
 		<div class="skitIcon"><?php $this->RenderIcon( $this->enChar ); ?></div>
 		<div class="skitBlock">
@@ -96,6 +101,7 @@ class skitLine {
 			</div>
 		</div>
 	</div>
+<?php } ?>
 </div>
 	<?php
 	}
@@ -138,15 +144,19 @@ class skitMetaForIndex {
 		$this->changeStatus = $changeStatus;
 	}
 
-	function RenderTableRow( $version, $markVersionDifferences ) {
+	function RenderTableRow( $version, $locale, $compare, $markVersionDifferences ) {
 		echo '<tr';
 		if ( $markVersionDifferences ) {
 			echo ' class="changeStatusIndex'.$this->changeStatus.'"';
 		}
 		echo '>';
 		echo '<td>'.$this->category.'</td>';
-		echo '<td><a href="?version='.$version.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->jpName.'</a></td>';
-		echo '<td><a href="?version='.$version.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->enName.'</a></td>';
+		if ( WantsJp($compare) ) {
+			echo '<td><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->jpName.'</a></td>';
+		}
+		if ( WantsEn($compare) ) {
+			echo '<td><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->enName.'</a></td>';
+		}
 		echo '<td>'.$this->charHtml.'</td>';
 		echo '</tr>';
 	}

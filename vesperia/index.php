@@ -6,6 +6,7 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 
+require_once 'util.php';
 require_once 'db.class.php';
 require_once 'scenario.class.php';
 require_once 'skitLine.class.php';
@@ -29,6 +30,15 @@ if ( $allowVersionSelect && isset($_GET['version']) ) {
 	if ( $_GET['version'] === 'ps3' || $_GET['version'] === '360' ) {
 		$version = $_GET['version'];
 	}
+}
+
+$locale = 'jp';
+$compare = 'c2';
+if ( isset($_GET['compare']) ) {
+	if ( $_GET['compare'] === '1' ) { $compare = '1'; } else
+	if ( $_GET['compare'] === '2' ) { $compare = '2'; } else
+	if ( $_GET['compare'] === 'c1' ) { $compare = 'c1'; } else
+	if ( $_GET['compare'] === 'c2' ) { $compare = 'c2'; }
 }
 
 include '../credentials.php';
@@ -83,7 +93,7 @@ function paginate( $pageNum, $itemsPerPage, $itemsTotal, $baseLink ) {
 }
 
 if ( $section === 'search' ) {
-	print_top( $version, $allowVersionSelect, 'Search', $query );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Search', $query );
 	if ( $perPage <=   0 ) { $perPage =  50; }
 	if ( $perPage >  500 ) { $perPage = 500; }
 	$globalOffset = ( $page - 1 ) * $perPage;
@@ -96,18 +106,18 @@ if ( $section === 'search' ) {
 		$totalOffsetBegin = $globalOffset;
 		$totalOffsetEnd = $totalOffsetBegin + $perPage;
 
-		$totalSkitNameCount  = $db->SearchSkitNamesCount( $query );
-		$totalItemCount      = $db->SearchItemsCount( $query );
-		$totalEnemyCount     = $db->SearchEnemiesCount( $query );
-		$totalArteCount      = $db->SearchArtesCount( $query );
-		$totalSkillCount     = $db->SearchSkillsCount( $query );
-		$totalRecipeCount    = $db->SearchRecipesCount( $query );
-		$totalTitleCount     = $db->SearchTitlesCount( $query );
-		$totalSynopsisCount  = $db->SearchSynopsisCount( $query );
-		$totalBtlBookCount   = $db->SearchBattleBookCount( $query );
-		$totalScenarioCount  = $db->SearchScenarioCount( $query );
-		$totalSkitCount      = $db->SearchSkitCount( $query );
-		$totalStringDicCount = $db->SearchStringDicCount( $query );
+		$totalSkitNameCount  = $db->SearchSkitNamesCount( $compare, $query );
+		$totalItemCount      = $db->SearchItemsCount( $compare, $query );
+		$totalEnemyCount     = $db->SearchEnemiesCount( $compare, $query );
+		$totalArteCount      = $db->SearchArtesCount( $compare, $query );
+		$totalSkillCount     = $db->SearchSkillsCount( $compare, $query );
+		$totalRecipeCount    = $db->SearchRecipesCount( $compare, $query );
+		$totalTitleCount     = $db->SearchTitlesCount( $compare, $query );
+		$totalSynopsisCount  = $db->SearchSynopsisCount( $compare, $query );
+		$totalBtlBookCount   = $db->SearchBattleBookCount( $compare, $query );
+		$totalScenarioCount  = $db->SearchScenarioCount( $compare, $query );
+		$totalSkitCount      = $db->SearchSkitCount( $compare, $query );
+		$totalStringDicCount = $db->SearchStringDicCount( $compare, $query );
 
 		$indexOffsetSkitName  = 0;
 		$indexOffsetItem      = $indexOffsetSkitName  + $totalSkitNameCount;
@@ -123,24 +133,24 @@ if ( $section === 'search' ) {
 		$indexOffsetStringDic = $indexOffsetSkit      + $totalSkitCount;
 		$totalFoundEntries    = $indexOffsetStringDic + $totalStringDicCount;
 
-		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&section=search&query='.urlencode($query) );
+		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=search&query='.urlencode($query) );
 
 		echo '<div>Found '.$totalFoundEntries.' entries.</div>';
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkitName, $totalSkitNameCount ) ) {
-			$skits = $db->SearchSkitNamesHtml( $query, max( 0, $totalOffsetBegin - $indexOffsetSkitName ), $entriesToGo );
+			$skits = $db->SearchSkitNamesHtml( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetSkitName ), $entriesToGo );
 			echo '<hr>';
 			echo '<div class="scenario-previous-next">Skits</div>';
 			echo '<table>';
 			foreach ( $skits as $s ) {
-				$s->RenderTableRow( $version, $markVersionDifferences );
+				$s->RenderTableRow( $version, $locale, $compare, $markVersionDifferences );
 				--$entriesToGo;
 			}
 			echo '</table>';
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetItem, $totalItemCount ) ) {
-			$items = $db->SearchItems( $query, max( 0, $totalOffsetBegin - $indexOffsetItem ), $entriesToGo );
+			$items = $db->SearchItems( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetItem ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -155,7 +165,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetEnemy, $totalEnemyCount ) ) {
-			$items = $db->SearchEnemies( $query, max( 0, $totalOffsetBegin - $indexOffsetEnemy ), $entriesToGo );
+			$items = $db->SearchEnemies( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetEnemy ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -170,7 +180,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetArte, $totalArteCount ) ) {
-			$artes = $db->SearchArtes( $query, max( 0, $totalOffsetBegin - $indexOffsetArte ), $entriesToGo );
+			$artes = $db->SearchArtes( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetArte ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -185,7 +195,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkill, $totalSkillCount ) ) {
-			$items = $db->SearchSkills( $query, max( 0, $totalOffsetBegin - $indexOffsetSkill ), $entriesToGo );
+			$items = $db->SearchSkills( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetSkill ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -200,7 +210,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetRecipe, $totalRecipeCount ) ) {
-			$items = $db->SearchRecipes( $query, max( 0, $totalOffsetBegin - $indexOffsetRecipe ), $entriesToGo );
+			$items = $db->SearchRecipes( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetRecipe ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -217,7 +227,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetTitle, $totalTitleCount ) ) {
-			$items = $db->SearchTitles( $query, max( 0, $totalOffsetBegin - $indexOffsetTitle ), $entriesToGo );
+			$items = $db->SearchTitles( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetTitle ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -232,7 +242,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSynopsis, $totalSynopsisCount ) ) {
-			$items = $db->SearchSynopsis( $query, max( 0, $totalOffsetBegin - $indexOffsetSynopsis ), $entriesToGo );
+			$items = $db->SearchSynopsis( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetSynopsis ), $entriesToGo );
 			echo '<hr>';
 			$first = true;
 			foreach ( $items as $item ) {
@@ -245,7 +255,7 @@ if ( $section === 'search' ) {
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetBtlBook, $totalBtlBookCount ) ) {
-			$items = $db->SearchBattleBook( $query, max( 0, $totalOffsetBegin - $indexOffsetBtlBook ), $entriesToGo );
+			$items = $db->SearchBattleBook( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetBtlBook ), $entriesToGo );
 			echo '<hr>';
 			echo '<table>';
 			$first = true;
@@ -263,89 +273,89 @@ if ( $section === 'search' ) {
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetScenario, $totalScenarioCount ) ) {
 			echo '<hr>';
-			$sce = $db->SearchScenario( $query, max( 0, $totalOffsetBegin - $indexOffsetScenario ), $entriesToGo );
+			$sce = $db->SearchScenario( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetScenario ), $entriesToGo );
 			$previousId = '';
 			foreach ( $sce as $s ) {
 				if ( $previousId !== $s->episodeId ) {
-					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
+					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
 					$previousId = $s->episodeId;
 				}
-				$s->Render( $markVersionDifferences );
+				$s->Render( $version, $locale, $compare, $markVersionDifferences );
 				--$entriesToGo;
 			}
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkit, $totalSkitCount ) ) {
 			echo '<hr>';
-			$skit = $db->SearchSkit( $query, max( 0, $totalOffsetBegin - $indexOffsetSkit ), $entriesToGo );
+			$skit = $db->SearchSkit( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetSkit ), $entriesToGo );
 			$previousId = '';
 			foreach ( $skit as $s ) {
 				if ( $previousId !== $s->skitId ) {
-					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
+					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
 					$previousId = $s->skitId;
 				}
-				$s->Render( $markVersionDifferences );
+				$s->Render( $version, $locale, $compare, $markVersionDifferences );
 				--$entriesToGo;
 			}
 		}
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetStringDic, $totalStringDicCount ) ) {
 			echo '<hr>';
-			$entries = $db->SearchStringDic( $query, max( 0, $totalOffsetBegin - $indexOffsetStringDic ), $entriesToGo );
+			$entries = $db->SearchStringDic( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetStringDic ), $entriesToGo );
 			if ( !empty($entries) ) {
 				echo '<div class="scenario-previous-next">Strings</div>';
 				foreach ( $entries as $e ) {
-					$e->Render( $markVersionDifferences );
+					$e->Render( $version, $locale, $compare, $markVersionDifferences );
 					--$entriesToGo;
 				}
 			}
 		}
 
-		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&section=search&query='.urlencode($query) );
+		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=search&query='.urlencode($query) );
 
 		echo '</div>';
 		echo '</div>';
 	}
 } elseif ( $section === 'scenario' ) {
-	print_top( $version, $allowVersionSelect, 'Scenario' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Scenario' );
 	
 	$scenarioMetadata = null;
 	if ( $showScenarioJumper ) {
 		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 		if ( $thisScenarioMeta !== null ) {
 			$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-			ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
+			ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences, $name );
 		}
 	}
 	
 	echo '<div class="scenario-content">';
 	
 	if ( $scenarioMetadata !== null ) {
-		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name, true, $allowVersionSelect, $markVersionDifferences );
+		ScenarioMeta::RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $name, true, $allowVersionSelect, $markVersionDifferences );
 	}
 	
 	$sce = $db->GetScenario( $name );
 
 	echo '<div class="storyBox">';
 	foreach ( $sce as $s ) {
-		$s->Render( $markVersionDifferences );
+		$s->Render( $version, $locale, $compare, $markVersionDifferences );
 	}
 	echo '</div>';
 	
 	if ( $scenarioMetadata !== null ) {
-		ScenarioMeta::RenderPreviousNext( $version, $scenarioMetadata, $name, false, $allowVersionSelect, $markVersionDifferences );
+		ScenarioMeta::RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $name, false, $allowVersionSelect, $markVersionDifferences );
 	}
 	
 	echo '</div>';
 	
 } elseif ( $section === 'skit' ) {
-	print_top( $version, $allowVersionSelect, 'Skit' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Skit' );
 	
 	if ( $showScenarioJumper ) {
 		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 		if ( $thisScenarioMeta !== null ) {
 			$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-			ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences, $name );
+			ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences, $name );
 		}
 	}
 	
@@ -368,69 +378,73 @@ if ( $section === 'search' ) {
 	}
 	echo '>';
 	if ( $meta !== null ) {
-		echo '<div class="skit-name">';
-		echo $meta->jpName;
-		echo '</div>';
-		echo '<div class="skit-name">';
-		echo $meta->enName;
-		echo '</div>';
+		if ( WantsJp($compare) ) {
+			echo '<div class="skit-name">';
+			echo $meta->jpName;
+			echo '</div>';
+		}
+		if ( WantsEn($compare) ) {
+			echo '<div class="skit-name">';
+			echo $meta->enName;
+			echo '</div>';
+		}
 	}
 	echo '</div>';
 	
 	echo '<div class="storyBox">';
 	foreach ( $lines as $s ) {
-		$s->Render( $markVersionDifferences );
+		$s->Render( $version, $locale, $compare, $markVersionDifferences );
 	}
 	echo '</div>';
 	
 	echo '</div>';
 	
 } elseif ( $section === 'scenario-index' ) {
-	print_top( $version, $allowVersionSelect, 'Story Index' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Story Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 1 );
-	ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences );
+	ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences );
 } elseif ( $section === 'sidequest-index' ) {
-	print_top( $version, $allowVersionSelect, 'Sidequest Index' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
-	ScenarioMeta::RenderIndex( $version, $scenarioMetadata, $markVersionDifferences );
+	ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences );
 } elseif ( $section === 'skit-index' ) {
-	print_top( $version, $allowVersionSelect, 'Skit Index' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Skit Index' );
 	echo '<table>';
 	
 	$skits = $db->GetSkitIndex();
 	foreach ( $skits as $s ) {
-		$s->RenderTableRow( $version, $markVersionDifferences );
+		$s->RenderTableRow( $version, $locale, $compare, $markVersionDifferences );
 	}
 	
 	echo '</table>';
 } elseif ( $section === 'artes' ) {
-	print_top( $version, $allowVersionSelect, 'Artes' );
-	print_character_select( $version, $section );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Artes' );
+	print_character_select( $version, $locale, $compare, $section );
 	echo '<table>';
 	
 	if ( $character === false ) {
-		$artes = $db->GetArtesHtml( $id );
+		$artes = $db->GetArtesHtml( $compare, $id );
 	} else {
-		$artes = $db->GetArtesByCharacterHtml( $character );
+		$artes = $db->GetArtesByCharacterHtml( $compare, $character );
 	}
 	$first = true;
 	foreach ( $artes as $a ) {
 		if ( $first === true ) { $first = false; } else {
-			echo '<tr><td colspan="5"><hr></td></tr>';
+			echo '<tr><td colspan="4"><hr></td></tr>';
 		}
 		echo $a;
 	}
 	
 	echo '</table>';
 } elseif ( $section === 'skills' ) {
-	print_top( $version, $allowVersionSelect, 'Skills' );
-	print_character_select( $version, $section );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Skills' );
+	print_character_select( $version, $locale, $compare, $section );
 	echo '<table>';
 	
 	if ( $character === false ) {
-		$skills = $db->GetSkillsHtml( $id );
+		$skills = $db->GetSkillsHtml( $compare, $id );
 	} else {
-		$skills = $db->GetSkillsByCharacterHtml( $character );
+		$skills = $db->GetSkillsByCharacterHtml( $compare, $character );
 	}
 	$first = true;
 	foreach ( $skills as $a ) {
@@ -442,10 +456,10 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'recipes' ) {
-	print_top( $version, $allowVersionSelect, 'Recipes' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Recipes' );
 	echo '<table>';
 	
-	$items = $db->GetRecipesHtml( $id );
+	$items = $db->GetRecipesHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -458,10 +472,10 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'shops' ) {
-	print_top( $version, $allowVersionSelect, 'Shops' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Shops' );
 	echo '<table>';
 	
-	$items = $db->GetShopsHtml( $id );
+	$items = $db->GetShopsHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -472,14 +486,14 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'titles' ) {
-	print_top( $version, $allowVersionSelect, 'Titles' );
-	print_character_select( $version, $section );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Titles' );
+	print_character_select( $version, $locale, $compare, $section );
 	echo '<table>';
 	
 	if ( $character === false ) {
-		$items = $db->GetTitlesHtml( $id );
+		$items = $db->GetTitlesHtml( $compare, $id );
 	} else {
-		$items = $db->GetTitlesByCharacterHtml( $character );
+		$items = $db->GetTitlesByCharacterHtml( $compare, $character );
 	}
 	$first = true;
 	foreach ( $items as $item ) {
@@ -491,9 +505,9 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'synopsis' ) {
-	print_top( $version, $allowVersionSelect, 'Synopsis' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Synopsis' );
 	
-	$items = $db->GetSynopsisHtml( $id );
+	$items = $db->GetSynopsisHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -503,10 +517,10 @@ if ( $section === 'search' ) {
 	}
 	
 } elseif ( $section === 'battlebook' ) {
-	print_top( $version, $allowVersionSelect, 'Battle Book' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Battle Book' );
 	echo '<table>';
 	
-	$items = $db->GetBattleBookHtml( $id );
+	$items = $db->GetBattleBookHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -519,10 +533,10 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'enemies' ) {
-	print_top( $version, $allowVersionSelect, 'Enemies' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Enemies' );
 	echo '<table>';
 	
-	$items = $db->GetEnemiesHtml( $id, $category );
+	$items = $db->GetEnemiesHtml( $compare, $id, $category );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -533,16 +547,16 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'items' ) {
-	print_top( $version, $allowVersionSelect, 'Items' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Items' );
 
 	if ( $perPage <=   0 ) { $perPage = 120; }
 	if ( $perPage >  500 ) { $perPage = 500; }
 
-	$itemcount = $db->GetItemsCount( $id, $category, $icon );
+	$itemcount = $db->GetItemsCount( $compare, $id, $category, $icon );
 	$offset = ($page - 1) * $perPage;
-	$items = $db->GetItemsHtml( $id, $category, $icon, $offset, $perPage );
+	$items = $db->GetItemsHtml( $compare, $id, $category, $icon, $offset, $perPage );
 
-	$baselink = '?version='.$version.'&section=items';
+	$baselink = '?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items';
 	if ( $category !== false ) { $baselink .= '&category='.$category; }
 	if ( $icon !== false ) { $baselink .= '&icon='.$icon; }
 
@@ -560,10 +574,10 @@ if ( $section === 'search' ) {
 
 	paginate( $page, $perPage, $itemcount, $baselink );
 } elseif ( $section === 'locations' ) {
-	print_top( $version, $allowVersionSelect, 'Locations' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Locations' );
 	echo '<table>';
 	
-	$items = $db->GetLocationsHtml( $id );
+	$items = $db->GetLocationsHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -574,12 +588,12 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'searchpoint' ) {
-	print_top( $version, $allowVersionSelect, 'Search Points' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Search Points' );
 	echo '<img src="etc/'.$version.'/SearchPoint.jpg">';
 	echo '<hr>';
 	echo '<table>';
 	
-	$items = $db->GetSearchPointsHtml( $id );
+	$items = $db->GetSearchPointsHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -590,20 +604,20 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'records' ) {
-	print_top( $version, $allowVersionSelect, 'Records' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Records' );
 	echo '<table>';
 	
-	$items = $db->GetRecordsHtml( $id );
+	$items = $db->GetRecordsHtml( $compare, $id );
 	foreach ( $items as $item ) {
 		echo $item;
 	}
 	
 	echo '</table>';
 } elseif ( $section === 'settings' ) {
-	print_top( $version, $allowVersionSelect, 'Settings' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Settings' );
 	echo '<table>';
 	
-	$items = $db->GetSettingsHtml( $id );
+	$items = $db->GetSettingsHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -614,10 +628,10 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'gradeshop' ) {
-	print_top( $version, $allowVersionSelect, 'Grade Shop' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Grade Shop' );
 	echo '<table>';
 	
-	$items = $db->GetGradeShopHtml( $id );
+	$items = $db->GetGradeShopHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -628,10 +642,10 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'trophies' ) {
-	print_top( $version, $allowVersionSelect, 'Trophies' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Trophies' );
 	echo '<table>';
 	
-	$items = $db->GetTrophiesHtml( $id );
+	$items = $db->GetTrophiesHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -642,10 +656,10 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'strategy' ) {
-	print_top( $version, $allowVersionSelect, 'Strategy' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Strategy' );
 	echo '<table>';
 	
-	$items = $db->GetStrategySetHtml( $id );
+	$items = $db->GetStrategySetHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -658,7 +672,7 @@ if ( $section === 'search' ) {
 	echo '<hr>';
 	echo '<table>';
 	
-	$items = $db->GetStrategyOptionsHtml( $id );
+	$items = $db->GetStrategyOptionsHtml( $compare, $id );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -669,7 +683,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'necropolis' ) {
-	print_top( $version, $allowVersionSelect, 'Necropolis of Nostalgia' );
+	print_top( $version, $locale, $compare, $allowVersionSelect, 'Necropolis of Nostalgia' );
 	
 	$stratumNames = array(
 		'A' => 'Firmament',
@@ -704,7 +718,7 @@ if ( $section === 'search' ) {
 			echo '</td>';
 			for ( $number = 1; $number <= 10; ++$number ) {
 				echo '<td>';
-				echo '<a href="?version='.$version.'&section=necropolis&map='.$letter.$number.'">'.$number.'</a>';
+				echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis&map='.$letter.$number.'">'.$number.'</a>';
 				echo '</td>';
 			}
 			echo '</tr>';
@@ -712,7 +726,7 @@ if ( $section === 'search' ) {
 		echo '</table>';
 		echo '</div>';
 	} else {
-		$items = $db->GetNecropolisHtml( $enemies, $map );
+		$items = $db->GetNecropolisHtml( $compare, $enemies, $map );
 		$first = true;
 		foreach ( $items as $item ) {
 			if ( $first === true ) { $first = false; } else {
@@ -723,13 +737,13 @@ if ( $section === 'search' ) {
 			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$stratumNames[$map_letter].' '.$map_number.'F ('.$map_letter.'-'.$map_number.')</div></th></tr>';
 			echo '<tr><th colspan="6">';
 			if ( $enemies === true ) {
-				echo '<a href="?version='.$version.'&section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
+				echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
 			} else {
 				echo 'General Info';
 			}
 			echo ' - ';
 			if ( $enemies !== true ) {
-				echo '<a href="?version='.$version.'&section=necropolis&map='.$map_letter.$map_number.'&enemies=true">Enemies</a>';
+				echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis&map='.$map_letter.$map_number.'&enemies=true">Enemies</a>';
 			} else {
 				echo 'Enemies';
 			}
@@ -741,7 +755,7 @@ if ( $section === 'search' ) {
 	}
 	
 } else {
-	print_top( $version, $allowVersionSelect, false );?>
+	print_top( $version, $locale, $compare, $allowVersionSelect, false );?>
 	<h1>Tales of Vesperia</h1>
 	<h2>Data &amp; Translation Guide</h2>
 	

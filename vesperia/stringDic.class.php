@@ -1,4 +1,6 @@
 <?php
+require_once 'util.php';
+
 class stringDicEntry {
 	var $gameId;
 	var $jpText;
@@ -10,9 +12,10 @@ class stringDicEntry {
 		$this->enText = $enText;
 	}
 	
-	function Render( $markVersionDifferences ) {
+	function Render( $version, $locale, $compare, $markVersionDifferences ) {
 	?>
 <div class="storyLine">
+<?php if ( WantsJp($compare) ) { ?>
 	<div class="storyBlock">
 		<div class="storyText">
 		<div class="storyTextSub">
@@ -20,6 +23,8 @@ class stringDicEntry {
 		</div>
 		</div>
 	</div>
+<?php } ?>
+<?php if ( WantsEn($compare) ) { ?>
 	<div class="storyBlock">
 		<div class="storyText">
 		<div class="storyTextSub">
@@ -27,6 +32,7 @@ class stringDicEntry {
 		</div>
 		</div>
 	</div>
+<?php } ?>
 </div>
 	<?php
 	}
