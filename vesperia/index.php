@@ -535,7 +535,7 @@ if ( $section === 'search' ) {
 	if ( $perPage <=   0 ) { $perPage = 120; }
 	if ( $perPage >  500 ) { $perPage = 500; }
 
-	$itemcount = $db->GetItemsCount( $compare, $id, $category, $icon );
+	$itemcount = $db->GetItemsCount( $id, $category, $icon );
 	$offset = ($page - 1) * $perPage;
 	$items = $db->GetItemsHtml( $compare, $id, $category, $icon, $offset, $perPage );
 
