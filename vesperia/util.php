@@ -22,7 +22,7 @@ class GameVersionLocale {
 	}
 
 	public static function HasSearchPoints( $version ) {
-		return $version === 'ps3v' || $version === 'ps3p';
+		return $version === 'ps3v' || $version === 'ps3p' || $version === 'pc';
 	}
 
 	public static function HasTrophies( $version ) {
@@ -30,11 +30,11 @@ class GameVersionLocale {
 	}
 
 	public static function HasNecropolis( $version ) {
-		return $version === 'ps3v' || $version === 'ps3p';
+		return $version === 'ps3v' || $version === 'ps3p' || $version === 'pc';
 	}
 
 	public static function HasPatty( $version ) {
-		return $version === 'ps3v' || $version === 'ps3p';
+		return $version === 'ps3v' || $version === 'ps3p' || $version === 'pc';
 	}
 
 	public static function GetVersions() {
@@ -46,6 +46,7 @@ class GameVersionLocale {
 		$l[] = new GameVersionLocale( '360e',  'de',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - German'  );
 		$l[] = new GameVersionLocale( 'ps3v',  'jp',   '1',             array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Japanese Version'      );
 		$l[] = new GameVersionLocale( 'ps3p',  'jp',   'c2',            array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Fan-Translation'       );
+		$l[] = new GameVersionLocale( 'pc',   'eng',   '2',             array( '1', '2', 'c1', 'c2' ), 'PC Version - English'                );
 		return $l;
 	}
 
@@ -70,7 +71,7 @@ class GameVersionLocale {
 		}
 		if ( !$foundversion ) {
 			// no valid version selected, fall back to sensible default
-			$version = 'ps3p';
+			$version = 'pc';
 		}
 
 		// see if valid locale was selected
