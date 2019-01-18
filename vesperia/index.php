@@ -97,7 +97,7 @@ if ( $section === 'search' ) {
 		$totalOffsetBegin = $globalOffset;
 		$totalOffsetEnd = $totalOffsetBegin + $perPage;
 
-		$totalSkitNameCount  = $db->SearchSkitNamesCount( $compare, $query );
+		$totalSkitNameCount  = GameVersionLocale::AllowScenario( $version ) ? $db->SearchSkitNamesCount( $compare, $query ) : 0;
 		$totalItemCount      = $db->SearchItemsCount( $compare, $query );
 		$totalEnemyCount     = $db->SearchEnemiesCount( $compare, $query );
 		$totalArteCount      = $db->SearchArtesCount( $compare, $query );
@@ -106,9 +106,9 @@ if ( $section === 'search' ) {
 		$totalTitleCount     = $db->SearchTitlesCount( $compare, $query );
 		$totalSynopsisCount  = $db->SearchSynopsisCount( $compare, $query );
 		$totalBtlBookCount   = $db->SearchBattleBookCount( $compare, $query );
-		$totalScenarioCount  = $db->SearchScenarioCount( $compare, $query );
-		$totalSkitCount      = $db->SearchSkitCount( $compare, $query );
-		$totalStringDicCount = $db->SearchStringDicCount( $compare, $query );
+		$totalScenarioCount  = GameVersionLocale::AllowScenario( $version ) ? $db->SearchScenarioCount( $compare, $query ) : 0;
+		$totalSkitCount      = GameVersionLocale::AllowScenario( $version ) ? $db->SearchSkitCount( $compare, $query ) : 0;
+		$totalStringDicCount = GameVersionLocale::AllowScenario( $version ) ? $db->SearchStringDicCount( $compare, $query ) : 0;
 
 		$indexOffsetSkitName  = 0;
 		$indexOffsetItem      = $indexOffsetSkitName  + $totalSkitNameCount;
@@ -307,7 +307,7 @@ if ( $section === 'search' ) {
 		echo '</div>';
 		echo '</div>';
 	}
-} elseif ( $section === 'scenario' ) {
+} elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'scenario' ) {
 	print_top( $version, $locale, $compare, 'Scenario' );
 	
 	$scenarioMetadata = null;
@@ -339,7 +339,7 @@ if ( $section === 'search' ) {
 	
 	echo '</div>';
 	
-} elseif ( $section === 'skit' ) {
+} elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'skit' ) {
 	print_top( $version, $locale, $compare, 'Skit' );
 	
 	if ( $showScenarioJumper ) {
@@ -382,15 +382,15 @@ if ( $section === 'search' ) {
 	
 	echo '</div>';
 	
-} elseif ( $section === 'scenario-index' ) {
+} elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'scenario-index' ) {
 	print_top( $version, $locale, $compare, 'Story Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 1 );
 	ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences );
-} elseif ( $section === 'sidequest-index' ) {
+} elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'sidequest-index' ) {
 	print_top( $version, $locale, $compare, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
 	ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences );
-} elseif ( $section === 'skit-index' ) {
+} elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'skit-index' ) {
 	print_top( $version, $locale, $compare, 'Skit Index' );
 	echo '<table>';
 	

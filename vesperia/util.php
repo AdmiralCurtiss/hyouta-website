@@ -37,6 +37,10 @@ class GameVersionLocale {
 		return $version === 'ps3v' || $version === 'ps3p' || $version === 'pc';
 	}
 
+	public static function AllowScenario( $version ) {
+		return $version === 'ps3p';
+	}
+
 	public static function GetVersions() {
 		$l = array();
 		//                            version  locale  default compare  valid compares                 user friendly long name

@@ -106,10 +106,10 @@ function print_menu( $version, $locale, $compare ) {
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=39"><img src="item-icons/ICON39.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=3"><img src="item-icons/ICON3.png" height="16" width="16"></a>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=40"><img src="item-icons/ICON40.png" height="16" width="16"></a>
-<br/>
+<?php if ( GameVersionLocale::AllowScenario( $version ) ) { ?><br/>
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=scenario-index">Story</a> / 
 <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=sidequest-index">Sidequests</a> / 
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=skit-index">Skits</a>
+<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=skit-index">Skits</a><?php } ?>
 </div>
 <?php
 }
