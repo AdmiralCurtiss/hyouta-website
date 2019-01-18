@@ -148,18 +148,34 @@ class GameVersionLocale {
 
 			if ( count($links) === 1 ) {
 				foreach ( $links as $link ) {
-					if ( !$link['selected'] ) { echo '<a href="'.$link['link'].'">'; }
+					if ( $link['selected'] ) {
+						echo '<b>';
+					} else {
+						echo '<a href="'.$link['link'].'">';
+					}
 					echo $g->longName;
-					if ( !$link['selected'] ) { echo '</a>'; }
+					if ( $link['selected'] ) {
+						echo '</b>';
+					} else {
+						echo '</a>';
+					}
 				}
 			} else {
 				echo $g->longName;
 				echo ':';
 				foreach ( $links as $link ) {
 					echo ' ';
-					if ( !$link['selected'] ) { echo '<a href="'.$link['link'].'">'; }
+					if ( $link['selected'] ) {
+						echo '<b>';
+					} else {
+						echo '<a href="'.$link['link'].'">';
+					}
 					echo GameVersionLocale::GetUserFriendlyLongNameFromCompare( $link['compare'] );
-					if ( !$link['selected'] ) { echo '</a>'; }
+					if ( $link['selected'] ) {
+						echo '</b>';
+					} else {
+						echo '</a>';
+					}
 				}
 			}
 			echo '<br />';
