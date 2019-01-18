@@ -127,7 +127,7 @@ class GameVersionLocale {
 
 	public static function GetUserFriendlyLongNameFromCompare( $compare ) {
 		if ( $compare === '1'  ) { return '1st Language Only'; }
-		if ( $compare === '2'  ) { return '2st Language Only'; }
+		if ( $compare === '2'  ) { return '2nd Language Only'; }
 		if ( $compare === 'c1' ) { return 'Both Languages (Links of 1st)'; }
 		if ( $compare === 'c2' ) { return 'Both Languages (Links of 2nd)'; }
 		return $compare;
