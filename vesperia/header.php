@@ -135,7 +135,7 @@ function print_top( $version, $locale, $compare, $category, $query = '' ) {
 
 function print_bottom() {
 	echo '</div>';
-	echo '<div id="footer">All Tales of Vesperia game content &copy; 2008/2009 Bandai Namco Games Inc.</div>';
+	echo '<div id="footer">All Tales of Vesperia game content &copy; 2008-2019 Bandai Namco Games Inc.</div>';
 }
 
 function print_character_select( $version, $locale, $compare, $section ) {
