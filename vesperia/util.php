@@ -11,17 +11,19 @@ class GameVersionLocale {
 	var $locale;
 	var $defaultCompare;
 	var $validCompares;
+	var $shortName;
 	var $longName;
 	var $lang1short;
 	var $lang2short;
 	var $lang1long;
 	var $lang2long;
 
-	function __construct( $version, $locale, $defaultCompare, $validCompares, $longName, $lang1short, $lang2short, $lang1long, $lang2long ) {
+	function __construct( $version, $locale, $defaultCompare, $validCompares, $shortName, $longName, $lang1short, $lang2short, $lang1long, $lang2long ) {
 		$this->version = $version;
 		$this->locale = $locale;
 		$this->defaultCompare = $defaultCompare;
 		$this->validCompares = $validCompares;
+		$this->shortName = $shortName;
 		$this->longName = $longName;
 		$this->lang1short = $lang1short;
 		$this->lang2short = $lang2short;
@@ -51,14 +53,14 @@ class GameVersionLocale {
 
 	public static function GetVersions() {
 		$l = array();
-		//                            version  locale  default compare  valid compares                 user friendly long name
-		$l[] = new GameVersionLocale( '360u',  'us',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 North American Version'    , 'JP', 'EN', 'Japanese', 'English' );
-		$l[] = new GameVersionLocale( '360e',  'uk',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - English', 'JP', 'EN', 'Japanese', 'English' );
-		$l[] = new GameVersionLocale( '360e',  'fr',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - French' , 'JP', 'FR', 'Japanese', 'French' );
-		$l[] = new GameVersionLocale( '360e',  'de',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - German' , 'JP', 'DE', 'Japanese', 'German' );
-		$l[] = new GameVersionLocale( 'ps3v',  'jp',   '1',             array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Japanese Version'     , 'JP', 'EN', 'Japanese', 'English' );
-		$l[] = new GameVersionLocale( 'ps3p',  'jp',   'c2',            array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Fan-Translation'      , 'JP', 'EN', 'Japanese', 'English' );
-		$l[] = new GameVersionLocale( 'pc',   'eng',   '2',             array( '1', '2', 'c1', 'c2' ), 'PC Version - English'               , 'JP', 'EN', 'Japanese', 'English' );
+		//                            version  locale  default compare  valid compares                 short version select id  user friendly long name
+		$l[] = new GameVersionLocale( '360u',  'us',   '2',             array(      '2'             ), '360',                   'Xbox 360 North American Version'    , 'JP', 'US', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( '360e',  'uk',   '2',             array(      '2'             ), '360',                   'Xbox 360 European Version - English', 'JP', 'UK', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( '360e',  'fr',   '2',             array(      '2'             ), '360',                   'Xbox 360 European Version - French' , 'JP', 'FR', 'Japanese', 'French' );
+		$l[] = new GameVersionLocale( '360e',  'de',   '2',             array(      '2'             ), '360',                   'Xbox 360 European Version - German' , 'JP', 'DE', 'Japanese', 'German' );
+		$l[] = new GameVersionLocale( 'ps3v',  'jp',   '1',             array( '1'                  ), 'PS3',                   'PlayStation 3 Japanese Version'     , 'JP', 'EN', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( 'ps3p',  'jp',   'c2',            array(      '2', 'c1', 'c2' ), 'PS3',                   'PlayStation 3 Fan-Translation'      , 'JP', 'Fan EN', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( 'pc',   'eng',   '2',             array(      '2'             ), 'PC',                    'PC Version - English'               , 'JP', 'EN', 'Japanese', 'English' );
 		return $l;
 	}
 
@@ -140,8 +142,15 @@ class GameVersionLocale {
 		if ( $compare === 'c2' ) { return 'Compare with '.$gameversion->lang2long.' links'; }
 		return $compare;
 	}
+	public static function GetUserFriendlyShortNameFromCompare( $compare, $gameversion ) {
+		if ( $compare === '1'  ) { return $gameversion->lang1short; }
+		if ( $compare === '2'  ) { return $gameversion->lang2short; }
+		if ( $compare === 'c1' ) { return 'Compare'; }
+		if ( $compare === 'c2' ) { return 'Compare'; }
+		return $compare;
+	}
 
-	public static function PrintVersionSelect( $version, $locale, $compare ) {
+	public static function PrintVersionSelectLong( $version, $locale, $compare ) {
 		$versions = GameVersionLocale::GetVersions();
 		foreach ( $versions as $g ) {
 			$links = array();
@@ -187,6 +196,69 @@ class GameVersionLocale {
 				}
 			}
 			echo '<br />';
+		}
+	}
+
+	public static function PrintVersionSelectShort( $version, $locale, $compare ) {
+		$versions = GameVersionLocale::GetVersions();
+		$groups = array();
+		foreach ( $versions as $g ) {
+			$groups[$g->shortName][] = $g;
+		}
+
+		$first = true;
+		foreach ( $groups as $shortName => $group ) {
+			if ( $first ) {
+				$first = false;
+			} else {
+				echo ' - ';
+			}
+
+			echo $shortName;
+			foreach ( $group as $g ) {
+				$links = array();
+				foreach ( $g->validCompares as $c ) {
+					if ( $c === 'c1' ) { continue; } // hack so we don't have two compares in the short version select...
+					$selected = $version === $g->version && $locale === $g->locale && $compare === $c;
+					$links[] = [
+						'selected' => $selected,
+						'compare' => $c,
+						'link' => '?version='.$g->version.'&locale='.$g->locale.'&compare='.$c
+					];
+				}
+
+				if ( count($links) === 1 ) {
+					foreach ( $links as $link ) {
+						echo ' ';
+						if ( $link['selected'] ) {
+							echo '<b>';
+						} else {
+							echo '<a href="'.$link['link'].'">';
+						}
+						echo GameVersionLocale::GetUserFriendlyShortNameFromCompare( $link['compare'], $g );
+						if ( $link['selected'] ) {
+							echo '</b>';
+						} else {
+							echo '</a>';
+						}
+					}
+				} else {
+					foreach ( $links as $link ) {
+						echo ' ';
+						if ( $link['selected'] ) {
+							echo '<b>';
+						} else {
+							echo '<a href="'.$link['link'].'">';
+						}
+						echo GameVersionLocale::GetUserFriendlyShortNameFromCompare( $link['compare'], $g );
+						if ( $link['selected'] ) {
+							echo '</b>';
+						} else {
+							echo '</a>';
+						}
+					}
+				}
+			}
 		}
 	}
 }

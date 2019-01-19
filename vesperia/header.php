@@ -117,7 +117,9 @@ function print_menu( $version, $locale, $compare ) {
 function print_top( $version, $locale, $compare, $category, $query = '' ) {
 	print_header( $category );
 	echo '<body>';
-	echo '<div id="header-name"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'">Tales of Vesperia - Reference Guide</a></div>';
+	echo '<div id="header-name"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'">Tales of Vesperia - Reference Guide</a> - ';
+	GameVersionLocale::PrintVersionSelectShort( $version, $locale, $compare );
+	echo '</div>';
 	print_menu( $version, $locale, $compare );
 	echo '<div id="search">';
 	echo '<form method="get" action="index.php">';

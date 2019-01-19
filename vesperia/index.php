@@ -744,7 +744,7 @@ if ( $section === 'search' ) {
 	
 	echo '<p>';
 	echo '<div class="mainVersionSelect">';
-	GameVersionLocale::PrintVersionSelect( $version, $locale, $compare );
+	GameVersionLocale::PrintVersionSelectLong( $version, $locale, $compare );
 	echo '</div>';
 	echo '</p>';
 
