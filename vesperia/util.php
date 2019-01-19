@@ -12,13 +12,21 @@ class GameVersionLocale {
 	var $defaultCompare;
 	var $validCompares;
 	var $longName;
+	var $lang1short;
+	var $lang2short;
+	var $lang1long;
+	var $lang2long;
 
-	function __construct( $version, $locale, $defaultCompare, $validCompares, $longName ) {
+	function __construct( $version, $locale, $defaultCompare, $validCompares, $longName, $lang1short, $lang2short, $lang1long, $lang2long ) {
 		$this->version = $version;
 		$this->locale = $locale;
 		$this->defaultCompare = $defaultCompare;
 		$this->validCompares = $validCompares;
 		$this->longName = $longName;
+		$this->lang1short = $lang1short;
+		$this->lang2short = $lang2short;
+		$this->lang1long = $lang1long;
+		$this->lang2long = $lang2long;
 	}
 
 	public static function HasSearchPoints( $version ) {
@@ -44,13 +52,13 @@ class GameVersionLocale {
 	public static function GetVersions() {
 		$l = array();
 		//                            version  locale  default compare  valid compares                 user friendly long name
-		$l[] = new GameVersionLocale( '360u',  'us',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 North American Version'     );
-		$l[] = new GameVersionLocale( '360e',  'uk',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - English' );
-		$l[] = new GameVersionLocale( '360e',  'fr',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - French'  );
-		$l[] = new GameVersionLocale( '360e',  'de',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - German'  );
-		$l[] = new GameVersionLocale( 'ps3v',  'jp',   '1',             array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Japanese Version'      );
-		$l[] = new GameVersionLocale( 'ps3p',  'jp',   'c2',            array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Fan-Translation'       );
-		$l[] = new GameVersionLocale( 'pc',   'eng',   '2',             array( '1', '2', 'c1', 'c2' ), 'PC Version - English'                );
+		$l[] = new GameVersionLocale( '360u',  'us',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 North American Version'    , 'JP', 'EN', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( '360e',  'uk',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - English', 'JP', 'EN', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( '360e',  'fr',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - French' , 'JP', 'FR', 'Japanese', 'French' );
+		$l[] = new GameVersionLocale( '360e',  'de',   '2',             array( '1', '2', 'c1', 'c2' ), 'Xbox 360 European Version - German' , 'JP', 'DE', 'Japanese', 'German' );
+		$l[] = new GameVersionLocale( 'ps3v',  'jp',   '1',             array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Japanese Version'     , 'JP', 'EN', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( 'ps3p',  'jp',   'c2',            array( '1', '2', 'c1', 'c2' ), 'PlayStation 3 Fan-Translation'      , 'JP', 'EN', 'Japanese', 'English' );
+		$l[] = new GameVersionLocale( 'pc',   'eng',   '2',             array( '1', '2', 'c1', 'c2' ), 'PC Version - English'               , 'JP', 'EN', 'Japanese', 'English' );
 		return $l;
 	}
 
@@ -125,11 +133,11 @@ class GameVersionLocale {
 		return true;
 	}
 
-	public static function GetUserFriendlyLongNameFromCompare( $compare ) {
-		if ( $compare === '1'  ) { return '1st Language Only'; }
-		if ( $compare === '2'  ) { return '2nd Language Only'; }
-		if ( $compare === 'c1' ) { return 'Both Languages (Links of 1st)'; }
-		if ( $compare === 'c2' ) { return 'Both Languages (Links of 2nd)'; }
+	public static function GetUserFriendlyLongNameFromCompare( $compare, $gameversion ) {
+		if ( $compare === '1'  ) { return $gameversion->lang1long; }
+		if ( $compare === '2'  ) { return $gameversion->lang2long; }
+		if ( $compare === 'c1' ) { return 'Compare with '.$gameversion->lang1long.' links'; }
+		if ( $compare === 'c2' ) { return 'Compare with '.$gameversion->lang2long.' links'; }
 		return $compare;
 	}
 
@@ -170,7 +178,7 @@ class GameVersionLocale {
 					} else {
 						echo '<a href="'.$link['link'].'">';
 					}
-					echo GameVersionLocale::GetUserFriendlyLongNameFromCompare( $link['compare'] );
+					echo GameVersionLocale::GetUserFriendlyLongNameFromCompare( $link['compare'], $g );
 					if ( $link['selected'] ) {
 						echo '</b>';
 					} else {
