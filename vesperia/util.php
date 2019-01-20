@@ -150,16 +150,16 @@ class GameVersionLocale {
 		return $compare;
 	}
 
-	public static function PrintVersionSelectLong( $version, $locale, $compare ) {
+	public static function PrintVersionSelectLong( $urlHelper ) {
 		$versions = GameVersionLocale::GetVersions();
 		foreach ( $versions as $g ) {
 			$links = array();
 			foreach ( $g->validCompares as $c ) {
-				$selected = $version === $g->version && $locale === $g->locale && $compare === $c;
+				$selected = $urlHelper->version === $g->version && $urlHelper->locale === $g->locale && $urlHelper->compare === $c;
 				$links[] = [
 					'selected' => $selected,
 					'compare' => $c,
-					'link' => '?version='.$g->version.'&locale='.$g->locale.'&compare='.$c
+					'link' => $urlHelper->WithVersion($g->version)->WithLocale($g->locale)->WithCompare($c)->GetUrl()
 				];
 			}
 
@@ -199,7 +199,7 @@ class GameVersionLocale {
 		}
 	}
 
-	public static function PrintVersionSelectShort( $version, $locale, $compare ) {
+	public static function PrintVersionSelectShort( $urlHelper ) {
 		$versions = GameVersionLocale::GetVersions();
 		$groups = array();
 		foreach ( $versions as $g ) {
@@ -219,11 +219,11 @@ class GameVersionLocale {
 				$links = array();
 				foreach ( $g->validCompares as $c ) {
 					if ( $c === 'c1' ) { continue; } // hack so we don't have two compares in the short version select...
-					$selected = $version === $g->version && $locale === $g->locale && $compare === $c;
+					$selected = $urlHelper->version === $g->version && $urlHelper->locale === $g->locale && $urlHelper->compare === $c;
 					$links[] = [
 						'selected' => $selected,
 						'compare' => $c,
-						'link' => '?version='.$g->version.'&locale='.$g->locale.'&compare='.$c
+						'link' => $urlHelper->WithVersion($g->version)->WithLocale($g->locale)->WithCompare($c)->GetUrl()
 					];
 				}
 

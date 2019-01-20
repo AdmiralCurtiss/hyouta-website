@@ -114,11 +114,16 @@ function print_menu( $version, $locale, $compare ) {
 <?php
 }
 
-function print_top( $version, $locale, $compare, $category, $query = '' ) {
+function print_top( $urlHelper, $category ) {
+	$version = $urlHelper->version;
+	$locale = $urlHelper->locale;
+	$compare = $urlHelper->compare;
+	$query = $urlHelper->query === false ? '' : $urlHelper->query;
+
 	print_header( $category );
 	echo '<body>';
 	echo '<div id="header-name"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'">Tales of Vesperia - Reference Guide</a> - ';
-	GameVersionLocale::PrintVersionSelectShort( $version, $locale, $compare );
+	GameVersionLocale::PrintVersionSelectShort( $urlHelper );
 	echo '</div>';
 	print_menu( $version, $locale, $compare );
 	echo '<div id="search">';

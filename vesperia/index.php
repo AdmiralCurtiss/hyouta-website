@@ -68,7 +68,7 @@ function paginate( $pageNum, $itemsPerPage, $itemsTotal, $urlHelper ) {
 }
 
 if ( $section === 'search' ) {
-	print_top( $version, $locale, $compare, 'Search', $query );
+	print_top( $urlHelper, 'Search' );
 	if ( $perPage <=   0 ) { $perPage =  50; }
 	if ( $perPage >  500 ) { $perPage = 500; }
 	$globalOffset = ( $page - 1 ) * $perPage;
@@ -292,7 +292,7 @@ if ( $section === 'search' ) {
 		echo '</div>';
 	}
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'scenario' ) {
-	print_top( $version, $locale, $compare, 'Scenario' );
+	print_top( $urlHelper, 'Scenario' );
 	
 	$scenarioMetadata = null;
 	if ( $showScenarioJumper ) {
@@ -324,7 +324,7 @@ if ( $section === 'search' ) {
 	echo '</div>';
 	
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'skit' ) {
-	print_top( $version, $locale, $compare, 'Skit' );
+	print_top( $urlHelper, 'Skit' );
 	
 	if ( $showScenarioJumper ) {
 		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
@@ -367,15 +367,15 @@ if ( $section === 'search' ) {
 	echo '</div>';
 	
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'scenario-index' ) {
-	print_top( $version, $locale, $compare, 'Story Index' );
+	print_top( $urlHelper, 'Story Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 1 );
 	ScenarioMeta::RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences );
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'sidequest-index' ) {
-	print_top( $version, $locale, $compare, 'Sidequest Index' );
+	print_top( $urlHelper, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
 	ScenarioMeta::RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences );
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'skit-index' ) {
-	print_top( $version, $locale, $compare, 'Skit Index' );
+	print_top( $urlHelper, 'Skit Index' );
 	echo '<table>';
 	
 	$skits = $db->GetSkitIndex();
@@ -385,7 +385,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'artes' ) {
-	print_top( $version, $locale, $compare, 'Artes' );
+	print_top( $urlHelper, 'Artes' );
 	print_character_select( $version, $locale, $compare, $section );
 	echo '<table>';
 	
@@ -404,7 +404,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'skills' ) {
-	print_top( $version, $locale, $compare, 'Skills' );
+	print_top( $urlHelper, 'Skills' );
 	print_character_select( $version, $locale, $compare, $section );
 	echo '<table>';
 	
@@ -423,7 +423,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'recipes' ) {
-	print_top( $version, $locale, $compare, 'Recipes' );
+	print_top( $urlHelper, 'Recipes' );
 	echo '<table>';
 	
 	$items = $db->GetRecipesHtml( $compare, $id );
@@ -439,7 +439,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'shops' ) {
-	print_top( $version, $locale, $compare, 'Shops' );
+	print_top( $urlHelper, 'Shops' );
 	echo '<table>';
 	
 	$items = $db->GetShopsHtml( $compare, $id );
@@ -453,7 +453,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'titles' ) {
-	print_top( $version, $locale, $compare, 'Titles' );
+	print_top( $urlHelper, 'Titles' );
 	print_character_select( $version, $locale, $compare, $section );
 	echo '<table>';
 	
@@ -472,7 +472,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'synopsis' ) {
-	print_top( $version, $locale, $compare, 'Synopsis' );
+	print_top( $urlHelper, 'Synopsis' );
 	
 	$items = $db->GetSynopsisHtml( $compare, $id );
 	$first = true;
@@ -484,7 +484,7 @@ if ( $section === 'search' ) {
 	}
 	
 } elseif ( $section === 'battlebook' ) {
-	print_top( $version, $locale, $compare, 'Battle Book' );
+	print_top( $urlHelper, 'Battle Book' );
 	echo '<table>';
 	
 	$items = $db->GetBattleBookHtml( $compare, $id );
@@ -500,7 +500,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'enemies' ) {
-	print_top( $version, $locale, $compare, 'Enemies' );
+	print_top( $urlHelper, 'Enemies' );
 	echo '<table>';
 	
 	$items = $db->GetEnemiesHtml( $compare, $id, $category );
@@ -514,7 +514,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'items' ) {
-	print_top( $version, $locale, $compare, 'Items' );
+	print_top( $urlHelper, 'Items' );
 
 	if ( $perPage <=   0 ) { $perPage = 120; }
 	if ( $perPage >  500 ) { $perPage = 500; }
@@ -537,7 +537,7 @@ if ( $section === 'search' ) {
 
 	paginate( $page, $perPage, $itemcount, $urlHelper );
 } elseif ( $section === 'locations' ) {
-	print_top( $version, $locale, $compare, 'Locations' );
+	print_top( $urlHelper, 'Locations' );
 	echo '<table>';
 	
 	$items = $db->GetLocationsHtml( $compare, $id );
@@ -551,7 +551,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( GameVersionLocale::HasSearchPoints( $version ) && $section === 'searchpoint' ) {
-	print_top( $version, $locale, $compare, 'Search Points' );
+	print_top( $urlHelper, 'Search Points' );
 	echo '<img src="etc/'.$version.'/SearchPoint.jpg">';
 	echo '<hr>';
 	echo '<table>';
@@ -567,7 +567,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'records' ) {
-	print_top( $version, $locale, $compare, 'Records' );
+	print_top( $urlHelper, 'Records' );
 	echo '<table>';
 	
 	$items = $db->GetRecordsHtml( $compare, $id );
@@ -577,7 +577,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'settings' ) {
-	print_top( $version, $locale, $compare, 'Settings' );
+	print_top( $urlHelper, 'Settings' );
 	echo '<table>';
 	
 	$items = $db->GetSettingsHtml( $compare, $id );
@@ -591,7 +591,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'gradeshop' ) {
-	print_top( $version, $locale, $compare, 'Grade Shop' );
+	print_top( $urlHelper, 'Grade Shop' );
 	echo '<table>';
 	
 	$items = $db->GetGradeShopHtml( $compare, $id );
@@ -605,7 +605,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( GameVersionLocale::HasTrophies( $version ) && $section === 'trophies' ) {
-	print_top( $version, $locale, $compare, 'Trophies' );
+	print_top( $urlHelper, 'Trophies' );
 	echo '<table>';
 	
 	$items = $db->GetTrophiesHtml( $compare, $id );
@@ -619,7 +619,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( $section === 'strategy' ) {
-	print_top( $version, $locale, $compare, 'Strategy' );
+	print_top( $urlHelper, 'Strategy' );
 	echo '<table>';
 	
 	$items = $db->GetStrategySetHtml( $compare, $id );
@@ -646,7 +646,7 @@ if ( $section === 'search' ) {
 	
 	echo '</table>';
 } elseif ( GameVersionLocale::HasNecropolis( $version ) && $section === 'necropolis' ) {
-	print_top( $version, $locale, $compare, 'Necropolis of Nostalgia' );
+	print_top( $urlHelper, 'Necropolis of Nostalgia' );
 
 	$stratumNames = array(
 		0 => 'Firmament',
@@ -713,13 +713,13 @@ if ( $section === 'search' ) {
 	}
 	
 } else {
-	print_top( $version, $locale, $compare, false );
+	print_top( $urlHelper, false );
 	echo '<h1>Tales of Vesperia</h1>';
 	echo '<h2>Reference Guide</h2>';
 	
 	echo '<p>';
 	echo '<div class="mainVersionSelect">';
-	GameVersionLocale::PrintVersionSelectLong( $version, $locale, $compare );
+	GameVersionLocale::PrintVersionSelectLong( $urlHelper );
 	echo '</div>';
 	echo '</p>';
 
