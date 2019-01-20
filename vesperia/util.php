@@ -263,4 +263,202 @@ class GameVersionLocale {
 	}
 }
 
+class VesperiaUrlHelper {
+	// all of these are set to boolean 'false' if unset unless otherwise noted
+	var $version;    // string; game version
+	var $locale;     // string; game locale
+	var $compare;    // string; 1 language only / both / which links
+	var $section;    // string; type of content to show
+	var $category;   // integer; category of items or enemy
+	var $icon;       // integer; icon of items
+	var $character;  // integer; single player character for artes/skills
+	var $id;         // integer; individual item/enemy/recipe/whatever
+	var $name;       // string; scenario or skit name
+	var $mapletter;  // integer; range 0-5; necropolis stratum
+	var $mapfloor;   // integer; range 1-10; necropolis floor in stratum
+	var $enemies;    // boolean; true to show necropolis maps with enemies instead of general data
+	var $query;      // string; search query
+	var $page;       // integer; page index
+	var $perpage;    // integer; amount of items per page
+	var $diff;       // boolean; true to mark diffs to 360 version on ps3 content (where implemented)
+	var $jump;       // boolean; true to show the scenario jumper next to scenario text; true by default!
+
+	function __construct( $version, $locale, $compare, $section, $category, $icon, $character, $id, $name, $mapletter, $mapfloor, $enemies, $query, $page, $perpage, $diff, $jump ) {
+		$this->version = $version;
+		$this->locale = $locale;
+		$this->compare = $compare;
+		$this->section = $section;
+		$this->category = $category;
+		$this->icon = $icon;
+		$this->character = $character;
+		$this->id = $id;
+		$this->name = $name;
+		$this->mapletter = $mapletter;
+		$this->mapfloor = $mapfloor;
+		$this->enemies = $enemies;
+		$this->query = $query;
+		$this->page = $page;
+		$this->perpage = $perpage;
+		$this->diff = $diff;
+		$this->jump = $jump;
+	}
+
+	public static function FromGetParams( $args ) {
+		$version = 'ps3p';
+		$locale = 'jp';
+		$compare = 'c2';
+		if ( !GameVersionLocale::ParseVersion( $version, $locale, $compare, $args ) ) {
+			die();
+		}
+
+		$section = false;
+		if ( isset($args['section']) ) {
+			$section = $args['section'];
+		}
+		$id = false;
+		if ( isset($args['id']) ) {
+			$id = (int)$args['id'];
+		}
+		$category = false;
+		if ( isset($args['category']) ) {
+			$category = (int)$args['category'];
+		}
+		$icon = false;
+		if ( isset($args['icon']) ) {
+			$icon = (int)$args['icon'];
+		}
+		$character = false;
+		if ( isset($args['character']) ) {
+			$character = (int)$args['character'];
+		}
+		$name = false;
+		if ( isset($args['name']) ) {
+			$name = $args['name'];
+		}
+		$query = false;
+		if ( isset($args['query']) ) {
+			$query = $args['query'];
+		}
+		$page = false;
+		if ( isset($args['page']) ) {
+			$page = (int)$args['page'];
+			if ( $page < 1 ) {
+				$page = 1;
+			}
+		}
+		$perPage = false;
+		if ( isset($args['perpage']) ) {
+			$perPage = (int)$args['perpage'];
+		}
+		$markVersionDifferences = false;
+		if ( isset($args['diff']) && $args['diff'] === 'true' ) {
+			$markVersionDifferences = true;
+		}
+		$showScenarioJumper = true;
+		if ( isset($args['jump']) && $args['jump'] === 'false' ) {
+			$showScenarioJumper = false;
+		}
+
+		$map_letter_digit = false;
+		$map_number = false;
+		if ( isset($args['map']) ) {
+			$map = $args['map'];
+			$map_letter = substr($map, 0, 1);
+			$map_letter_digit = ord($map_letter) - ord('A');
+			if ( $map_letter_digit < 0 ) {
+				$map_letter_digit = 0;
+			}
+			if ( $map_letter_digit > 5 ) {
+				$map_letter_digit = 5;
+			}
+			$map_number = (int)substr($map, 1);
+			if ( $map_number < 1 ) {
+				$map_number = 1;
+			}
+			if ( $map_number > 10 ) {
+				$map_number = 10;
+			}
+		}
+		$enemies = false;
+		if ( isset($args['enemies']) ) {
+			$enemies = $args['enemies'] === 'true';
+		}
+		
+		return new VesperiaUrlHelper( $version, $locale, $compare, $section, $category, $icon, $character, $id, $name, $map_letter_digit, $map_number, $enemies, $query, $page, $perPage, $markVersionDifferences, $showScenarioJumper );
+	}
+
+	function WithVersion   ( $d ) { return new VesperiaUrlHelper( $d,             $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithLocale    ( $d ) { return new VesperiaUrlHelper( $this->version, $d           , $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithCompare   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $d            , $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithSection   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $d            , false,           false,       false,            false,     false,       false,            false,           false,          $this->query, false,       false,          $this->diff, $this->jump ); } // this clears section-specific params automatically too
+	function WithCategory  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $d             , $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithIcon      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $d         , $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithCharacter ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $d              , $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithId        ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $d       , $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithName      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $d         , $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithMapLetter ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $d              , $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithMapFloor  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $d             , $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithEnemies   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $d            , $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithQuery     ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $d          , $this->page, $this->perpage, $this->diff, $this->jump ); }
+	function WithPage      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $d         , $this->perpage, $this->diff, $this->jump ); }
+	function WithPerPage   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $d            , $this->diff, $this->jump ); }
+	function WithDiff      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $d         , $this->jump ); }
+	function WithJump      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $d          ); }
+
+	function MapLetterAsLetter() {
+		if ($this->mapletter !== false && $this->mapletter >= 0 && $this->mapletter < 6) {
+			return chr(65 + $this->mapletter);
+		} else {
+			return 'A';
+		}
+	}
+
+	function GetUrl() {
+		$link = '?version='.$this->version;
+		$link .= '&locale='.$this->locale;
+		$link .= '&compare='.$this->compare;
+		if ( $this->section !== false ) {
+			$link .= '&section='.$this->section;
+		}
+		if ( $this->category !== false ) {
+		$link .= '&category='.$this->category;
+		}
+		if ( $this->icon !== false ) {
+			$link .= '&icon='.$this->icon;
+		}
+		if ( $this->character !== false ) {
+			$link .= '&character='.$this->character;
+		}
+		if ( $this->id !== false ) {
+			$link .= '&id='.$this->id;
+		}
+		if ( $this->name !== false ) {
+			$link .= '&name='.$this->name;
+		}
+		if ( $this->mapletter !== false && $this->mapfloor !== false ) {
+			$letter = $this->MapLetterAsLetter();
+			$link .= '&map='.$letter.$this->mapfloor;
+		}
+		if ( $this->enemies === true ) {
+			$link .= '&enemies=true';
+		}
+		if ( $this->query !== false ) {
+			$link .= '&query='.urlencode($this->query);
+		}
+		if ( $this->page !== false ) {
+			$link .= '&page='.$this->page;
+		}
+		if ( $this->perpage !== false ) {
+			$link .= '&perpage='.$this->perpage;
+		}
+		if ( $this->diff === true ) {
+			$link .= '&diff=true';
+		}
+		if ( $this->jump === false ) {
+			$link .= '&jump=false';
+		}
+		return $link;
+	}
+}
+
 ?>

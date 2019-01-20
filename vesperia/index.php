@@ -24,41 +24,25 @@ if ( $maintenance_mode ) {
 	die();
 }
 
-$version = 'ps3p';
-$locale = 'jp';
-$compare = 'c2';
+$urlHelper = VesperiaUrlHelper::FromGetParams( $_GET );
 
-if ( !GameVersionLocale::ParseVersion( $version, $locale, $compare, $_GET ) ) {
-	die();
-}
+$version = $urlHelper->version;
+$locale = $urlHelper->locale;
+$compare = $urlHelper->compare;
+$section = $urlHelper->section === false ? 'index' : $urlHelper->section;
+$id = $urlHelper->id;
+$category = $urlHelper->category;
+$icon = $urlHelper->icon;
+$character = $urlHelper->character;
+$name = $urlHelper->name === false ? '' : $urlHelper->name;
+$query = $urlHelper->query === false ? '' : $urlHelper->query;
+$page = $urlHelper->page === false ? 1 : $urlHelper->page;
+$markVersionDifferences = $urlHelper->diff;
+$showScenarioJumper = $urlHelper->jump;
+$perPage = $urlHelper->perpage === false ? 0 : $urlHelper->perpage;
 
 include '../credentials.php';
 $db = new db( __db_connstr_vesperia_from_version_and_locale__( $version, $locale ), $__db_username_vesperia__, $__db_password_vesperia__ );
-
-$section = 'index';
-if ( isset($_GET['section']) ) {
-	$section = $_GET['section'];
-}
-$id = false;
-if ( isset($_GET['id']) ) { $id = (int)$_GET['id']; }
-$category = false;
-if ( isset($_GET['category']) ) { $category = (int)$_GET['category']; }
-$icon = false;
-if ( isset($_GET['icon']) ) { $icon = (int)$_GET['icon']; }
-$character = false;
-if ( isset($_GET['character']) ) { $character = (int)$_GET['character']; }
-$name = '';
-if ( isset($_GET['name']) ) { $name = $_GET['name']; }
-$query = '';
-if ( isset($_GET['query']) ) { $query = $_GET['query']; }
-$page = 1;
-if ( isset($_GET['page']) ) { $page = (int)$_GET['page']; if ( $page < 1 ) { $page = 1; } }
-$markVersionDifferences = false;
-if ( isset($_GET['diff']) && $_GET['diff'] === 'true' ) { $markVersionDifferences = true; }
-$showScenarioJumper = true;
-if ( isset($_GET['jump']) && $_GET['jump'] === 'false' ) { $showScenarioJumper = false; }
-$perPage = 0;
-if ( isset($_GET['perpage']) ) { $perPage = (int)$_GET['perpage']; }
 
 echo '<html>';
 
@@ -67,17 +51,17 @@ function shouldSearch( $begin, $end, $offset, $count ) {
 	return max( $begin, $offset ) - ( min( $end, ($offset+$count) ) - 1 ) <= 0;
 }
 
-function paginate( $pageNum, $itemsPerPage, $itemsTotal, $baseLink ) {
+function paginate( $pageNum, $itemsPerPage, $itemsTotal, $urlHelper ) {
 	$totalPages = (int)ceil($itemsTotal / $itemsPerPage);
 
 	if ( $totalPages > 1 ) {
 		$pageString = '';
 		if ( $pageNum > 1 ) {
-			$pageString .= '<a href="'.$baseLink.'&page='.( $pageNum - 1 ).'&perpage='.$itemsPerPage.'">Previous Page</a> - ';
+			$pageString .= '<a href="'.$urlHelper->WithPage($pageNum - 1)->WithPerPage($itemsPerPage)->GetUrl().'">Previous Page</a> - ';
 		}
 		$pageString .= 'Page '.$pageNum.' of '.$totalPages;
 		if ( $pageNum < $totalPages ) {
-			$pageString .= ' - <a href="'.$baseLink.'&page='.( $pageNum + 1 ).'&perpage='.$itemsPerPage.'">Next Page</a>';
+			$pageString .= ' - <a href="'.$urlHelper->WithPage($pageNum + 1)->WithPerPage($itemsPerPage)->GetUrl().'">Next Page</a>';
 		}
 		echo '<p>'.$pageString.'</p>';
 	}
@@ -124,7 +108,7 @@ if ( $section === 'search' ) {
 		$indexOffsetStringDic = $indexOffsetSkit      + $totalSkitCount;
 		$totalFoundEntries    = $indexOffsetStringDic + $totalStringDicCount;
 
-		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=search&query='.urlencode($query) );
+		paginate( $page, $perPage, $totalFoundEntries, $urlHelper->WithSection('search')->WithQuery($query) );
 
 		echo '<div>Found '.$totalFoundEntries.' entries.</div>';
 
@@ -268,7 +252,7 @@ if ( $section === 'search' ) {
 			$previousId = '';
 			foreach ( $sce as $s ) {
 				if ( $previousId !== $s->episodeId ) {
-					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$s->episodeId.'">'.$s->episodeId.'</a></div>';
+					echo '<div class="scenario-previous-next"><a href="'.$urlHelper->WithSection('scenario')->WithName($s->episodeId)->GetUrl().'">'.$s->episodeId.'</a></div>';
 					$previousId = $s->episodeId;
 				}
 				$s->Render( $version, $locale, $compare, $markVersionDifferences );
@@ -282,7 +266,7 @@ if ( $section === 'search' ) {
 			$previousId = '';
 			foreach ( $skit as $s ) {
 				if ( $previousId !== $s->skitId ) {
-					echo '<div class="scenario-previous-next"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$s->skitId.'">'.$s->skitId.'</a></div>';
+					echo '<div class="scenario-previous-next"><a href="'.$urlHelper->WithSection('skit')->WithName($s->skitId)->GetUrl().'">'.$s->skitId.'</a></div>';
 					$previousId = $s->skitId;
 				}
 				$s->Render( $version, $locale, $compare, $markVersionDifferences );
@@ -302,7 +286,7 @@ if ( $section === 'search' ) {
 			}
 		}
 
-		paginate( $page, $perPage, $totalFoundEntries, '?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=search&query='.urlencode($query) );
+		paginate( $page, $perPage, $totalFoundEntries, $urlHelper->WithSection('search')->WithQuery($query) );
 
 		echo '</div>';
 		echo '</div>';
@@ -539,11 +523,7 @@ if ( $section === 'search' ) {
 	$offset = ($page - 1) * $perPage;
 	$items = $db->GetItemsHtml( $compare, $id, $category, $icon, $offset, $perPage );
 
-	$baselink = '?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items';
-	if ( $category !== false ) { $baselink .= '&category='.$category; }
-	if ( $icon !== false ) { $baselink .= '&icon='.$icon; }
-
-	paginate( $page, $perPage, $itemcount, $baselink );
+	paginate( $page, $perPage, $itemcount, $urlHelper );
 
 	echo '<table>';
 	$first = true;
@@ -555,7 +535,7 @@ if ( $section === 'search' ) {
 	}
 	echo '</table>';
 
-	paginate( $page, $perPage, $itemcount, $baselink );
+	paginate( $page, $perPage, $itemcount, $urlHelper );
 } elseif ( $section === 'locations' ) {
 	print_top( $version, $locale, $compare, 'Locations' );
 	echo '<table>';
@@ -667,41 +647,36 @@ if ( $section === 'search' ) {
 	echo '</table>';
 } elseif ( GameVersionLocale::HasNecropolis( $version ) && $section === 'necropolis' ) {
 	print_top( $version, $locale, $compare, 'Necropolis of Nostalgia' );
-	
+
 	$stratumNames = array(
-		'A' => 'Firmament',
-		'B' => 'Existence',
-		'C' => 'Hegemony',
-		'D' => 'Fauna',
-		'E' => 'Fatality',
-		'F' => 'Abysm'
+		0 => 'Firmament',
+		1 => 'Existence',
+		2 => 'Hegemony',
+		3 => 'Fauna',
+		4 => 'Fatality',
+		5 => 'Abysm'
 	);
-	
+
 	$map = false;
-	if ( isset($_GET['map']) ) {
-		$map = $_GET['map'];
-		$map_letter = substr($map, 0, 1);
-		$map_letter_digit = ord($map_letter) - ord('A');
-		$map_number = (int)substr($map, 1);
-		$map = 'BTL_XTM_AREA_'.( str_pad($map_letter_digit * 10 + $map_number, 2, '0', STR_PAD_LEFT) );
+	if ( $urlHelper->mapletter !== false && $urlHelper->mapfloor !== false ) {
+		$map_letter = $urlHelper->mapletter;
+		$map_number = $urlHelper->mapfloor;
+		$map = 'BTL_XTM_AREA_'.( str_pad($map_letter * 10 + $map_number, 2, '0', STR_PAD_LEFT) );
 	}
-	$enemies = false;
-	if ( isset($_GET['enemies']) ) {
-		$enemies = $_GET['enemies'] === 'true';
-	}
-	
+	$enemies = $urlHelper->enemies;
+
 	if ( $map === false ) {
 		// output map list
 		echo '<div class="necropolis-select">';
 		echo '<table>';
-		for ( $letter = 'A'; $letter <= 'F'; ++$letter ) {
+		for ( $letter = 0; $letter < 6; ++$letter ) {
 			echo '<tr>';
 			echo '<td>';
 			echo $stratumNames[$letter];
 			echo '</td>';
 			for ( $number = 1; $number <= 10; ++$number ) {
 				echo '<td>';
-				echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis&map='.$letter.$number.'">'.$number.'</a>';
+				echo '<a href="'.$urlHelper->WithSection('necropolis')->WithMapLetter($letter)->WithMapFloor($number)->GetUrl().'">'.$number.'</a>';
 				echo '</td>';
 			}
 			echo '</tr>';
@@ -716,17 +691,17 @@ if ( $section === 'search' ) {
 				echo '<hr>';
 			}
 			
-			echo '<div id="'.$map_letter.$map_number.'">';
-			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$stratumNames[$map_letter].' '.$map_number.'F ('.$map_letter.'-'.$map_number.')</div></th></tr>';
+			echo '<div id="'.$urlHelper->MapLetterAsLetter().$map_number.'">';
+			echo '<table class="necropolisfloor"><tr><th colspan="6"><div class="itemname" style="text-align: center;">'.$stratumNames[$map_letter].' '.$map_number.'F ('.$urlHelper->MapLetterAsLetter().'-'.$map_number.')</div></th></tr>';
 			echo '<tr><th colspan="6">';
 			if ( $enemies === true ) {
-				echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis&map='.$map_letter.$map_number.'">General Info</a>';
+				echo '<a href="'.$urlHelper->WithEnemies(false)->GetUrl().'">General Info</a>';
 			} else {
 				echo 'General Info';
 			}
 			echo ' - ';
 			if ( $enemies !== true ) {
-				echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis&map='.$map_letter.$map_number.'&enemies=true">Enemies</a>';
+				echo '<a href="'.$urlHelper->WithEnemies(true)->GetUrl().'">Enemies</a>';
 			} else {
 				echo 'Enemies';
 			}
