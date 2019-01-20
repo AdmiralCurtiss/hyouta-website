@@ -118,7 +118,7 @@ if ( $section === 'search' ) {
 			echo '<div class="scenario-previous-next">Skits</div>';
 			echo '<table>';
 			foreach ( $skits as $s ) {
-				$s->RenderTableRow( $version, $locale, $compare, $markVersionDifferences );
+				$s->RenderTableRow( $urlHelper, $markVersionDifferences );
 				--$entriesToGo;
 			}
 			echo '</table>';
@@ -380,7 +380,7 @@ if ( $section === 'search' ) {
 	
 	$skits = $db->GetSkitIndex();
 	foreach ( $skits as $s ) {
-		$s->RenderTableRow( $version, $locale, $compare, $markVersionDifferences );
+		$s->RenderTableRow( $urlHelper, $markVersionDifferences );
 	}
 	
 	echo '</table>';

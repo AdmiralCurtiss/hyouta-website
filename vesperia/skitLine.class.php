@@ -144,18 +144,18 @@ class skitMetaForIndex {
 		$this->changeStatus = $changeStatus;
 	}
 
-	function RenderTableRow( $version, $locale, $compare, $markVersionDifferences ) {
+	function RenderTableRow( $urlHelper, $markVersionDifferences ) {
 		echo '<tr';
 		if ( $markVersionDifferences ) {
 			echo ' class="changeStatusIndex'.$this->changeStatus.'"';
 		}
 		echo '>';
 		echo '<td>'.$this->category.'</td>';
-		if ( WantsJp($compare) ) {
-			echo '<td><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->jpName.'</a></td>';
+		if ( WantsJp($urlHelper->compare) ) {
+			echo '<td><a href="'.$urlHelper->WithSection('skit')->WithName($this->skitId)->GetUrl().'">'.$this->jpName.'</a></td>';
 		}
-		if ( WantsEn($compare) ) {
-			echo '<td><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$this->skitId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$this->enName.'</a></td>';
+		if ( WantsEn($urlHelper->compare) ) {
+			echo '<td><a href="'.$urlHelper->WithSection('skit')->WithName($this->skitId)->GetUrl().'">'.$this->enName.'</a></td>';
 		}
 		echo '<td>'.$this->charHtml.'</td>';
 		echo '</tr>';
