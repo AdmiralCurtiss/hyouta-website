@@ -2,116 +2,180 @@
 require_once 'util.php';
 
 function print_header( $section = false, $version = false ) {
-?>
-	<head>
-		<link rel="stylesheet" href="style.css" />
-		<link rel="stylesheet" href="scenario.css" />
-		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-		<title><?php if ( $section !== false ) { echo $section.' - '; } ?>Tales of Vesperia</title>
-	</head>
-<?php
+	echo '<head>';
+	echo '<link rel="stylesheet" href="style.css" />';
+	echo '<link rel="stylesheet" href="scenario.css" />';
+	echo '<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />';
+	echo '<title>';
+	if ( $section !== false ) {
+		echo $section.' - ';
+	}
+	echo 'Tales of Vesperia';
+	echo '</title>';
+	echo '</head>';
 }
 
 function print_menu( $version, $locale, $compare ) {
-?>
-<div id="topmenu">
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=artes"><img src="menu-icons/main-01.png" title="Artes"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=skills"><img src="menu-icons/main-04.png" title="Skills"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=strategy"><img src="menu-icons/main-05.png" title="Strategy"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=recipes"><img src="menu-icons/main-06.png" title="Recipes"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=shops"><img src="menu-icons/main-02.png" title="Shops"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=titles"><img src="menu-icons/main-07.png" title="Titles"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=synopsis"><img src="menu-icons/sub-09.png" title="Synopsis"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=battlebook"><img src="menu-icons/sub-14.png" title="Battle Book"></a>
-<!--<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies"><img src="menu-icons/sub-13.png" title="Monster Book"></a>-->
-<!--<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items"><img src="menu-icons/sub-11.png" title="Collector's Book"></a>-->
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=locations"><img src="menu-icons/sub-10.png" title="World Map"></a>
-<?php if ( GameVersionLocale::HasSearchPoints( $version ) ) { ?> <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=searchpoint"><img src="etc/U_ITEM_IRIKIAGRASS-64px.png" title="Search Points"></a><?php } ?>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=records"><img src="menu-icons/sub-08.png" title="Records"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=settings"><img src="menu-icons/sub-07.png" title="Settings"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=gradeshop"><img src="item-categories/cat-01.png" title="Grade Shop"></a>
-<?php if ( GameVersionLocale::HasNecropolis( $version ) ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=necropolis"><img src="menu-icons/weather-4-64px.png" title="Necropolis of Nostalgia Maps"></a><?php } ?>
-<?php if ( GameVersionLocale::HasTrophies( $version ) ) { ?> <a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=trophies"><img src="trophies/gold.png" title="Trophies"></a><?php } ?>
-<br>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=2"><img src="item-categories/cat-02.png" title="Tools" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=3"><img src="item-categories/cat-03.png" title="Main" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=4"><img src="item-categories/cat-04.png" title="Sub" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=5"><img src="item-categories/cat-05.png" title="Head" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=6"><img src="item-categories/cat-06.png" title="Body" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=7"><img src="item-categories/cat-07.png" title="Accessories" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=8"><img src="item-categories/cat-08.png" title="Ingredients" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=9"><img src="item-categories/cat-09.png" title="Synthesis materials" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=10"><img src="item-categories/cat-10.png" title="Valuables" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&category=11"><img src="item-categories/cat-11.png" title="DLC" height="32"></a>
-
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=0"><img src="monster-categories/cat-0.png" title="Human Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=1"><img src="monster-categories/cat-1.png" title="Beast Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=2"><img src="monster-categories/cat-2.png" title="Bird Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=3"><img src="monster-categories/cat-3.png" title="Magic Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=4"><img src="monster-categories/cat-4.png" title="Plant Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=5"><img src="monster-categories/cat-5.png" title="Aquatic Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=6"><img src="monster-categories/cat-6.png" title="Insect Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=7"><img src="monster-categories/cat-7.png" title="Inorganic Type" height="32"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=enemies&category=8"><img src="monster-categories/cat-8.png" title="Scale Type" height="32"></a>
-<br>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=35"><img src="item-icons/ICON35.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=36"><img src="item-icons/ICON36.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=37"><img src="item-icons/ICON37.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=60"><img src="item-icons/ICON60.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=38"><img src="item-icons/ICON38.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=1"><img src="item-icons/ICON1.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=4"><img src="item-icons/ICON4.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=12"><img src="item-icons/ICON12.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=6"><img src="item-icons/ICON6.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=5"><img src="item-icons/ICON5.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=13"><img src="item-icons/ICON13.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=14"><img src="item-icons/ICON14.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=15"><img src="item-icons/ICON15.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=7"><img src="item-icons/ICON7.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=52"><img src="item-icons/ICON52.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=51"><img src="item-icons/ICON51.png" height="16" width="16"></a>
-<?php if ( GameVersionLocale::HasPatty( $version ) ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=53"><img src="item-icons/ICON53.png" height="16" width="16"></a> <?php } ?>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=9"><img src="item-icons/ICON9.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=16"><img src="item-icons/ICON16.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=18"><img src="item-icons/ICON18.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=2"><img src="item-icons/ICON2.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=17"><img src="item-icons/ICON17.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=19"><img src="item-icons/ICON19.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=10"><img src="item-icons/ICON10.png" height="16" width="16"></a>
-<?php if ( GameVersionLocale::HasPatty( $version )  ) { ?><a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=54"><img src="item-icons/ICON54.png" height="16" width="16"></a> <?php } ?>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=20"><img src="item-icons/ICON20.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=21"><img src="item-icons/ICON21.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=22"><img src="item-icons/ICON22.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=23"><img src="item-icons/ICON23.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=24"><img src="item-icons/ICON24.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=25"><img src="item-icons/ICON25.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=26"><img src="item-icons/ICON26.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=27"><img src="item-icons/ICON27.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=56"><img src="item-icons/ICON56.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=30"><img src="item-icons/ICON30.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=28"><img src="item-icons/ICON28.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=32"><img src="item-icons/ICON32.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=31"><img src="item-icons/ICON31.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=33"><img src="item-icons/ICON33.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=29"><img src="item-icons/ICON29.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=34"><img src="item-icons/ICON34.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=41"><img src="item-icons/ICON41.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=42"><img src="item-icons/ICON42.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=43"><img src="item-icons/ICON43.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=44"><img src="item-icons/ICON44.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=45"><img src="item-icons/ICON45.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=57"><img src="item-icons/ICON57.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=61"><img src="item-icons/ICON61.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=63"><img src="item-icons/ICON63.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=39"><img src="item-icons/ICON39.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=3"><img src="item-icons/ICON3.png" height="16" width="16"></a>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=items&icon=40"><img src="item-icons/ICON40.png" height="16" width="16"></a>
-<?php if ( GameVersionLocale::AllowScenario( $version ) ) { ?><br/>
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=scenario-index">Story</a> / 
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=sidequest-index">Sidequests</a> / 
-<a href="?version=<?php echo $version; ?>&locale=<?php echo $locale; ?>&compare=<?php echo $compare; ?>&section=skit-index">Skits</a><?php } ?>
-</div>
-<?php
+	echo '<div id="topmenu">';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=artes"><img src="menu-icons/main-01.png" title="Artes"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skills"><img src="menu-icons/main-04.png" title="Skills"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=strategy"><img src="menu-icons/main-05.png" title="Strategy"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=recipes"><img src="menu-icons/main-06.png" title="Recipes"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=shops"><img src="menu-icons/main-02.png" title="Shops"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=titles"><img src="menu-icons/main-07.png" title="Titles"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=synopsis"><img src="menu-icons/sub-09.png" title="Synopsis"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=battlebook"><img src="menu-icons/sub-14.png" title="Battle Book"></a>';
+	//echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies"><img src="menu-icons/sub-13.png" title="Monster Book"></a>';
+	//echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items"><img src="menu-icons/sub-11.png" title="Collector\'s Book"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=locations"><img src="menu-icons/sub-10.png" title="World Map"></a>';
+	if ( GameVersionLocale::HasSearchPoints( $version ) ) {
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=searchpoint"><img src="etc/U_ITEM_IRIKIAGRASS-64px.png" title="Search Points"></a>';
+	}
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=records"><img src="menu-icons/sub-08.png" title="Records"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=settings"><img src="menu-icons/sub-07.png" title="Settings"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=gradeshop"><img src="item-categories/cat-01.png" title="Grade Shop"></a>';
+	if ( GameVersionLocale::HasNecropolis( $version ) ) {
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=necropolis"><img src="menu-icons/weather-4-64px.png" title="Necropolis of Nostalgia Maps"></a>';
+	}
+	if ( GameVersionLocale::HasTrophies( $version ) ) {
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=trophies"><img src="trophies/gold.png" title="Trophies"></a>';
+	}
+	echo '<br>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=2"><img src="item-categories/cat-02.png" title="Tools" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=3"><img src="item-categories/cat-03.png" title="Main" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=4"><img src="item-categories/cat-04.png" title="Sub" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=5"><img src="item-categories/cat-05.png" title="Head" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=6"><img src="item-categories/cat-06.png" title="Body" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=7"><img src="item-categories/cat-07.png" title="Accessories" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=8"><img src="item-categories/cat-08.png" title="Ingredients" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=9"><img src="item-categories/cat-09.png" title="Synthesis materials" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=10"><img src="item-categories/cat-10.png" title="Valuables" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&category=11"><img src="item-categories/cat-11.png" title="DLC" height="32"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=0"><img src="monster-categories/cat-0.png" title="Human Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=1"><img src="monster-categories/cat-1.png" title="Beast Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=2"><img src="monster-categories/cat-2.png" title="Bird Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=3"><img src="monster-categories/cat-3.png" title="Magic Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=4"><img src="monster-categories/cat-4.png" title="Plant Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=5"><img src="monster-categories/cat-5.png" title="Aquatic Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=6"><img src="monster-categories/cat-6.png" title="Insect Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=7"><img src="monster-categories/cat-7.png" title="Inorganic Type" height="32"></a>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=enemies&category=8"><img src="monster-categories/cat-8.png" title="Scale Type" height="32"></a>';
+	echo '<br>';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=35"><img src="item-icons/ICON35.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=36"><img src="item-icons/ICON36.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=37"><img src="item-icons/ICON37.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=60"><img src="item-icons/ICON60.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=38"><img src="item-icons/ICON38.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=1"><img src="item-icons/ICON1.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=4"><img src="item-icons/ICON4.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=12"><img src="item-icons/ICON12.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=6"><img src="item-icons/ICON6.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=5"><img src="item-icons/ICON5.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=13"><img src="item-icons/ICON13.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=14"><img src="item-icons/ICON14.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=15"><img src="item-icons/ICON15.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=7"><img src="item-icons/ICON7.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=52"><img src="item-icons/ICON52.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=51"><img src="item-icons/ICON51.png" height="16" width="16"></a>';
+	echo ' ';
+	if ( GameVersionLocale::HasPatty( $version ) ) {
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=53"><img src="item-icons/ICON53.png" height="16" width="16"></a>';
+		echo ' ';
+	}
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=9"><img src="item-icons/ICON9.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=16"><img src="item-icons/ICON16.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=18"><img src="item-icons/ICON18.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=2"><img src="item-icons/ICON2.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=17"><img src="item-icons/ICON17.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=19"><img src="item-icons/ICON19.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=10"><img src="item-icons/ICON10.png" height="16" width="16"></a>';
+	echo ' ';
+	if ( GameVersionLocale::HasPatty( $version ) ) {
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=54"><img src="item-icons/ICON54.png" height="16" width="16"></a>';
+		echo ' ';
+	}
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=20"><img src="item-icons/ICON20.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=21"><img src="item-icons/ICON21.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=22"><img src="item-icons/ICON22.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=23"><img src="item-icons/ICON23.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=24"><img src="item-icons/ICON24.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=25"><img src="item-icons/ICON25.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=26"><img src="item-icons/ICON26.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=27"><img src="item-icons/ICON27.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=56"><img src="item-icons/ICON56.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=30"><img src="item-icons/ICON30.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=28"><img src="item-icons/ICON28.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=32"><img src="item-icons/ICON32.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=31"><img src="item-icons/ICON31.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=33"><img src="item-icons/ICON33.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=29"><img src="item-icons/ICON29.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=34"><img src="item-icons/ICON34.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=41"><img src="item-icons/ICON41.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=42"><img src="item-icons/ICON42.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=43"><img src="item-icons/ICON43.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=44"><img src="item-icons/ICON44.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=45"><img src="item-icons/ICON45.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=57"><img src="item-icons/ICON57.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=61"><img src="item-icons/ICON61.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=63"><img src="item-icons/ICON63.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=39"><img src="item-icons/ICON39.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=3"><img src="item-icons/ICON3.png" height="16" width="16"></a>';
+	echo ' ';
+	echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=items&icon=40"><img src="item-icons/ICON40.png" height="16" width="16"></a>';
+	if ( GameVersionLocale::AllowScenario( $version ) ) {
+		echo '<br/>';
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario-index">Story</a> / ';
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=sidequest-index">Sidequests</a> / ';
+		echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit-index">Skits</a>';
+	}
+	echo '</div>';
 }
 
 function print_top( $urlHelper, $category ) {
