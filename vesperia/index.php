@@ -110,7 +110,7 @@ if ( $section === 'search' ) {
 
 		paginate( $page, $perPage, $totalFoundEntries, $urlHelper->WithSection('search')->WithQuery($query) );
 
-		echo '<div>Found '.$totalFoundEntries.' entries.</div>';
+		echo '<div>Found '.$totalFoundEntries.' '.( $totalFoundEntries === 1 ? 'entry' : 'entries' ).'.</div>';
 
 		if ( shouldSearch( $totalOffsetBegin, $totalOffsetEnd, $indexOffsetSkitName, $totalSkitNameCount ) ) {
 			$skits = $db->SearchSkitNamesHtml( $compare, $query, max( 0, $totalOffsetBegin - $indexOffsetSkitName ), $entriesToGo );
