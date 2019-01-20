@@ -107,7 +107,7 @@ class scenarioMeta {
 		die();
 	}
 	
-	public static function RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences, $currentEpisodeId = null ) {
+	public static function RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences, $currentEpisodeId = null ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
@@ -148,25 +148,21 @@ class scenarioMeta {
 				if ( $markVersionDifferences ) {
 					echo ' changeStatusIndex'.$scene->changeStatus;
 				}
-				echo '">'.$scene->GetDescriptionLong($compare).'</span>';
+				echo '">'.$scene->GetDescriptionLong($urlHelper->compare).'</span>';
 			} else {
 				if ( $currDepth === 2 ) {
-					echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$scene->episodeId;
+					echo '<a href="'.$urlHelper->WithSection('scenario')->WithName($scene->episodeId)->GetUrl().'"';
 				} else if ( $currDepth === 3 ) {
-					echo '<a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=skit&name='.$scene->episodeId;
+					echo '<a href="'.$urlHelper->WithSection('skit')->WithName($scene->episodeId)->GetUrl().'"';
 				}
 				if ( $currDepth === 2 || $currDepth === 3 ) {
-					if ( $markVersionDifferences ) {
-						echo '&diff=true';
-					}
-					echo '"';
 					if ( $markVersionDifferences ) {
 						echo ' class="changeStatusIndex'.$scene->changeStatus.'"';
 					}
 					echo '>';
 				}
 				
-				echo $scene->GetDescriptionLong($compare);
+				echo $scene->GetDescriptionLong($urlHelper->compare);
 				
 				if ( $currDepth >= 2 ) {
 					echo '</a>';
@@ -182,7 +178,7 @@ class scenarioMeta {
 		echo '</div>';
 	}
 	
-	public static function RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $currentEpisodeId, $top, $markVersionDifferences ) {
+	public static function RenderPreviousNext( $urlHelper, $scenarioMetadata, $currentEpisodeId, $top, $markVersionDifferences ) {
 		$categoryId = null;
 		$sceneId = null;
 		$currDepth = 0;
@@ -199,7 +195,7 @@ class scenarioMeta {
 					if ( $markVersionDifferences ) {
 						$previousNextText .= ' changeStatusIndex'.$s->changeStatus;
 					}
-					$previousNextText .= '"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$s->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$s->GetDescriptionShort($compare).'</a></span>';
+					$previousNextText .= '"><a href="'.$urlHelper->WithSection('scenario')->WithName($s->episodeId)->GetUrl().'">'.$s->GetDescriptionShort($urlHelper->compare).'</a></span>';
 					$previousNextText .= ' - ';
 				}
 				
@@ -208,7 +204,7 @@ class scenarioMeta {
 				if ( $markVersionDifferences ) {
 					$previousNextText .= ' changeStatusIndex'.$scene->changeStatus;
 				}
-				$previousNextText .= '">'.$scene->GetDescriptionShort($compare).'</span>';
+				$previousNextText .= '">'.$scene->GetDescriptionShort($urlHelper->compare).'</span>';
 				$currentIndex = $index;
 				
 				$currentDepth = 2;
@@ -233,7 +229,7 @@ class scenarioMeta {
 					if ( $markVersionDifferences ) {
 						$previousNextText .= ' changeStatusIndex'.$scene->changeStatus;
 					}
-					$previousNextText .= '"><a href="?version='.$version.'&locale='.$locale.'&compare='.$compare.'&section=scenario&name='.$scene->episodeId.( $markVersionDifferences ? '&diff=true' : '' ).'">'.$scene->GetDescriptionShort($compare).'</a></span>';
+					$previousNextText .= '"><a href="'.$urlHelper->WithSection('scenario')->WithName($scene->episodeId)->GetUrl().'">'.$scene->GetDescriptionShort($urlHelper->compare).'</a></span>';
 					break;
 				}
 			} else if ( $scene->parentId === $sceneId ) {

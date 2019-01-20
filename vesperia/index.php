@@ -299,14 +299,14 @@ if ( $section === 'search' ) {
 		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 		if ( $thisScenarioMeta !== null ) {
 			$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-			ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences, $name );
+			ScenarioMeta::RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences, $name );
 		}
 	}
 	
 	echo '<div class="scenario-content">';
 	
 	if ( $scenarioMetadata !== null ) {
-		ScenarioMeta::RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $name, true, $markVersionDifferences );
+		ScenarioMeta::RenderPreviousNext( $urlHelper, $scenarioMetadata, $name, true, $markVersionDifferences );
 	}
 	
 	$sce = $db->GetScenario( $name );
@@ -318,7 +318,7 @@ if ( $section === 'search' ) {
 	echo '</div>';
 	
 	if ( $scenarioMetadata !== null ) {
-		ScenarioMeta::RenderPreviousNext( $version, $locale, $compare, $scenarioMetadata, $name, false, $markVersionDifferences );
+		ScenarioMeta::RenderPreviousNext( $urlHelper, $scenarioMetadata, $name, false, $markVersionDifferences );
 	}
 	
 	echo '</div>';
@@ -330,7 +330,7 @@ if ( $section === 'search' ) {
 		$thisScenarioMeta = $db->GetScenarioMetaFromEpisodeId( $name );
 		if ( $thisScenarioMeta !== null ) {
 			$scenarioMetadata = $db->GetScenarioMetaGroupRange( $thisScenarioMeta->type, $thisScenarioMeta->sceneGroup - 1, $thisScenarioMeta->sceneGroup + 1 );
-			ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences, $name );
+			ScenarioMeta::RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences, $name );
 		}
 	}
 	
@@ -369,11 +369,11 @@ if ( $section === 'search' ) {
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'scenario-index' ) {
 	print_top( $version, $locale, $compare, 'Story Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 1 );
-	ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences );
+	ScenarioMeta::RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences );
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'sidequest-index' ) {
 	print_top( $version, $locale, $compare, 'Sidequest Index' );
 	$scenarioMetadata = $db->GetScenarioIndex( 2 );
-	ScenarioMeta::RenderIndex( $version, $locale, $compare, $scenarioMetadata, $markVersionDifferences );
+	ScenarioMeta::RenderIndex( $urlHelper, $scenarioMetadata, $markVersionDifferences );
 } elseif ( GameVersionLocale::AllowScenario( $version ) && $section === 'skit-index' ) {
 	print_top( $version, $locale, $compare, 'Skit Index' );
 	echo '<table>';
