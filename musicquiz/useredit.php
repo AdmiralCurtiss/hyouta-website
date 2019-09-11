@@ -9,7 +9,7 @@ if ( !isset( $session ) ) {
 		     && isset($_POST['pass2'])											 ) {
 			if ( $_POST['pass1'] == $_POST['pass2'] ) {
 				require_once('db.class.php');
-				include '../credentials.php';
+				require_once '../credentials.php';
 				$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 				if ( $db->editpassword( $session->userid, $_POST['pass1'] ) ) {
 					$errormsg = 'Successfully changed password.';

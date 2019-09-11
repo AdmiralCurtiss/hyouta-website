@@ -5,7 +5,7 @@
 		$pagegen_start_time = $time[1] + $time[0];
 	//page generation time code end
 	
-	include '../credentials.php';
+	require_once '../credentials.php';
 	include 'session.php';
     $database = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 	$session = new Session( $database );

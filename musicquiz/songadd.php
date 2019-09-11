@@ -44,7 +44,7 @@ function songadd($db) {
 }
 
 if ( $session->logged_in && $session->user->is_admin() ) {
-	include '../credentials.php';
+	require_once '../credentials.php';
 	$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 	
 	if ( isset($_POST['url']) ) {

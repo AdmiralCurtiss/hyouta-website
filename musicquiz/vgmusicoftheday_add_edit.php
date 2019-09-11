@@ -15,7 +15,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	//require_once 'song.class.php';
 	require_once 'url_container.class.php';
 
-	include '../credentials.php';
+	require_once '../credentials.php';
 	$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 	
 	$uploaders = $db->get_users_with_rank(3);
