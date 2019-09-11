@@ -22,28 +22,30 @@ function time_since($since) {
     return $print;
 }
 
-	include '../credentials.php';
-	$database = @mysql_connect($__db_hostname_stuff__, $__db_username_stuff__, $__db_password_stuff__) OR die(mysql_error());
-	@mysql_select_db($__db_database_stuff__) OR die(mysql_error());
+include '../credentials.php';
+
+
+$database = new PDO( $__db_connstr_stuff__, $__db_username_stuff__, $__db_password_stuff__, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'") );
+$database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$database->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+$database->beginTransaction();
+
+echo '<html>';
+echo '<head>';
+echo '<title>Savegame Archive</title>';
+echo '</head>';
+echo '<body>';
+
+$statement = $database->prepare( 'SELECT id, date, filename, `desc` FROM marioparty ORDER BY date DESC' );
+$statement->execute();
+
+while ( $data = $statement->fetch() ) {
+	$desc = $data['desc'] == null ? $data['filename'] : $data['desc'];
+	echo '<a href="'.$data['filename'].'">'.$desc.'</a>, '.time_since(time()-strtotime($data['date'])).' ago<br>';
+}
+
+echo '</body>';
+
+$database->rollBack();
+
 ?>
-
-<html>
-<head>
-<title>Savegame Archive</title>
-</head>
-<body>
-<?php 
-
-	$resultset = mysql_query('SELECT id, date, filename, `desc` FROM marioparty ORDER BY date DESC');
-	if ( $resultset ) {
-		while ( $data = mysql_fetch_assoc($resultset) ) {
-			$desc = $data['desc'] == null ? $data['filename'] : $data['desc'];
-			echo '<a href="'.$data['filename'].'">'.$desc.'</a>, '.time_since(time()-strtotime($data['date'])).' ago<br>';
-			// ('.$data['date'].')
-		}
-	} else {
-		echo 'Database query failed!';
-	}
-
-?>
-</body>
