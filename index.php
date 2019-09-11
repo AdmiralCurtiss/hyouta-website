@@ -16,7 +16,6 @@ The Video Game Music Quiz is a site where you get small clips of video game musi
 
 <h2>Other stuff</h2>
 <a href="https://github.com/AdmiralCurtiss/">My GitHub account</a><br/>
-<a href="/stream">#B8Stickam</a><br/>
 <a href="/savegame">My save files</a><br/>
 </body>
 </html>
