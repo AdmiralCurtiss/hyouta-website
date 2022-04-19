@@ -102,7 +102,7 @@ if ( $session->logged_in && $session->user->is_admin() ) {
 		echo '</tr></form>';
 	echo '</table>';
 
-	echo '<a href="http://192.168.0.19/musicquiz/index.php?section=nameedit&type=game&id='.($id+1).'">Next</a>';
+	echo '<a href="index.php?section=nameedit&type=game&id='.($id+1).'">Next</a>';
 	
 } else {
 	include 'main.php';
