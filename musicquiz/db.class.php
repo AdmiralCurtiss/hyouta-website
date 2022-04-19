@@ -261,25 +261,31 @@ class db {
 		
 		return false;	
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function edit_game( $gameid, $gamename, $priority ) {
 		$gameid = (int)$gameid;
 		$priority = (int)$priority;
-		
-		$query = 'UPDATE music_games SET gamename = \''.mysql_real_escape_string(stripslashes($gamename))
-				.'\' WHERE gameid = '.$gameid.' AND priority = '.$priority;
 
-		return mysql_query($query, $this->database);
+		$query = 'UPDATE music_games SET gamename = :gamename WHERE gameid = :gameid AND priority = :priority';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':gamename' => $gamename,
+			':gameid' => $gameid,
+			':priority' => $priority,
+		));
+		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function edit_songname( $songid, $songname, $priority ) {
 		$songid = (int)$songid;
 		$priority = (int)$priority;
-		
-		$query = 'UPDATE music_songnames SET songname = \''.mysql_real_escape_string(stripslashes($songname))
-				.'\' WHERE songid = '.$songid.' AND priority = '.$priority;
 
-		return mysql_query($query, $this->database);
+		$query = 'UPDATE music_songnames SET songname = :songname WHERE songid = :songid AND priority = :priority';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':songname' => $songname,
+			':songid' => $songid,
+			':priority' => $priority,
+		));
+		return $success;
 	}
     function check_if_song_is_public( $songid ) {
 		$songid = (int)$songid;
@@ -886,33 +892,33 @@ class db {
 		$success = $stmt->execute($args);
         return $success;
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
-	function add_song( $url, $difficulty, $gameid, $available ) {
+	function add_song($url, $difficulty, $gameid, $available) {
 		$difficulty = (int)$difficulty;
 		$gameid = (int)$gameid;
-		
-		$query = 'INSERT INTO music_songs ( url, gameid, difficulty, available ) VALUES '
-				.'( \''.mysql_real_escape_string($url).'\', '.$gameid.', '.$difficulty.', '.( $available ? 1 : 0 ).' )';
-		if ( mysql_query($query, $this->database) ) {
-			return mysql_insert_id();
-		}
-		
-		return false;
+
+		$query = 'INSERT INTO music_songs (url, gameid, difficulty, available, calcdiff) VALUES (:url, :gameid, :difficulty, :available, :calcdiff)';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':url' => $url,
+			':gameid' => $gameid,
+			':difficulty' => $difficulty,
+			':available' => ($available ? 1 : 0),
+			':calcdiff' => 254,
+		));
+		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function get_free_gameid() {
 		$query = 'SELECT MAX(gameid)+1 AS nextgameid FROM music_games';
-		
+
+		$stmt = $this->database->prepare($query);
 		$success = $stmt->execute();
 		if ( $success ) {
 			$data = $stmt->fetch();
-			return $data['nextgameid'];
+			return (int)$data['nextgameid'];
 		}
-		
+
 		return false;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function get_free_priority( $gameid, $from ) {
 		$gameid = (int)$gameid;
 		if ( $from == 'g' ) {
@@ -922,16 +928,16 @@ class db {
 		} else {
 			return false;
 		}
-		
+
+		$stmt = $this->database->prepare($query);
 		$success = $stmt->execute();
 		if ( $success ) {
 			$data = $stmt->fetch();
-			return $data['nextprio'];
+			return (int)$data['nextprio'];
 		}
-		
+
 		return false;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function add_game( $gameid, $gamename, $priority = false ) {
 		$gameid = (int)$gameid;
 		if ( $priority ) {
@@ -940,13 +946,16 @@ class db {
 			$priority = $this->get_free_priority( $gameid, 'g' );
 			if ( $priority == false ) $priority = 1;
 		}
-		
-		$query = 'INSERT INTO music_games ( gameid, gamename, priority ) VALUES '
-				.'( '.$gameid.', \''.mysql_real_escape_string(stripslashes($gamename)).'\', '.$priority.' )';
-		
-		return mysql_query($query, $this->database);
+
+		$query = 'INSERT INTO music_games (gameid, gamename, priority) VALUES (:gameid, :gamename, :priority)';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':gameid' => $gameid,
+			':gamename' => $gamename,
+			':priority' => $priority,
+		));
+		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function add_songname( $songid, $songname, $priority = false ) {
 		$songid = (int)$songid;
 		if ( $priority ) {
@@ -955,23 +964,32 @@ class db {
 			$priority = $this->get_free_priority( $songid, 's' );
 			if ( $priority == false ) $priority = 1;
 		}
-		
-		$query = 'INSERT INTO music_songnames ( songid, songname, priority ) VALUES '
-				.'( '.$songid.', \''.mysql_real_escape_string(stripslashes($songname)).'\', '.$priority.' )';
-		
-		return mysql_query($query, $this->database);
+
+		$query = 'INSERT INTO music_songnames (songid, songname, priority) VALUES (:songid, :songname, :priority)';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':songid' => $songid,
+			':songname' => $songname,
+			':priority' => $priority,
+		));
+		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function edit_song( $songid, $url, $difficulty, $gameid, $available ) {
 		$songid = (int)$songid;
 		$difficulty = (int)$difficulty;
 		$gameid = (int)$gameid;
-		$query = 'UPDATE music_songs SET url = \''.mysql_real_escape_string($url).'\', '
-				.'difficulty = '.$difficulty
-				.( $gameid >= 0 ? ', gameid = '.$gameid : '' )
-				.', available = '.( $available ? 1 : 0 ).' WHERE songid = '.$songid;
 
-		return mysql_query($query, $this->database);
+		$query = 'UPDATE music_songs SET url = :url, difficulty = :difficulty'
+				.( $gameid >= 0 ? ', gameid = '.$gameid : '' )
+				.', available = :available WHERE songid = :songid';
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':url' => $url,
+			':difficulty' => $difficulty,
+			':available' => ($available ? 1 : 0),
+			':songid' => $songid,
+		));
+		return $success;
 	}
     /// TODO: ============== EDIT TO PDO ==================== 
 	function create_new_series( $seriesname ) {
@@ -979,30 +997,35 @@ class db {
 		if ( mysql_query($query, $this->database) ) {
 			return mysql_insert_id();
 		}
-		
+
 		return false;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function edit_series_name( $seriesid, $seriesname ) {
 		$seriesid = (int)$seriesid;
-		
-		$query = 'UPDATE music_series SET seriesname = \''.mysql_real_escape_string(stripslashes($seriesname)).'\' WHERE seriesid = '.$seriesid;
-		
-		return mysql_query($query, $this->database);
+
+		$query = 'UPDATE music_series SET seriesname = :seriesname WHERE seriesid = :seriesid';
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':seriesname' => $seriesname,
+			':seriesid' => $seriesid,
+		));
+		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function set_series_of_game( $gameid, $seriesid ) {
 		$gameid = (int)$gameid;
 		$seriesid = (int)$seriesid;
-		
+
 		if ( $this->get_assigned_seriesid_from_gameid($gameid) ) {
-			$query = 'UPDATE music_series_games SET seriesid = '.$seriesid.' WHERE gameid = '.$gameid;
-			return mysql_query($query, $this->database);
+			$query = 'UPDATE music_series_games SET seriesid = :seriesid WHERE gameid = :gameid';
 		} else {
-			$query = 'INSERT INTO music_series_games (seriesid, gameid) VALUES ('.$seriesid.', '.$gameid.')';
-			return mysql_query($query, $this->database);
+			$query = 'INSERT INTO music_series_games (seriesid, gameid) VALUES (:seriesid, :gameid)';
 		}
-		return false;
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':seriesid' => $seriesid,
+			':gameid' => $gameid,
+		));
+		return $success;
 	}
     function get_assigned_seriesid_from_gameid($gameid) {
 		$gameid = (int)$gameid;
