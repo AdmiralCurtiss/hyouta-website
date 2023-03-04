@@ -51,14 +51,17 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 
 	require_once '../credentials.php';
 	$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
-	
+
 	if ( isset($_POST['formaction']) ) {
 		$_POST['type'] = (int)$_POST['type'];
 		if ( $_POST['type'] <= 0 ) die();
-	
+
 		if ( $_POST['formaction'] == 'Add File' ) {
 			echo 'Uploading detected. ';
 			$upload_success = false;
+
+			echo 'Uploading is disabled.';
+			/*
 			if ( $_FILES["file"]["error"] > 0 ) {
 				if ( $_FILES["file"]["error"] == '4' ) {
 					echo 'No file uploaded.';
@@ -105,6 +108,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 					echo 'Database updated! ';
 				}
 			}
+			*/
 		} else if ( $_POST['formaction'] == 'Add URL' ) {
 			echo 'URL adding detected! ';
 			
@@ -191,6 +195,9 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 </table>
 </form>
 
+<?php
+
+/*
 <form action="index.php?section=vgmotd-urladd&id=<?php echo $_GET['id']; ?>" method="post" enctype="multipart/form-data">
 <table>
 	<tr>
@@ -213,7 +220,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 </table>
 </form>
 </div>
-<?php
+*/
 
 } else {
 	include 'main.php';

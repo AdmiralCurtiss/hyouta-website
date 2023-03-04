@@ -3,19 +3,19 @@ if ( !isset( $session ) ) {
 	die();
 }
 
-//if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	require_once 'db.class.php';
 	require_once 'song.class.php';
 	require_once 'url_container.class.php';
 
 	error_reporting(E_ALL);
-	
+
 	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		$vgmotduser = true;
 	} else {
 		$vgmotduser = false;
 	}
-	
+
 	require_once '../credentials.php';
 	$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
 
@@ -206,7 +206,7 @@ if ( !isset( $session ) ) {
 							} else {
 								echo '<br>';
 							}
-							
+
 							if ( $url->has_icon() ) {
 								echo '<a href="'.$url->url.'"><img src="'.$url->get_icon().'" title="'.$url->get_typename().'" border="0" /></a>';
 							} else {
@@ -234,7 +234,7 @@ if ( !isset( $session ) ) {
 				echo '<td>&nbsp;</td>';
 			}
 		}
-		
+
 		if ( $vgmotduser ) {
 			echo '<td align="middle"><a href="index.php?section=vgmotd-urladd&id='.$song->songid.'">'
 				.'<img src="images/plus.gif" title="Add new URL" border="0" /></a></td>';
@@ -243,12 +243,12 @@ if ( !isset( $session ) ) {
 			.'</tr>';
 	}
 	echo '</table>';
-	
+
 	echo $pagestable;
-	
+
 	echo '<br><br><br><br><br>';
-	
-//} else {
-//	include 'main.php';
-//}
+
+} else {
+	include 'error.php';
+}
 ?>

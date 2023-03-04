@@ -5,7 +5,6 @@ require_once 'url_container.class.php';
 require_once 'passbcrypt_holder.class.php';
 
 class db {
-
 	var $database;
 
 	function __construct( $connstr, $username, $password ) {
@@ -14,11 +13,11 @@ class db {
 		$this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$this->database->beginTransaction();
 	}
-	
+
 	function __destruct() {
 		$this->database->rollBack();
 	}
-	
+
 	// no longer used, just to check & convert legacy passwords
 	function gethash($password) {
 		return md5('nGWNrTdpmBBpNCce4#hWNvyYNum4f'.$password.'# umN3q3rbcP# HFpmzR6ExQMn7sZ');
@@ -168,7 +167,7 @@ class db {
 			}
 			return $users;
 		}
-		
+
 		return false;
 	}
 	function update_session($userid, $session) {
@@ -220,7 +219,7 @@ class db {
 			}
 			return $games;
 		}
-	
+
 		return false;
 	}
 
@@ -288,12 +287,12 @@ class db {
 	}
     function check_if_song_is_public( $songid ) {
 		$songid = (int)$songid;
-		
+
 		$query = 'SELECT COUNT(1) AS songexist FROM music_songs WHERE available = 1 AND songid = :songid';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['songexist'] == 1 ) return true;
@@ -303,11 +302,11 @@ class db {
 		}
 	}
 
-    function get_gamelist() {
+	function get_gamelist() {
 		$query = 'SELECT gamename, gameid FROM music_games ORDER BY gameid ASC, priority ASC';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute();
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute();
 		if ( $success ) {
 			$games = array();
 			$previd = 0;
@@ -323,17 +322,17 @@ class db {
 			}
 			return $games;
 		}
-	
+
 		return false;
 	}
-    function get_songnames( $songid ) {
+	function get_songnames( $songid ) {
 		$songid = (int)$songid;
 		$query = 'SELECT songname FROM music_songnames WHERE songid = :songid ORDER BY priority ASC';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$songnames = array();
 			while ( $data = $stmt->fetch() ) {
@@ -341,21 +340,21 @@ class db {
 			}
 			return $songnames;
 		}
-		
-		return false;	
+
+		return false;
 	}
-    function get_song( $songid, $get_names = true ) {
+	function get_song( $songid, $get_names = true ) {
 		$songid = (int)$songid;
 		if ( $get_names ) {
 			$query = 'SELECT songid, url, gameid, difficulty, available FROM music_songs WHERE songid = :songid';
 		} else {
 			$query = 'SELECT songid, url, difficulty FROM music_songs WHERE available = 1 AND songid = :songid';
 		}
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['songid'] == null ) return false;
@@ -369,19 +368,19 @@ class db {
 			}
 			return $song;
 		}
-		
+
 		return false;
 	}
-    function get_all_songs( $unavailable_only = false ) {
+	function get_all_songs( $unavailable_only = false ) {
 		$query = 'SELECT music_songs.songid, url, difficulty, gamename, songname, available FROM music_songs '
 				.'LEFT JOIN music_games ON music_songs.gameid = music_games.gameid '
 				.'LEFT JOIN music_songnames ON music_songs.songid = music_songnames.songid '
 				.'WHERE ( music_games.priority = 1 or ISNULL(music_games.priority) ) AND ( music_songnames.priority = 1 or ISNULL(music_songnames.priority) ) '
 				.( $unavailable_only ? 'AND available = 0 ' : '' )
 				.'ORDER BY music_songs.songid ASC';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute();
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute();
 		if ( $success ) {
 			$songs = array();
 			while ( $data = $stmt->fetch() ) {
@@ -391,25 +390,25 @@ class db {
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
-    function get_all_songs_percentage_only_from_cache( $start_with = 0, $amount = 200, $order = 'songid ASC' ) {
+	function get_all_songs_percentage_only_from_cache( $start_with = 0, $amount = 200, $order = 'songid ASC' ) {
 		$query = 'SELECT songid, gameguessed, gamecorrect, gamenoguess, songguessed, songcorrect, songnoguess, skipped FROM music_songs WHERE available = 1 '
-                .'ORDER BY :order LIMIT :start, :amount';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':order' => $order,
-            ':start' => $start_with,
-            ':amount' => $amount,
-        ));
+		        .'ORDER BY :order LIMIT :start, :amount';
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':order' => $order,
+			':start' => $start_with,
+			':amount' => $amount,
+		));
 		if ( $success ) {
 			$songs = array();
 			while ( $data = $stmt->fetch() ) {
 				$i = (int)$data['songid'];
 				$songs[$i] = new song( $data['songid'] );
-				
+
 				$guessamount['gameguessed'] = (int)$data['gameguessed'];
 				$guessamount['gamecorrect'] = (int)$data['gamecorrect'];
 				$guessamount['gamenoguess'] = (int)$data['gamenoguess'];
@@ -421,38 +420,38 @@ class db {
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
-    function get_amount_available_songs() {
+	function get_amount_available_songs() {
 		$query = 'SELECT COUNT(1) AS songamount FROM music_songs WHERE available = 1';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute();
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute();
 		if ( $success ) {
 			if ( $data = $stmt->fetch() ) {
 				return (int)$data['songamount'];
 			}
 		}
-		
+
 		return false;
 	}
-    function get_current_highest_songid() {
+	function get_current_highest_songid() {
 		$query = 'SELECT MAX(songid) AS maxid FROM music_songs';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute();
 		if ( $success ) {
 			if ( $data = $stmt->fetch() ) {
 				return (int)$data['maxid'];
 			}
 		}
-		
+
 		return false;
 	}
-    function get_all_songs_percentage_for_recalc() {
+	function get_all_songs_percentage_for_recalc() {
 		$query = 'SELECT music_songs.songid, music_series_games.seriesid FROM music_songs '
 				.'JOIN music_series_games ON music_songs.gameid = music_series_games.gameid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute();
 		if ( $success ) {
 			$songs = array();
@@ -464,92 +463,92 @@ class db {
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
-    function get_next_song( $userid ) {
+	function get_next_song( $userid ) {
 		$userid = (int)$userid;
 		$query = 'SELECT songid, url, difficulty FROM music_songs '
 				.'WHERE songid NOT IN ( SELECT songid FROM music_guesses WHERE userid = :userid1 ) '
 				.'AND songid NOT IN ( SELECT songid FROM music_skipped WHERE userid = :userid2 ) '
-                .'AND available = 1 ORDER BY difficulty ASC LIMIT 1';
+				.'AND available = 1 ORDER BY difficulty ASC LIMIT 1';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid1' => $userid,
-            ':userid2' => $userid,
-        ));
+			':userid1' => $userid,
+			':userid2' => $userid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['songid'] == null ) return false;
 			$song = new song($data['songid'], $data['url'], $data['difficulty']);
 			return $song;
 		}
-		
+
 		return false;
 	}
-    function get_random_unguessed_song( $userid ) {
+	function get_random_unguessed_song( $userid ) {
 		$userid = (int)$userid;
 		$query = 'SELECT songid, url, difficulty FROM music_songs '
 				.'WHERE songid NOT IN ( SELECT songid FROM music_guesses WHERE userid = :userid1 ) '
 				.'AND songid NOT IN ( SELECT songid FROM music_skipped WHERE userid = :userid2 ) '
-                .'AND available = 1 ORDER BY rand() LIMIT 1';
+				.'AND available = 1 ORDER BY rand() LIMIT 1';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid1' => $userid,
-            ':userid2' => $userid,
-        ));
+			':userid1' => $userid,
+			':userid2' => $userid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['songid'] == null ) return false;
 			$song = new song($data['songid'], $data['url'], $data['difficulty']);
 			return $song;
 		}
-		
+
 		return false;
 	}
-    function get_calcdiff_unguessed_song( $userid ) {
+	function get_calcdiff_unguessed_song( $userid ) {
 		$userid = (int)$userid;
 		$query = 'SELECT songid, url, difficulty FROM music_songs '
 				.'WHERE songid NOT IN ( SELECT songid FROM music_guesses WHERE userid = :userid1 ) '
 				.'AND songid NOT IN ( SELECT songid FROM music_skipped WHERE userid = :userid2 ) '
-                .'AND available = 1 ORDER BY calcdiff DESC LIMIT 1';
+				.'AND available = 1 ORDER BY calcdiff DESC LIMIT 1';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid1' => $userid,
-            ':userid2' => $userid,
-        ));
+			':userid1' => $userid,
+			':userid2' => $userid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['songid'] == null ) return false;
 			$song = new song($data['songid'], $data['url'], $data['difficulty']);
 			return $song;
 		}
-		
+
 		return false;
 	}
-    function get_series_name( $seriesid ) {
+	function get_series_name( $seriesid ) {
 		$seriesid = (int)$seriesid;
 		$query = 'SELECT seriesname FROM music_series WHERE seriesid = :seriesid';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':seriesid' => $seriesid,
-        ));
+			':seriesid' => $seriesid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['seriesname'] == null ) return false;
 			return $data['seriesname'];
 		}
-		
+
 		return false;
 	}
-    function get_all_series() {
+	function get_all_series() {
 		$query = 'SELECT seriesid, seriesname FROM music_series ORDER BY seriesname ASC';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute();
 		if ( $success ) {
 			$series = array();
@@ -558,63 +557,63 @@ class db {
 			}
 			return $series;
 		}
-		
+
 		return false;
 	}
-    function get_series_from_gameid( $gameid ) { // $return[0] = id, $return[1] = name
+	function get_series_from_gameid( $gameid ) { // $return[0] = id, $return[1] = name
 		$gameid  = (int)$gameid ;
 		$query = 'SELECT music_series.seriesid, music_series.seriesname FROM music_songs'
 				.' JOIN music_series_games ON music_series_games.gameid = music_songs.gameid'
 				.' JOIN music_series ON music_series_games.seriesid = music_series.seriesid'
 				.' WHERE music_series_games.gameid = :gameid';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':gameid' => $gameid,
-        ));
+			':gameid' => $gameid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['seriesid'] == null ) return false;
 			return array( $data['seriesid'] , $data['seriesname'] );
 		}
-		
+
 		return false;
 	}
 
-    function delete_skip( $userid, $songid ) {
+	function delete_skip( $userid, $songid ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
 
 		//delete skip if exists
 		$query = 'DELETE FROM music_skipped WHERE userid = :userid AND songid = :songid';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
-		
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+			':songid' => $songid,
+		));
+
 		if ( $success ) {
 			if ( $stmt->rowCount() != 0 ) {
 				$query = 'UPDATE music_songs SET skipped = skipped-1 WHERE songid = :songid';
-                $stmt = $this->database->prepare( $query );
-                $success = $stmt->execute(array(
-                    ':songid' => $songid,
-                ));
+				$stmt = $this->database->prepare( $query );
+				$success = $stmt->execute(array(
+					':songid' => $songid,
+				));
 			}
 			return true;
 		}
-		
+
 		return false;
 	}
-    function guess_song( $userid, $songid, $gameguess, $gamecorrect, $songguess, $songcorrect, $halfguess ) {
+	function guess_song( $userid, $songid, $gameguess, $gamecorrect, $songguess, $songcorrect, $halfguess ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
-		
+
 		if ( $songid <= 0 ) return false;
 		if ( !$this->check_if_song_is_public( $songid ) ) return false;
-		
+
 		$this->delete_skip( $userid, $songid );
-		
+
 		//set guessamounts
 		$query = 'UPDATE music_songs SET ';
 		if ( $gamecorrect ) {
@@ -632,16 +631,16 @@ class db {
 			$query .= 'songnoguess = songnoguess+1';
 		}
 		$query .= ' WHERE songid = :songid';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
-		
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':songid' => $songid,
+		));
+
 		$points = 0;
 		if ( $gamecorrect ) $points++;
 		if ( $songcorrect ) $points += 2;
 		if ( $halfguess && ( !$gameguess || !$songguess ) ) $points += 4;
-		
+
 		if ( !$gamecorrect && $gameguess ) {
 			$game_in_wrong_list = $this->check_wrong_guess( $songid, $gameguess, 'g' );
 		} else {
@@ -652,44 +651,44 @@ class db {
 		} else {
 			$song_in_wrong_list = false;
 		}
-		
+
 		// auto-hide if all guessed is correct
 		if ( ($gamecorrect || $game_in_wrong_list) && ($songcorrect || $song_in_wrong_list) ) { $hidefromall = 1; }
 		else if ( ($gamecorrect || $game_in_wrong_list) && !$songguess ) { $hidefromall = 1; }
 		else if ( ($songcorrect || $song_in_wrong_list) && !$gameguess ) { $hidefromall = 1; }
 		else { $hidefromall = 0; }
-				
+
 		$query = 'INSERT INTO music_guesses ( userid, songid, gameguess, songguess, points, hidefromall ) '
 				.'VALUES (:userid, :songid, :gameguess, :songguess, :points, :hide)';
 		$gameguessvalue = ( $gameguess ? $gameguess : null );
-        $songguessvalue = ( $songguess ? $songguess : null );
-               
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-            ':points' => $points,
-            ':hide' => $hidefromall,
-            ':gameguess' => $gameguessvalue,
-            ':songguess' => $songguessvalue,
-        ));
-        
+		$songguessvalue = ( $songguess ? $songguess : null );
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+			':songid' => $songid,
+			':points' => $points,
+			':hide' => $hidefromall,
+			':gameguess' => $gameguessvalue,
+			':songguess' => $songguessvalue,
+		));
+
 		return $success;
 	}
-    function skip_song( $userid, $songid ) {
+	function skip_song( $userid, $songid ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
-		
+
 		if ( $songid <= 0 ) return false;
 		if ( !$this->check_if_song_is_public( $songid ) ) return false;
-		
+
 		//check if song already guessed
 		$query = 'SELECT COUNT(1) AS alreadyguessed FROM music_guesses WHERE userid = :userid AND songid = :songid';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['alreadyguessed'] == 1 ) return false;
@@ -698,84 +697,84 @@ class db {
 		}
 
 		$query = 'INSERT INTO music_skipped ( userid, songid ) VALUES ( :userid, :songid )';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$query = 'UPDATE music_songs SET skipped = skipped+1 WHERE songid = :songid';
-            $stmt = $this->database->prepare( $query );
-		    $success = $stmt->execute(array(
-                ':songid' => $songid,
-            ));
+			$stmt = $this->database->prepare( $query );
+			$success = $stmt->execute(array(
+				':songid' => $songid,
+			));
 			return true;
 		}
 		return false;
 	}
-    function give_up( $userid, $songid ) {
+	function give_up( $userid, $songid ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
-		
+
 		if ( $songid <= 0 ) return false;
 		if ( !$this->check_if_song_is_public( $songid ) ) return false;
 
 		//check if song already guessed
 		$query = 'SELECT COUNT(1) AS alreadyguessed FROM music_guesses WHERE userid = :userid AND songid = :songid';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['alreadyguessed'] == 1 ) return false;
 		} else {
 			return false;
 		}
-		
+
 		$this->delete_skip( $userid, $songid );
 
 		$query = 'INSERT INTO music_guesses ( userid, songid, gameguess, songguess, points, hidefromall ) '
 				.'VALUES (:userid, :songid, NULL, NULL, 0, 1)';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$query = 'UPDATE music_songs SET gamenoguess = gamenoguess+1, songnoguess = songnoguess+1 WHERE songid = :songid';
-            $stmt = $this->database->prepare( $query );
-		    $success = $stmt->execute(array(
-                ':songid' => $songid,
-            ));
+			$stmt = $this->database->prepare( $query );
+			$success = $stmt->execute(array(
+				':songid' => $songid,
+			));
 			return true;
 		}
 		return false;
 	}
-    function get_amount_skipped_songs( $userid ) {
+	function get_amount_skipped_songs( $userid ) {
 		$userid = (int)$userid;
 		$query = 'SELECT COUNT(songid) AS songcount FROM music_skipped WHERE userid = :userid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
+			':userid' => $userid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			return $data['songcount'];
 		}
-		
+
 		return false;
 	}
-    function get_skipped_song_ids( $userid ) {
+	function get_skipped_song_ids( $userid ) {
 		$userid = (int)$userid;
 		$query = 'SELECT songid FROM music_skipped WHERE userid = :userid ORDER BY songid ASC';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
+			':userid' => $userid,
+		));
 		if ( $success ) {
 			$songids = array();
 			while ( $data = $stmt->fetch() ) {
@@ -783,59 +782,59 @@ class db {
 			}
 			return $songids;
 		}
-		
+
 		return false;
 	}
-    function clear_skipped_songs( $userid ) {
+	function clear_skipped_songs( $userid ) {
 		$userid = (int)$userid;
-		
+
 		$skipped_songs = $this->get_skipped_song_ids( $userid );
 		foreach ( $skipped_songs as $song ) {
 			$query = 'UPDATE music_songs SET skipped=skipped-1 WHERE songid = :songid';
-            $stmt = $this->database->prepare( $query );
-		    $success = $stmt->execute(array(
-                ':songid' => $song,
-            ));
+			$stmt = $this->database->prepare( $query );
+			$success = $stmt->execute(array(
+				':songid' => $song,
+			));
 		}
-		
+
 		$query = 'DELETE FROM music_skipped WHERE userid = :userid';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
-        return $success;
+			':userid' => $userid,
+		));
+		return $success;
 	}
-    function song_already_guessed( $userid, $songid ) {
+	function song_already_guessed( $userid, $songid ) {
 		//returns true if song already guessed, false if not
-		
+
 		$userid = (int)$userid;
 		$songid = (int)$songid;
 		$query = 'SELECT COUNT(1) AS already_guessed FROM music_guesses WHERE userid = :userid AND songid = :songid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			return ( $data['already_guessed'] == 1 );
 		}
-		
+
 		return false;
 	}
-    function song_halfguessed( $userid, $songid ) {
+	function song_halfguessed( $userid, $songid ) {
 		//returns 0 = nope, 1 = game guessed / song not, 2 = game not / song guessed
-		
+
 		$userid = (int)$userid;
 		$songid = (int)$songid;
 		$query = 'SELECT gameguess, songguess, points FROM music_guesses WHERE userid = :userid AND songid = :songid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['points'] < 4 ) {
@@ -848,21 +847,21 @@ class db {
 				return 2;
 			}
 		}
-		
+
 		return false;
 	}
-    function update_guess( $userid, $songid, $gameguess, $add_gamecorrect, $songguess, $add_songcorrect, $remove_halfguess ) {
+	function update_guess( $userid, $songid, $gameguess, $add_gamecorrect, $songguess, $add_songcorrect, $remove_halfguess ) {
 		$songid = (int)$songid;
 		$userid = (int)$userid;
-		
+
 		$points = 0;
 		if ( $add_gamecorrect )  $points++;
 		if ( $add_songcorrect )  $points += 2;
 		if ( $remove_halfguess ) $points -= 4;
-		
+
 		$skip_gameguess = ( $gameguess === false );
 		$skip_songguess = ( $songguess === false );
-		
+
 		if ( !$skip_gameguess && !$add_gamecorrect ) {
 			$unhide_from_all = true;
 		} else if ( !$skip_songguess && !$add_songcorrect ) {
@@ -870,26 +869,26 @@ class db {
 		} else {
 			$unhide_from_all = false;
 		}
-	
+
 		$query = 'UPDATE music_guesses SET '
 				.( $skip_gameguess ? '' : 'gameguess = :gameguess, ' )
 				.( $skip_songguess ? '' : 'songguess = :songguess, ' )
 				.( $unhide_from_all ? 'hidefromall = 0, ' : '' )
 				.'points = ( points + :morepts ) WHERE songid = :songid AND userid = :userid';
-        $stmt = $this->database->prepare( $query );
-        $args = array();
-        $args[':userid'] = $userid;
-        $args[':songid'] = $songid;
-        $args[':morepts'] = $points;
-        if ( !$skip_gameguess ) {
-            $args[':gameguess'] = $gameguess;
-        }
-        if ( !$skip_songguess ) {
-            $args[':songguess'] = $songguess;
-        }
+		$stmt = $this->database->prepare( $query );
+		$args = array();
+		$args[':userid'] = $userid;
+		$args[':songid'] = $songid;
+		$args[':morepts'] = $points;
+		if ( !$skip_gameguess ) {
+			$args[':gameguess'] = $gameguess;
+		}
+		if ( !$skip_songguess ) {
+			$args[':songguess'] = $songguess;
+		}
 
 		$success = $stmt->execute($args);
-        return $success;
+		return $success;
 	}
 	function add_song($url, $difficulty, $gameid, $available) {
 		$difficulty = (int)$difficulty;
@@ -990,13 +989,15 @@ class db {
 		));
 		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function create_new_series( $seriesname ) {
-		$query = 'INSERT INTO music_series ( seriesname ) VALUES ( \''.mysql_real_escape_string(stripslashes($seriesname)).'\' )';
-		if ( mysql_query($query, $this->database) ) {
-			return mysql_insert_id();
+		$query = 'INSERT INTO music_series (seriesname) VALUES (:seriesname)';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':seriesname' => $seriesname,
+		));
+		if ($success) {
+			return $this->database->lastInsertId();
 		}
-
 		return false;
 	}
 	function edit_series_name( $seriesid, $seriesname ) {
@@ -1026,14 +1027,14 @@ class db {
 		));
 		return $success;
 	}
-    function get_assigned_seriesid_from_gameid($gameid) {
+	function get_assigned_seriesid_from_gameid($gameid) {
 		$gameid = (int)$gameid;
 		$query = 'SELECT seriesid FROM music_series_games WHERE gameid = :gameid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':gameid' => $gameid,
-        ));
+			':gameid' => $gameid,
+		));
 		if ( $success ) {
 			if ( $data = $stmt->fetch() ) {
 				return (int)$data['seriesid'];
@@ -1042,30 +1043,30 @@ class db {
 		}
 		return false;
 	}
-    function change_song_availability( $songid, $available = true ) {
+	function change_song_availability( $songid, $available = true ) {
 		$songid = (int)$songid;
 		$query = 'UPDATE music_songs SET available = :avail WHERE songid = :songid';
 
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':avail' => ( $available ? 1 : 0 ),
-            ':songid' => $songid,
-        ));
+			':avail' => ( $available ? 1 : 0 ),
+			':songid' => $songid,
+		));
 		return $success;
 	}
-	
-    function get_guessed_song_ids( $userid, $start_with = 0, $amount = 50 ) {
+
+	function get_guessed_song_ids( $userid, $start_with = 0, $amount = 50 ) {
 		$userid = (int)$userid;
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
 		$query = 'SELECT songid FROM music_guesses WHERE userid = :userid ORDER BY time DESC LIMIT :startw, :amount';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':startw' => $start_with,
-            ':amount' => $amount,
-        ));
+			':userid' => $userid,
+			':startw' => $start_with,
+			':amount' => $amount,
+		));
 		if ( $success ) {
 			$songids = array();
 			while ( $data = $stmt->fetch() ) {
@@ -1073,17 +1074,17 @@ class db {
 			}
 			return $songids;
 		}
-		
+
 		return false;
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function get_vgmusicoftheday_types($linktype = -1) {
 		$linktype = (int)$linktype;
 		$query = 'SELECT id, name, icon FROM vgmusicoftheday_types'
 				.( $linktype == -1 ? '' : ' WHERE linktype = '.$linktype )
 				.' ORDER BY id';
-	
+		$stmt = $this->database->prepare( $query );
+
 		$success = $stmt->execute();
 		if ( $success ) {
 			$types = array();
@@ -1094,142 +1095,225 @@ class db {
 			return $types;
 		}
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function get_vgmusicoftheday_songs_count($search_string = false, $limit_to_past = true) {
-				
 		if ( $search_string !== false ) {
-			$search_string = mysql_real_escape_string(stripslashes($search_string));
+			$search_string = '%'.$search_string.'%';
 			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
-				.' WHERE ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )'
+				.' WHERE ( UPPER(artist) LIKE UPPER(:search_string) OR UPPER(game) LIKE UPPER(:search_string) OR UPPER(song) LIKE UPPER(:search_string) OR UPPER(username) LIKE UPPER(:search_string) )'
 				.( $limit_to_past === true ? ' AND ( day <= DATE(NOW()) ) ' : '' );
+			$stmt = $this->database->prepare( $query );
+			$success = $stmt->execute(array(
+				':search_string' => $search_string,
+			));
+			if ( $success ) {
+				$data = $stmt->fetch();
+				return $data['c'];
+			}
 		} else {
 			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'.( $limit_to_past === true ? ' WHERE ( day <= DATE(NOW()) ) ' : '' );
+			$stmt = $this->database->prepare( $query );
+			$success = $stmt->execute();
+			if ( $success ) {
+				$data = $stmt->fetch();
+				return $data['c'];
+			}
 		}
-		
-		$success = $stmt->execute();
-		if ( $success ) {
-			$data = $stmt->fetch();
-			return $data['c'];
-		}
+
+		return false;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function get_vgmusicoftheday_songs_youtubeonly_count($search_string = false) {
 		if ( $search_string !== false ) {
-			$search_string = mysql_real_escape_string(stripslashes($search_string));
+			$search_string = '%'.$search_string.'%';
 			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1'
 				.' AND day > DATE(\'2010-09-08\') AND day < DATE(NOW())'
-				.' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )';
+				.' AND ( UPPER(artist) LIKE UPPER(:search_string) OR UPPER(game) LIKE UPPER(:search_string) OR UPPER(song) LIKE UPPER(:search_string) OR UPPER(username) LIKE UPPER(:search_string) )';
+			$stmt = $this->database->prepare($query);
+			$success = $stmt->execute(array(
+				':search_string' => $search_string,
+			));
+			if ( $success ) {
+				$data = $stmt->fetch();
+				return $data['c'];
+			}
 		} else {
 			$query = 'SELECT COUNT(1) as c FROM vgmusicoftheday JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id WHERE url_type = 1 AND day > DATE(\'2010-09-08\') AND day < DATE(NOW())';
-		}
-		
-		$success = $stmt->execute();
-		if ( $success ) {
-			$data = $stmt->fetch();
-			return $data['c'];
+			$stmt = $this->database->prepare($query);
+			$success = $stmt->execute();
+			if ( $success ) {
+				$data = $stmt->fetch();
+				return $data['c'];
+			}
 		}
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function add_vgmusicoftheday_url( $vgm_id, $url_type, $url ) {
 		$vgm_id = (int)$vgm_id;
 		$url_type = (int)$url_type;
-		$url = mysql_real_escape_string(stripslashes($url));
-		
-		$query = 'INSERT INTO vgmusicoftheday_urls ( vgm_id, url, url_type ) VALUES ( '.$vgm_id.', "'.$url.'", '.$url_type.' )';
-		
-		if ( mysql_query($query, $this->database) ) {
-			return mysql_insert_id();
+		$query = 'INSERT INTO vgmusicoftheday_urls (vgm_id, url, url_type) VALUES (:vgm_id, :url, :url_type)';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':vgm_id' => $vgm_id,
+			':url' => $url,
+			':url_type' => $url_type,
+		));
+		if ($success) {
+			return $this->database->lastInsertId();
 		}
-		
 		return false;
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function edit_vgmusicoftheday_url( $id, $vgm_id, $url_type, $url ) {
 		$id = (int)$id;
 		$vgm_id = (int)$vgm_id;
 		$url_type = (int)$url_type;
-		$url = mysql_real_escape_string(stripslashes($url));
-		
-		$query = 'UPDATE vgmusicoftheday_urls SET vgm_id = '.$vgm_id.', url = "'.$url.'", url_type = '.$url_type.' WHERE id = '.$id;
-		
-		return mysql_query($query, $this->database);
+		$query = 'UPDATE vgmusicoftheday_urls SET vgm_id = :vgm_id, url = :url, url_type = :url_type WHERE id = :id';
+
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':vgm_id' => $vgm_id,
+			':url' => $url,
+			':url_type' => $url_type,
+			':id' => $id,
+		));
+
+		return $success;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function edit_vgmusicoftheday_visibility( $id, $visibility ) {
 		$id = (int)$id;
 		$visibility = (int)$visibility;
-		$query = 'UPDATE vgmusicoftheday_urls SET visible = '.$visibility.' WHERE id = '.$id;
-		return mysql_query($query, $this->database);
+		$query = 'UPDATE vgmusicoftheday_urls SET visible = :visible WHERE id = :id';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':visible' => $visibility,
+			':id' => $id,
+		));
+
+		return $success;
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function delete_vgmusicoftheday_url( $id ) {
 		$id = (int)$id;
-		
-		$query = 'DELETE FROM vgmusicoftheday_urls WHERE id = '.$id;
-		
-		return mysql_query($query, $this->database);
+		$query = 'DELETE FROM vgmusicoftheday_urls WHERE id = :id';
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':id' => $id,
+		));
+
+		return $success;
 	}
 
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function edit_vgmusicoftheday_song( $id, $day, $artist, $game, $song, $quiz_id, $uploaderid, $comment = false ) {
 		$id = (int)$id;
-		$day = $day ? mysql_real_escape_string(stripslashes($day)) : false;
-		$artist = mysql_real_escape_string(stripslashes($artist));
-		$game = mysql_real_escape_string(stripslashes($game));
-		$song = mysql_real_escape_string(stripslashes($song));
 		$quiz_id = (int)$quiz_id;
 		$uploaderid = (int)$uploaderid;
-		$comment = $comment ? mysql_real_escape_string(stripslashes($comment)) : false;
-		
-		$query = 'UPDATE vgmusicoftheday'
-				.' SET day = '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', artist = "'.$artist.'", game = "'.$game.'", song = "'.$song.'",'
-				.' quiz_id = '.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', uploaderid = '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).','
-				.' comment = '.( $comment ? '"'.$comment.'"' : 'NULL' )
-				.' WHERE id = '.$id;
-		
-		return mysql_query($query, $this->database);
+
+		$vars = array(
+			':artist' => $artist,
+			':game' => $game,
+			':song' => $song,
+			':id' => $id,
+		);
+		$query = 'UPDATE vgmusicoftheday SET';
+		if ($day) {
+			$query .= ' day = STR_TO_DATE(:day, "%Y-%m-%d"),';
+			$vars[':day'] = $day;
+		} else {
+			$query .= ' day = NULL,';
+		}
+		$query .= ' artist = :artist,';
+		$query .= ' game = :game,';
+		$query .= ' song = :song,';
+		if ($quiz_id != 0) {
+			$query .= ' quiz_id = :quiz_id,';
+			$vars[':quiz_id'] = $quiz_id;
+		} else {
+			$query .= ' quiz_id = NULL,';
+		}
+		if ($uploaderid != 0) {
+			$query .= ' uploaderid = :uploaderid,';
+			$vars[':uploaderid'] = $uploaderid;
+		} else {
+			$query .= ' uploaderid = NULL,';
+		}
+		if ($comment) {
+			$query .= ' comment = :comment';
+			$vars[':comment'] = $comment;
+		} else {
+			$query .= ' comment = NULL';
+		}
+		$query .= ' WHERE id = :id';
+
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute($vars);
+
+		return $success;
 	}
 
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function add_vgmusicoftheday_song( $day, $artist, $game, $song, $quiz_id, $uploaderid, $comment = false ) {
-		$day = $day ? mysql_real_escape_string(stripslashes($day)) : false;
-		$artist = mysql_real_escape_string(stripslashes($artist));
-		$game = mysql_real_escape_string(stripslashes($game));
-		$song = mysql_real_escape_string(stripslashes($song));
 		$quiz_id = (int)$quiz_id;
 		$uploaderid = (int)$uploaderid;
-		$comment = $comment ? mysql_real_escape_string(stripslashes($comment)) : false;
-		
-		$query = 'INSERT INTO vgmusicoftheday ( day, artist, game, song, quiz_id, uploaderid, comment ) VALUES'
-				.' ( '.( $day ? 'STR_TO_DATE("'.$day.'","%Y-%m-%d")' : 'NULL' ).', "'.$artist.'", "'.$game.'", "'.$song.'", '
-				.( $quiz_id == 0 ? 'NULL' : $quiz_id ).', '.( $uploaderid == 0 ? 'NULL' : $uploaderid ).', '
-				.( $comment ? '"'.$comment.'"' : 'NULL' ).' )'
-				;
-		
-		if ( mysql_query($query, $this->database) ) {
-			return mysql_insert_id();
+
+		$vars = array(
+			':artist' => $artist,
+			':game' => $game,
+			':song' => $song,
+		);
+		$query = 'INSERT INTO vgmusicoftheday ( day, artist, game, song, quiz_id, uploaderid, comment ) VALUES (';
+		if ($day) {
+			$query .= 'STR_TO_DATE(:day,"%Y-%m-%d")';
+			$vars[':day'] = $day;
+		} else {
+			$query .= 'NULL';
 		}
-		
+		$query .= ', :artist, :game, :song, ';
+		if ($quiz_id != 0) {
+			$query .= ':quiz_id';
+			$vars[':quiz_id'] = $quiz_id;
+		} else {
+			$query .= 'NULL';
+		}
+		if ($uploaderid != 0) {
+			$query .= ':uploaderid';
+			$vars[':uploaderid'] = $uploaderid;
+		} else {
+			$query .= 'NULL';
+		}
+		if ($comment) {
+			$query .= ':comment';
+			$vars[':comment'] = $comment;
+		} else {
+			$query .= 'NULL';
+		}
+		$query .= ' )';
+
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute($vars);
+		if ($success) {
+			return $this->database->lastInsertId();
+		}
+
 		return false;
 	}
-	
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function get_vgmusicoftheday_song( $id ) {
-		
 		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, comment, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
-				.' WHERE id = '.$id;
-		
-		$success = $stmt->execute();
+				.' WHERE id = :id';
+
+		$stmt = $this->database->prepare($query);
+		$success = $stmt->execute(array(
+			':id' => $id,
+		));
 		if ( $success ) {
 			$i = 0;
+			$query_urls = 'SELECT id, url, url_type, visible FROM vgmusicoftheday_urls WHERE vgm_id = :vgm_id ORDER BY url_type ASC';
+			$stmt_urls = $this->database->prepare($query_urls);
 			while ( $data = $stmt->fetch() ) {
 				$songid = (int)$data['id'];
 				$songs = new song($songid, null, null, $data['game'], $data['song']);
@@ -1240,13 +1324,14 @@ class db {
 				$songs->username = $data['username'];
 				$songs->daynumber = $data['daynumber'];
 				$songs->comment = $data['comment'];
-				
+
 				// grab urls
-				$query_urls = 'SELECT id, url, url_type, visible FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' ORDER BY url_type ASC';
-				$resultset_urls = mysql_query($query_urls, $this->database);
+				$success_urls = $stmt_urls->execute(array(
+					':vgm_id' => $songid,
+				));
 				if ( $success_urls ) {
 					$urls = array();
-					while ( $data_urls = mysql_fetch_assoc($resultset_urls) ) {
+					while ( $data_urls = $stmt_urls->fetch() ) {
 						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type'], $data_urls['visible']);
 					}
 					$songs->url = $urls;
@@ -1257,29 +1342,33 @@ class db {
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function get_vgmusicoftheday_songs( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false, $limit_to_past = true ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
-		if ( $search_string !== false ) {
-			$search_string = mysql_real_escape_string(stripslashes($search_string));
-		}
-		
+
 		$query = 'SELECT id, day, artist, game, song, quiz_id, userid, comment, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid WHERE 1=1 '
 				.( $search_string === false ? '' :
-					' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )' )
+					' AND ( UPPER(artist) LIKE UPPER(:search_string) OR UPPER(game) LIKE UPPER(:search_string) OR UPPER(song) LIKE UPPER(:search_string) OR UPPER(username) LIKE UPPER(:search_string) )' )
 				.( $limit_to_past === true ? ' AND ( day <= DATE(NOW()) ) ' : '' )
 				.' ORDER BY '.$order
 				.' LIMIT '.$start_with.', '.$amount;
-		
-		$success = $stmt->execute();
+		$stmt = $this->database->prepare($query);
+
+		$vars = array();
+		if (!($search_string === false)) {
+			$vars[':search_string'] = '%'.$search_string.'%';
+		}
+		$success = $stmt->execute($vars);
 		if ( $success ) {
 			$songs = array();
 			$i = 0;
+			$query_urls = 'SELECT id, url, url_type, visible FROM vgmusicoftheday_urls WHERE vgm_id = :vgm_id AND visible != 0 ORDER BY url_type ASC';
+			$stmt_urls = $this->database->prepare($query_urls);
 			while ( $data = $stmt->fetch() ) {
 				$songid = (int)$data['id'];
 				$songs[$i] = new song($songid, null, null, $data['game'], $data['song']);
@@ -1290,13 +1379,14 @@ class db {
 				$songs[$i]->username = $data['username'];
 				$songs[$i]->daynumber = $data['daynumber'];
 				$songs[$i]->comment = $data['comment'];
-				
+
 				// grab urls
-				$query_urls = 'SELECT id, url, url_type, visible FROM vgmusicoftheday_urls WHERE vgm_id = '.$songid.' AND visible != 0 ORDER BY url_type ASC';
-				$resultset_urls = mysql_query($query_urls, $this->database);
+				$success_urls = $stmt_urls->execute(array(
+					':vgm_id' => $songid,
+				));
 				if ( $success_urls ) {
 					$urls = array();
-					while ( $data_urls = mysql_fetch_assoc($resultset_urls) ) {
+					while ( $data_urls = $stmt_urls->fetch() ) {
 						$urls[] = new url_container($data_urls['id'], $data_urls['url'], $data_urls['url_type'], $data_urls['visible']);
 					}
 					$songs[$i]->url = $urls;
@@ -1307,12 +1397,13 @@ class db {
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
-    /// TODO: ============== EDIT TO PDO ==================== 
+
 	function get_vgmusicoftheday_current_day() {
 		$query = 'SELECT DATEDIFF(CURDATE(), \'2010-09-08\') AS daynumber';
+		$stmt = $this->database->prepare($query);
 		$success = $stmt->execute();
 		if ( $success ) {
 			if ( $data = $stmt->fetch() ) {
@@ -1322,25 +1413,26 @@ class db {
 		return false;
 	}
 
-    /// TODO: ============== EDIT TO PDO ==================== 
 	function get_vgmusicoftheday_songs_youtubeonly( $start_with = 0, $amount = 50, $order = 'day ASC', $search_string = false ) {
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
-		if ( $search_string !== false ) {
-			$search_string = mysql_real_escape_string(stripslashes($search_string));
-		}
-		
+
 		$query = 'SELECT vgmusicoftheday.id, day, artist, game, song, quiz_id, userid, username, DATEDIFF(`day`, \'2010-09-08\') AS daynumber, url, vgmusicoftheday_urls.id AS urlid FROM vgmusicoftheday'
 				.' LEFT JOIN music_users ON uploaderid = userid'
 				.' LEFT JOIN vgmusicoftheday_urls ON vgm_id = vgmusicoftheday.id'
 				.' WHERE url_type = 1 AND vgmusicoftheday_urls.visible != 0'
 				.' AND day > DATE(\'2010-09-08\') AND day < DATE(NOW())'
 				.( $search_string === false ? '' :
-					' AND ( UPPER(artist) LIKE UPPER("%'.$search_string.'%") OR UPPER(game) LIKE UPPER("%'.$search_string.'%") OR UPPER(song) LIKE UPPER("%'.$search_string.'%") OR UPPER(username) LIKE UPPER("'.$search_string.'") )' )
+					' AND ( UPPER(artist) LIKE UPPER(:search_string) OR UPPER(game) LIKE UPPER(:search_string) OR UPPER(song) LIKE UPPER(:search_string) OR UPPER(username) LIKE UPPER(:search_string) )' )
 				.' ORDER BY '.$order
 				.' LIMIT '.$start_with.', '.$amount;
-		
-		$success = $stmt->execute();
+		$stmt = $this->database->prepare($query);
+
+		$vars = array();
+		if (!($search_string === false)) {
+			$vars[':search_string'] = '%'.$search_string.'%';
+		}
+		$success = $stmt->execute($vars);
 		if ( $success ) {
 			$songs = array();
 			$i = 0;
@@ -1353,7 +1445,7 @@ class db {
 				$songs[$i]->userid = $data['userid'];
 				$songs[$i]->username = $data['username'];
 				$songs[$i]->daynumber = $data['daynumber'];
-				
+
 				$urls = array();
 				$urls[] = new url_container($data['urlid'], $data['url'], 1, 1);
 				$songs[$i]->url = $urls;
@@ -1362,18 +1454,16 @@ class db {
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
 
-	
-    /// TODO: ============== FULLY UPDATE ==================== 
 	function get_guessed_songs( $userid, $songid_only, $start_with = 0, $amount = 50, $order = 'time DESC', $include_series = false, $halfguess_check = false ) {
 		$userid = (int)$userid;
 		$start_with = (int)$start_with;
 		$amount = (int)$amount;
-		
-        $args = array();
+
+		$args = array();
 		if ( $userid > 0 ) {
 			$query = 'SELECT music_guesses.songid, gameguess, songguess, points, gamename, songname, gameguessed, gamecorrect, gamenoguess, songguessed, songcorrect, songnoguess, skipped, hidefromall'
 					.( $include_series ? ', music_series.seriesid, seriesname, seriesgameguessed, seriesgamecorrect, seriesgamenoguess, seriessongguessed, seriessongcorrect, seriessongnoguess, seriesskipped, music_series.seriesid IS NULL AS isnull' : '' )
@@ -1387,7 +1477,7 @@ class db {
 					.' AND music_guesses.userid = :userid'
 					.( $halfguess_check ? ' AND points > 3' : ' AND points <= 3 ORDER BY '.$order )
 					.' LIMIT '.$start_with.', '.$amount;
-            $args[':userid'] = $userid;
+			$args[':userid'] = $userid;
 		} else {
 			$query = 'SELECT music_guesses.userid, music_users.username, music_guesses.songid, gameguess, songguess, points, gamename, songname, gameguessed, gamecorrect, gamenoguess, songguessed, songcorrect, songnoguess, skipped, hidefromall'
 					.( $include_series ? ', music_series.seriesid, seriesname, seriesgameguessed, seriesgamecorrect, seriesgamenoguess, seriessongguessed, seriessongcorrect, seriessongnoguess, seriesskipped, music_series.seriesid IS NULL AS isnull' : '' )
@@ -1403,8 +1493,8 @@ class db {
 					.( $songid_only != 0 ? ' AND music_guesses.songid = '.$songid_only : '' )
 					.' ORDER BY '.$order.' LIMIT '.$start_with.', '.$amount;
 		}
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute($args);
 		if ( $success ) {
 			$songs = array();
@@ -1451,27 +1541,27 @@ class db {
 						$songs[$i]->seriesid = 0;
 					}
 				}
-				
+
 				$songs[$i]->hidden = (int)$data['hidefromall'];
-				
+
 				$i++;
 			}
 			return $songs;
 		}
-		
+
 		return false;
 	}
-    function get_guessed_song( $userid, $songid ) {
+	function get_guessed_song( $userid, $songid ) {
 		$song = $this->get_song( $songid );
 		$userid = (int)$userid;
 		$songid = (int)$songid;
 		$query = 'SELECT gameguess, songguess, points FROM music_guesses WHERE userid = :userid AND songid = :songid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			$song->game_guessed = str_replace( array('<', '>', '\\\'') , array('&lt;', '&gt;', '\'') , $data['gameguess'] );
@@ -1481,23 +1571,23 @@ class db {
 			$song->name_correct = ( $data['points'] >= 2 );
 			return $song;
 		}
-		
+
 		return false;
 
 	}
-    function edit_result( $userid, $songid, $pointchange ) {
+	function edit_result( $userid, $songid, $pointchange ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
 		$pointchange = (int)$pointchange;
 		if ( $pointchange < -2 || $pointchange > 2 || $pointchange == 0 ) return false;
-		
+
 		$query = 'UPDATE music_guesses SET points = ( points + :pchange ) WHERE songid = :songid AND userid = :userid';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':songid' => $songid,
-            ':pchange' => $pointchange,
-        ));
+			':userid' => $userid,
+			':songid' => $songid,
+			':pchange' => $pointchange,
+		));
 		if ( $success ) {
 			switch ( $pointchange ) {
 				case 1:
@@ -1513,70 +1603,70 @@ class db {
 					$query = 'UPDATE music_songs SET songcorrect = songcorrect-1 WHERE songid = :songid';
 					break;
 			}
-            $stmt = $this->database->prepare( $query );
-		    $success = $stmt->execute(array(
-                ':songid' => $songid,
-            ));
+			$stmt = $this->database->prepare( $query );
+			$success = $stmt->execute(array(
+				':songid' => $songid,
+			));
 			return true;
 		}
 		return false;
 	}
-	
-    function get_amount_guessed_songs( $userid, $songid, $points = false ) {
+
+	function get_amount_guessed_songs( $userid, $songid, $points = false ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
-        
-        $args = array();
+
+		$args = array();
 		$query = 'SELECT COUNT(1) AS songcount FROM music_guesses';
 		if ( $userid > 0 ) {
 			$query .= ' WHERE userid = :userid';
-            $args[':userid'] = $userid;
+			$args[':userid'] = $userid;
 			if ( $points ) {
 				$query .= ' AND points = :points';
-                $args[':points'] = $points;
+				$args[':points'] = $points;
 			}
 		} else {
 			if ( $userid == 0 ) {
 				$query .= ' WHERE hidefromall = 0';
 				if ( $songid > 0 ) {
 					$query .= ' AND songid = :songid';
-                    $args[':songid'] = $songid;
+					$args[':songid'] = $songid;
 				}
 			} else if ( $songid > 0 ) {
 				$query .= ' WHERE songid = :songid';
-                $args[':songid'] = $songid;
+				$args[':songid'] = $songid;
 			}
 		}
-        
+
 		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute( $args );
 		if ( $success ) {
 			$data = $stmt->fetch();
 			return $data['songcount'];
 		}
-		
+
 		return false;
 	}
-    function get_amount_halfguessed_songs( $userid ) {
+	function get_amount_halfguessed_songs( $userid ) {
 		$userid = (int)$userid;
 		$query  = 'SELECT COUNT(1) AS songcount FROM music_guesses WHERE userid = :userid AND points > 3';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
+			':userid' => $userid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			return $data['songcount'];
 		}
-		
+
 		return false;
 	}
-    function get_amount_people_guessed( $songid ) {
+	function get_amount_people_guessed( $songid ) {
 		$songid = (int)$songid;
-		
+
 		$query = 'SELECT'
-                .' ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = :songidgg AND gameguess IS NOT NULL ) AS gameguessed, '
+				.' ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = :songidgg AND gameguess IS NOT NULL ) AS gameguessed, '
 				.' ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = :songidgc AND ( points = 1 OR points = 3 OR points = 5 ) ) AS gamecorrect, '
 				.' ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = :songidgn AND gameguess IS NULL ) AS gamenoguess, '
 				.' ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = :songidsg AND songguess IS NOT NULL ) AS songguessed, '
@@ -1584,16 +1674,16 @@ class db {
 				.' ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = :songidsn AND songguess IS NULL ) AS songnoguess, '
 				.' ( SELECT COUNT(1) AS songcount FROM music_skipped WHERE songid = :songidskip ) AS skipped '
 				;
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':songidgg' => $songid,
-            ':songidgc' => $songid,
-            ':songidgn' => $songid,
-            ':songidsg' => $songid,
-            ':songidsc' => $songid,
-            ':songidsn' => $songid,
-            ':songidskip' => $songid,
-        ));
+			':songidgg' => $songid,
+			':songidgc' => $songid,
+			':songidgn' => $songid,
+			':songidsg' => $songid,
+			':songidsc' => $songid,
+			':songidsn' => $songid,
+			':songidskip' => $songid,
+		));
 
 		/*	Query that ignores "not guessed" entries
 				$query = 'SELECT ( SELECT COUNT(1) AS songcount FROM music_guesses WHERE songid = '.$songid.' AND gameguess IS NOT NULL ) AS gametotal, '
@@ -1603,7 +1693,7 @@ class db {
 				.' ( SELECT COUNT(1) AS songcount FROM music_skipped WHERE songid = '.$songid.' ) AS skipped '
 				;
 		*/
-				
+
 		if ( $success ) {
 			$data = $stmt->fetch();
 			$guessamount['gameguessed'] = (int)$data['gameguessed'];
@@ -1619,15 +1709,15 @@ class db {
 
 		return $guessamount;
 	}
-    function get_amount_people_guessed_from_cache( $songid ) {
+	function get_amount_people_guessed_from_cache( $songid ) {
 		$songid = (int)$songid;
-		
+
 		$query = 'SELECT gameguessed, gamecorrect, gamenoguess, songguessed, songcorrect, songnoguess, skipped '
-                .'FROM music_songs WHERE songid = :songid';
-        $stmt = $this->database->prepare( $query );
+				.'FROM music_songs WHERE songid = :songid';
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			$guessamount['gameguessed'] = (int)$data['gameguessed'];
@@ -1643,21 +1733,21 @@ class db {
 
 		return $guessamount;
 	}
-	
+
 	function set_calculated_difficulty( $songid, $calcdiff ) {
 		$songid = (int)$songid;
 		$calcdiff = (int)$calcdiff;
-				
+
 		$query = 'UPDATE music_songs SET calcdiff = :calcdiff WHERE songid = :songid';
-        $stmt = $this->database->prepare( $query );
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':calcdiff' => $calcdiff,
-            ':songid' => $songid,
-        ));
-		
+			':calcdiff' => $calcdiff,
+			':songid' => $songid,
+		));
+
 		return $success;
 	}
-    function set_guessamount_cache( $songid, $gameguessed, $gamecorrect, $gamenoguess, $songguessed, $songcorrect, $songnoguess, $skipped ) {
+	function set_guessamount_cache( $songid, $gameguessed, $gamecorrect, $gamenoguess, $songguessed, $songcorrect, $songnoguess, $skipped ) {
 		$songid = (int)$songid;
 		$gameguessed = (int)$gameguessed;
 		$gamecorrect = (int)$gamecorrect;
@@ -1666,25 +1756,25 @@ class db {
 		$songcorrect = (int)$songcorrect;
 		$songnoguess = (int)$songnoguess;
 		$skipped = (int)$skipped;
-				
+
 		$query = 'UPDATE music_songs SET gameguessed = :gameguessed, gamecorrect = :gamecorrect, '
-                .'gamenoguess = :gamenoguess, songguessed = :songguessed, songcorrect = :songcorrect, '
-                .'songnoguess = :songnoguess, skipped = :skipped WHERE songid = :songid';
-		
-        $stmt = $this->database->prepare( $query );
+				.'gamenoguess = :gamenoguess, songguessed = :songguessed, songcorrect = :songcorrect, '
+				.'songnoguess = :songnoguess, skipped = :skipped WHERE songid = :songid';
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':gameguessed' => $gameguessed,
-            ':gamecorrect' => $gamecorrect,
-            ':gamenoguess' => $gamenoguess,
-            ':songguessed' => $songguessed,
-            ':songcorrect' => $songcorrect,
-            ':songnoguess' => $songnoguess,
-            ':skipped' => $skipped,
-            ':songid' => $songid,
-        ));
-        return $success;
+			':gameguessed' => $gameguessed,
+			':gamecorrect' => $gamecorrect,
+			':gamenoguess' => $gamenoguess,
+			':songguessed' => $songguessed,
+			':songcorrect' => $songcorrect,
+			':songnoguess' => $songnoguess,
+			':skipped' => $skipped,
+			':songid' => $songid,
+		));
+		return $success;
 	}
-    function set_seriesamount_cache( $seriesid, $gameguessed, $gamecorrect, $gamenoguess, $songguessed, $songcorrect, $songnoguess, $skipped ) {
+	function set_seriesamount_cache( $seriesid, $gameguessed, $gamecorrect, $gamenoguess, $songguessed, $songcorrect, $songnoguess, $skipped ) {
 		$seriesid = (int)$seriesid;
 		$gameguessed = (int)$gameguessed;
 		$gamecorrect = (int)$gamecorrect;
@@ -1693,81 +1783,81 @@ class db {
 		$songcorrect = (int)$songcorrect;
 		$songnoguess = (int)$songnoguess;
 		$skipped = (int)$skipped;
-				
+
 		$query = 'UPDATE music_series SET seriesgameguessed = :gameguessed, '
-                .'seriesgamecorrect = :gamecorrect, seriesgamenoguess = :gamenoguess, '
-                .'seriessongguessed = :songguessed, seriessongcorrect = :songcorrect, '
-                .'seriessongnoguess = :songnoguess, seriesskipped = :skipped '
-                .'WHERE seriesid = :seriesid';
-		
-        $stmt = $this->database->prepare( $query );
+				.'seriesgamecorrect = :gamecorrect, seriesgamenoguess = :gamenoguess, '
+				.'seriessongguessed = :songguessed, seriessongcorrect = :songcorrect, '
+				.'seriessongnoguess = :songnoguess, seriesskipped = :skipped '
+				.'WHERE seriesid = :seriesid';
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':gameguessed' => $gameguessed,
-            ':gamecorrect' => $gamecorrect,
-            ':gamenoguess' => $gamenoguess,
-            ':songguessed' => $songguessed,
-            ':songcorrect' => $songcorrect,
-            ':songnoguess' => $songnoguess,
-            ':skipped' => $skipped,
-            ':seriesid' => $seriesid,
-        ));
-        return $success;
+			':gameguessed' => $gameguessed,
+			':gamecorrect' => $gamecorrect,
+			':gamenoguess' => $gamenoguess,
+			':songguessed' => $songguessed,
+			':songcorrect' => $songcorrect,
+			':songnoguess' => $songnoguess,
+			':skipped' => $skipped,
+			':seriesid' => $seriesid,
+		));
+		return $success;
 	}
 
-    function set_guessorder( $userid, $guessorder ) {
+	function set_guessorder( $userid, $guessorder ) {
 		$userid = (int)$userid;
 		$guessorder = (int)$guessorder;
-				
+
 		$query = 'UPDATE music_users SET guessorder = :guessorder WHERE userid = :userid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':guessorder' => $guessorder,
-        ));
+			':userid' => $userid,
+			':guessorder' => $guessorder,
+		));
 		return $success;
 	}
-    function set_autoplay( $userid, $autoplay ) {
+	function set_autoplay( $userid, $autoplay ) {
 		$userid = (int)$userid;
 		$autoplay = (int)$autoplay;
-				
+
 		$query = 'UPDATE music_users SET autoplay = :autoplay WHERE userid = :userid';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':autoplay' => $autoplay,
-        ));
-        return $success;
-	}
-    function set_halfguess( $userid, $halfguess ) {
-		$userid = (int)$userid;
-		$halfguess = (int)$halfguess;
-				
-		$query = 'UPDATE music_users SET halfguess = :halfguess WHERE userid = :userid';
-		
-        $stmt = $this->database->prepare( $query );
-		$success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':halfguess' => $halfguess,
-        ));
+			':userid' => $userid,
+			':autoplay' => $autoplay,
+		));
 		return $success;
 	}
-    function hide_guess_from_all( $userid, $songid ) {
+	function set_halfguess( $userid, $halfguess ) {
+		$userid = (int)$userid;
+		$halfguess = (int)$halfguess;
+
+		$query = 'UPDATE music_users SET halfguess = :halfguess WHERE userid = :userid';
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+			':halfguess' => $halfguess,
+		));
+		return $success;
+	}
+	function hide_guess_from_all( $userid, $songid ) {
 		$userid = (int)$userid;
 		$songid = (int)$songid;
-		
-        $args = array();
+
+		$args = array();
 		$query = 'UPDATE music_guesses SET hidefromall = 1 WHERE userid = :userid';
-        $args[':userid'] = $userid;
-        if ( $songid != -1 ) {
-            $query .= ' AND songid = :songid';
-            $args[':songid'] = $songid;
-        }
-		
-        $stmt = $this->database->prepare( $query );
+		$args[':userid'] = $userid;
+		if ( $songid != -1 ) {
+			$query .= ' AND songid = :songid';
+			$args[':songid'] = $songid;
+		}
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute($args);
-		
+
 		if ( $success ) {
 			// push the entry we've just hidden into the wrong guesses table
 			$song = $this->get_guessed_song($userid, $songid);
@@ -1778,13 +1868,13 @@ class db {
 				$this->insert_wrong_guess($songid, $song->name_guessed, 'n');
 			}
 		}
-		
+
 		return $success;
 	}
-	
-    function check_wrong_guess( $songid, $name, $type ) {
+
+	function check_wrong_guess( $songid, $name, $type ) {
 		$songid = (int)$songid;
-		
+
 		$query = 'SELECT COUNT(1) AS wrongexists FROM ';
 		if ( $type == 'g' ) {
 			$query .= 'music_wrong_games';
@@ -1794,12 +1884,12 @@ class db {
 			return false;
 		}
 		$query .= ' WHERE songid = :songid AND UPPER(name) = UPPER(:name)';
-        
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':name' => $name,
-            ':songid' => $songid,
-        ));
+			':name' => $name,
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$data = $stmt->fetch();
 			if ( $data['wrongexists'] == 1 ) return true;
@@ -1808,9 +1898,9 @@ class db {
 			return false;
 		}
 	}
-    function insert_wrong_guess( $songid, $name, $type ) {
+	function insert_wrong_guess( $songid, $name, $type ) {
 		$songid = (int)$songid;
-		
+
 		$query = 'INSERT INTO ';
 		if ( $type == 'g' ) {
 			$query .= 'music_wrong_games';
@@ -1820,12 +1910,12 @@ class db {
 			return false;
 		}
 		$query .= ' (songid, name) VALUES (:songid, :name)';
-		
-        $stmt = $this->database->prepare( $query );
+
+		$stmt = $this->database->prepare( $query );
 		$success = $stmt->execute(array(
-            ':name' => $name,
-            ':songid' => $songid,
-        ));
+			':name' => $name,
+			':songid' => $songid,
+		));
 		return $success;
 	}
 }

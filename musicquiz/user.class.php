@@ -15,20 +15,19 @@ class user {
 		$this->guessorder = (int)$guessorder;
 		$this->autoplay = (int)$autoplay;
 	}
-	
+
 	function is_admin() {
 		if ( $this->role == 9 ) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	function is_vgmusicoftheday() {
 		if ( $this->role >= 3 ) {
 			return true;
 		}
 		return false;
 	}
-	
 }
 ?>
