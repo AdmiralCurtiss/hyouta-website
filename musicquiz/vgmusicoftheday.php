@@ -10,7 +10,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 
 	error_reporting(E_ALL);
 
-	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+	if ( $session->logged_in && $session->user->is_admin() ) {
 		$vgmotduser = true;
 	} else {
 		$vgmotduser = false;

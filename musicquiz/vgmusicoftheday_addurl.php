@@ -41,7 +41,7 @@ function getYoutubeIdentifier( $str ) {
 	}
 }
 
-if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+if ( $session->logged_in && $session->user->is_admin() ) {
 	$_GET['id'] = (int)$_GET['id'];
 	if ( $_GET['id'] <= 0 ) die();
 

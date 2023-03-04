@@ -26,11 +26,11 @@
 
 	if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		$section['vgmoftheday'] = 'vgmusicoftheday.php';
-		$section['vgmotd-urladd'] = 'vgmusicoftheday_addurl.php';
-		$section['vgmotd-add-edit'] = 'vgmusicoftheday_add_edit.php';
 	}
 
 	if ( $session->logged_in && $session->user->is_admin() ) {
+		$section['vgmotd-urladd'] = 'vgmusicoftheday_addurl.php';
+		$section['vgmotd-add-edit'] = 'vgmusicoftheday_add_edit.php';
 		$section['songadd']    = 'songadd.php';
 		$section['songedit']   = 'songedit.php';
 		$section['nameedit']   = 'nameedit.php';

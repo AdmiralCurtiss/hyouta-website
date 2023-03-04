@@ -3,7 +3,7 @@ if ( !isset( $session ) ) {
 	die();
 }
 
-if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
+if ( $session->logged_in && $session->user->is_admin() ) {
 	$songid = (int)$_GET['id'];
 	if ( $songid <= 0 ) {
 		$editing = false;
