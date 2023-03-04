@@ -5,8 +5,9 @@ if ( !isset( $session ) ) {
 ?><ul id="menulist">
 <?php
 	$menu=array();
+	$menu['main']     = 'Home';
 	$menu['faq']      = 'FAQ';
-	
+
 	if ( $session->logged_in ) {
 		$menu['guess']    = 'Guess Songs';
 		$menu['results']  = 'Already guessed';
@@ -14,9 +15,9 @@ if ( !isset( $session ) ) {
 	} else {
 		$menu['register'] = 'Register';
 	}
-	
+
 	//$menu['vgmoftheday'] = 'VGMusic of the Day';
-	
+
 	if ( $session->logged_in && $session->user->is_admin() ) {
 		$menu['songadd']  = 'Add new Song';
 		$menu['songedit'] = 'Change existing Song';

@@ -53,47 +53,50 @@ class Session
 
 		//username/password is correct
 		$_SESSION['userid']  = $this->user->userid;
-		$_SESSION['session'] = $this->generateRandStr(32);
-		$this->db->update_session($_SESSION['userid'], $_SESSION['session'], $_SERVER['REMOTE_ADDR']);
+		$_SESSION['session'] = $this->generateRandStr(256);
+		$this->db->update_session($_SESSION['userid'], $_SESSION['session']);
 
-		if($rememberme){
-			setcookie('userid',  $_SESSION['userid'],  time()+60*60*24*31);
-			setcookie('session', $_SESSION['session'], time()+60*60*24*31);
+		if ($rememberme) {
+			setcookie('userid',  $_SESSION['userid'],  time()+60*60*24*31*365*5);
+			setcookie('session', $_SESSION['session'], time()+60*60*24*31*365*5);
+		} else {
+			setcookie('userid',  '', time()-60*60*24*31);
+			setcookie('session', '', time()-60*60*24*31);
 		}
-		
+
 		return true;
-   }
+	}
 
 	function logout() {
 		if( isset($_COOKIE['userid']) ) {
-			setcookie('userid',  '',  time()-60*60*24*31);
+			setcookie('userid', '', time()-60*60*24*31);
 		}
-		
+
 		if( isset($_COOKIE['session']) ) {
-			setcookie('session',  '',  time()-60*60*24*31);
+			setcookie('session', '', time()-60*60*24*31);
 		}
-		
+
 		unset($_SESSION['userid']);
 		unset($_SESSION['session']);
-		
+
 		$this->logged_in = false;
 		$this->user = false;
-   }
+	}
 
-   function generateRandStr($length) {
-      $randstr = "";
-      for($i=0; $i<$length; $i++){
-         $randnum = mt_rand(0,61);
-         if($randnum < 10){
-            $randstr .= chr($randnum+48);
-         }else if($randnum < 36){
-            $randstr .= chr($randnum+55);
-         }else{
-            $randstr .= chr($randnum+61);
-         }
-      }
-      return $randstr;
-   }
+	function generateRandStr($length) {
+		$randstr = '';
+		for($i=0; $i<$length; $i++){
+			$randnum = mt_rand(0,61);
+			if ($randnum < 10) {
+				$randstr .= chr($randnum+48);
+			} else if ($randnum < 36) {
+				$randstr .= chr($randnum+55);
+			} else {
+				$randstr .= chr($randnum+61);
+			}
+		}
+		return $randstr;
+	}
 };
 
 ?>

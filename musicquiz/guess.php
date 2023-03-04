@@ -5,10 +5,10 @@ if ( !isset( $session ) ) {
 
 	require_once('db.class.php');
 	require_once '../credentials.php';
-    $db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
-	
+	$db = new db( $__db_connstr_music__, $__db_username_music__, $__db_password_music__ );
+
 	$halfguess = ( $session->user->halfguess != 0 );
-	
+
 	if ( isset( $_POST['formaction'] ) && $_POST['formaction'] == 'guess' ) {
 		if ( isset($_POST['game']) ) {
 			$_POST['game'] = trim($_POST['game']);
@@ -145,7 +145,9 @@ if ( !isset( $session ) ) {
 	} else {
 		echo '<p>Halfguessing is disabled. <a href="index.php?section=guess&halfguess=on">Click here to turn it on. (experimental feature, read FAQ!)</a></p>';
 	}
-	
+
+	// doesn't seem to work these days anymore
+	/*
 	if ( !isset($_GET['autoplay']) ) {
 		$autoplay = ( $session->user->autoplay != 0 );
 	} else {
@@ -159,13 +161,14 @@ if ( !isset( $session ) ) {
 			$autoplay = ( $session->user->autoplay != 0 );
 		}
 	}
-	
+
 	if ( $autoplay ) {
 		echo '<p>Autoplay is enabled. <a href="index.php?section=guess&autoplay=off">Click here to turn it off.</a></p>';
 	} else {
 		echo '<p>Autoplay is disabled. <a href="index.php?section=guess&autoplay=on">Click here to turn it on.</a></p>';
 	}
-	
+	*/
+
 	$skipped = $db->get_amount_skipped_songs($session->userid);
 	if ( isset( $_GET['songid'] ) ) {
 		$song = $db->get_song($_GET['songid'], false);
@@ -221,6 +224,4 @@ if ( $halfguessvalue == 1 ) echo '<tr><td>Song:</td><td><input name="song" type=
 			echo '<p>Already guessed this song.</p>';
 		}
 	}
-?><p><object width="640" height="240"><param name="movie" value="http://www.youtube.com/v/<?php echo $song->url; if ( $autoplay ) echo '&autoplay=1'; ?>&version=3&showinfo=0&modestbranding=1&rel=0&autohide=0"></param>
-<param name="allowFullScreen" value="false"></param>
-<param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/<?php echo $song->url; if ( $autoplay ) echo '&autoplay=1'; ?>&version=3&showinfo=0&modestbranding=1&rel=0&autohide=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="240"></embed></object></p><?php ?>
+?><p><iframe width="420" height="315" src="https://www.youtube.com/embed/<?php echo $song->url; ?>" frameborder="0"></iframe></p><?php ?>

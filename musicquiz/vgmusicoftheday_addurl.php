@@ -165,7 +165,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 	}
 	
 	echo '</div><br>';
-	echo '<div><a href="index.php?section=vgmotd-add-edit&id='.$_GET['id'].'">Edit this song\'s Data</a></div><br>';
+	echo '<div><a href="index.php?section=vgmotd-add-edit&id='.$_GET['id'].'">Edit this song&#39;s Data</a></div><br>';
 	echo '<br>';
 	
 ?><div>

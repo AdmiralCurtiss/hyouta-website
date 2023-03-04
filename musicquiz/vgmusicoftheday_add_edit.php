@@ -66,7 +66,7 @@ if ( $session->logged_in && $session->user->is_vgmusicoftheday() ) {
 		
 		echo '<div>'
 			.'Editing <b>'.$current_song->games.' - '.$current_song->names.' by '.$current_song->artist.'</b>, uploaded by '.$current_song->username.'.<br><br></div>';
-		echo '<div><a href="index.php?section=vgmotd-urladd&id='.$songid.'">Edit this song\'s URLs</a></div><br>';
+		echo '<div><a href="index.php?section=vgmotd-urladd&id='.$songid.'">Edit this song&#39;s URLs</a></div><br>';
 		
 		if ( $current_song->date != null ) {
 			$gettoday = false;

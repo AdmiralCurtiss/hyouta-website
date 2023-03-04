@@ -10,7 +10,7 @@ class db {
 
 	function __construct( $connstr, $username, $password ) {
 		$this->database = new PDO( $connstr, $username, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'") );
-		$this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 		$this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 		$this->database->beginTransaction();
 	}
@@ -37,67 +37,67 @@ class db {
 	function register($username, $password) {
 		$pwdhash = $this->getbcrypt($password, '$2y$11$'.$this->createbcryptsalt().'$');
 		$query = 'INSERT INTO music_users (username, password, salt, passbcrypt) '
-                .'VALUES ( :username, :password, :salt, :hash )';
+		        .'VALUES ( :username, :password, :salt, :hash )';
 
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':username' => $username,
-            ':password' => '',
-            ':salt' => $pwdhash->salt,
-            ':hash' => $pwdhash->hash,
-        ));
-        return $success;
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':username' => $username,
+			':password' => '',
+			':salt' => $pwdhash->salt,
+			':hash' => $pwdhash->hash,
+		));
+		return $success;
 	}
 	function editpassword( $userid, $password ) {
 		$userid = (int)$userid;
 		$pwdhash = $this->getbcrypt($password, '$2y$11$'.$this->createbcryptsalt().'$');
 		$query = 'UPDATE music_users '
-                .'SET password = :password, salt = :salt, passbcrypt = :hash '
-                .'WHERE userid = :userid';
+		        .'SET password = :password, salt = :salt, passbcrypt = :hash '
+		        .'WHERE userid = :userid';
 
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':password' => '',
-            ':salt' => $pwdhash->salt,
-            ':hash' => $pwdhash->hash,
-        ));
-        return $success;
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+			':password' => '',
+			':salt' => $pwdhash->salt,
+			':hash' => $pwdhash->hash,
+		));
+		return $success;
 	}
 	function get_user_and_confirm_password($userid, $password) {
 		// grab salt from DB
 		$userid = (int)$userid;
 		$query = 'SELECT salt FROM music_users WHERE userid = :userid';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+		));
 		$salt = null;
 		if ( $success ) {
 			$salt = $stmt->fetchColumn();
 		}
-		
+
 		$updatepw = false;
-		if ( $salt ) {
+		if ($salt) {
 			// new password format
 			$pwdnew = $this->getbcrypt($password, $salt);
 			$query = 'SELECT userid, username, role, halfguess, guessorder FROM music_users WHERE '
-                    .'userid = :userid AND passbcrypt = :hash';
-            $hash = $pwdnew->hash;
+			        .'userid = :userid AND passbcrypt = :hash';
+			$hash = $pwdnew->hash;
 		} else {
 			// old password format
 			$pwdhash = $this->gethash($password);
 			$query = 'SELECT userid, username, role, halfguess, guessorder FROM music_users WHERE '
-                    .'userid = :userid AND password = :hash';
-            $hash = $pwdhash;
+			        .'userid = :userid AND password = :hash';
+			$hash = $pwdhash;
 			$updatepw = true;
 		}
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':hash' => $hash,
-        ));
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+			':hash' => $hash,
+		));
 		if ( $success && $data = $stmt->fetch() ) {
 			if ( ((int)$data['role']) === 0 ) return false;
 			$user = new user($data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder']);
@@ -108,42 +108,42 @@ class db {
 	}
 	function get_userid($username) {
 		$query = 'SELECT userid FROM music_users WHERE username = :username';
-        
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':username' => $username,
-        ));
-        
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':username' => $username,
+		));
+
 		if ( $success ) {
 			return $stmt->fetchColumn();
-		}		
+		}
 		return false;
 	}
 	function get_user($userid) {
 		$userid = (int)$userid;
 		$query = 'SELECT userid, username, role, halfguess, guessorder, autoplay FROM music_users WHERE userid = :userid';
-        
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
-        
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+		));
+
 		if ( $success ) {
 			$data = $stmt->fetch();
 			$user = new user($data['userid'], $data['username'], $data['role'], $data['halfguess'], $data['guessorder'], $data['autoplay']);
 			return $user;
 		}
-		
+
 		return false;
 	}
 	function get_users_with_rank($role) {
 		$role = (int)$role;
 		$query = 'SELECT userid, username, role, halfguess, guessorder, autoplay FROM music_users WHERE role >= :role';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':role' => $role,
-        ));
-		
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':role' => $role,
+		));
+
 		if ( $success ) {
 			$users = array();
 			while ( $data = $stmt->fetch() ) {
@@ -151,16 +151,16 @@ class db {
 			}
 			return $users;
 		}
-		
+
 		return false;
 	}
 	function get_all_users() {
 		$query = 'SELECT userid, username, role, halfguess, guessorder, autoplay FROM music_users ORDER BY username ASC';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':role' => $role,
-        ));
-        
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':role' => $role,
+		));
+
 		if ( $success ) {
 			$users = array();
 			while ( $data = $stmt->fetch() ) {
@@ -171,29 +171,28 @@ class db {
 		
 		return false;
 	}
-	function update_session($userid, $session, $ip = '0.0.0.0') {
+	function update_session($userid, $session) {
 		$userid = (int)$userid;
-		$query = 'UPDATE music_users SET session = :session, ip = INET_ATON(:ip) WHERE userid = :userid';
+		$query = 'UPDATE music_users SET session = :session WHERE userid = :userid';
 
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-            ':session' => $session,
-            ':ip' => $ip,
-        ));
-        return $success;
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+			':session' => $session,
+		));
+		return $success;
 	}
 	function confirm_user($userid, $sessiontoken) {
 		if ( $sessiontoken == null || $sessiontoken == '' ) return false;
-	
+
 		$userid = (int)$userid;
 		$query = 'SELECT session FROM music_users WHERE userid = :userid';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':userid' => $userid,
-        ));
-        
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':userid' => $userid,
+		));
+
 		if ( $success ) {
 			$users = array();
 			if ( $data = $stmt->fetch() ) {
@@ -202,18 +201,18 @@ class db {
 				}
 			}
 		}
-		
+
 		return false;
-    }
-	
+	}
+
 	function get_gamenames( $songid ) {
 		$songid = (int)$songid;
 		$query = 'SELECT gamename FROM music_songs JOIN music_games ON music_songs.gameid = music_games.gameid WHERE songid = :songid ORDER BY priority ASC';
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
-		
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':songid' => $songid,
+		));
+
 		if ( $success ) {
 			$games = array();
 			while ( $data = $stmt->fetch() ) {
@@ -225,14 +224,14 @@ class db {
 		return false;
 	}
 
-    function get_gamenames_with_priority( $gameid ) {
+	function get_gamenames_with_priority( $gameid ) {
 		$gameid = (int)$gameid;
 		$query = 'SELECT gamename, priority FROM music_games WHERE gameid = :gameid ORDER BY priority ASC';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':gameid' => $gameid,
-        ));
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':gameid' => $gameid,
+		));
 		if ( $success ) {
 			$games = array();
 			while ( $data = $stmt->fetch() ) {
@@ -240,17 +239,17 @@ class db {
 			}
 			return $games;
 		}
-	
+
 		return false;
 	}
-    function get_songnames_with_priority( $songid ) {
+	function get_songnames_with_priority( $songid ) {
 		$songid = (int)$songid;
 		$query = 'SELECT songname, priority FROM music_songnames WHERE songid = :songid ORDER BY priority ASC';
-		
-        $stmt = $this->database->prepare( $query );
-        $success = $stmt->execute(array(
-            ':songid' => $songid,
-        ));
+
+		$stmt = $this->database->prepare( $query );
+		$success = $stmt->execute(array(
+			':songid' => $songid,
+		));
 		if ( $success ) {
 			$songnames = array();
 			while ( $data = $stmt->fetch() ) {
@@ -258,8 +257,8 @@ class db {
 			}
 			return $songnames;
 		}
-		
-		return false;	
+
+		return false;
 	}
 	function edit_game( $gameid, $gamename, $priority ) {
 		$gameid = (int)$gameid;

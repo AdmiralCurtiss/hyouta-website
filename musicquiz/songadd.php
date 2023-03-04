@@ -82,7 +82,7 @@ if ( $session->logged_in && $session->user->is_admin() ) {
 					$_POST = null;
 					unset($unmodified_url);
 				} else {
-					echo '<p>Failed adding new song. It\'s possible that only parts of the song information have been added to the database, please confirm that this is not the case before trying again.</p>';
+					echo '<p>Failed adding new song. It&#39;s possible that only parts of the song information have been added to the database, please confirm that this is not the case before trying again.</p>';
 				}
 			} else {
 				echo '<p>'.$songinsert_error_message.'</p>';
