@@ -282,8 +282,9 @@ class VesperiaUrlHelper {
 	var $perpage;    // integer; amount of items per page
 	var $diff;       // boolean; true to mark diffs to 360 version on ps3 content (where implemented)
 	var $jump;       // boolean; true to show the scenario jumper next to scenario text; true by default!
+	var $filtered;   // boolean; true to filter out things like unused items and generic artes; true by default!
 
-	function __construct( $version, $locale, $compare, $section, $category, $icon, $character, $id, $name, $mapletter, $mapfloor, $enemies, $query, $page, $perpage, $diff, $jump ) {
+	function __construct( $version, $locale, $compare, $section, $category, $icon, $character, $id, $name, $mapletter, $mapfloor, $enemies, $query, $page, $perpage, $diff, $jump, $filtered ) {
 		$this->version = $version;
 		$this->locale = $locale;
 		$this->compare = $compare;
@@ -301,6 +302,7 @@ class VesperiaUrlHelper {
 		$this->perpage = $perpage;
 		$this->diff = $diff;
 		$this->jump = $jump;
+		$this->filtered = $filtered;
 	}
 
 	public static function FromGetParams( $args ) {
@@ -383,27 +385,32 @@ class VesperiaUrlHelper {
 		if ( isset($args['enemies']) ) {
 			$enemies = $args['enemies'] === 'true';
 		}
+		$filtered = true;
+		if ( isset($args['filtered']) && $args['filtered'] === 'false' ) {
+			$filtered = false;
+		}
 		
-		return new VesperiaUrlHelper( $version, $locale, $compare, $section, $category, $icon, $character, $id, $name, $map_letter_digit, $map_number, $enemies, $query, $page, $perPage, $markVersionDifferences, $showScenarioJumper );
+		return new VesperiaUrlHelper( $version, $locale, $compare, $section, $category, $icon, $character, $id, $name, $map_letter_digit, $map_number, $enemies, $query, $page, $perPage, $markVersionDifferences, $showScenarioJumper, $filtered );
 	}
 
-	function WithVersion   ( $d ) { return new VesperiaUrlHelper( $d,             $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithLocale    ( $d ) { return new VesperiaUrlHelper( $this->version, $d           , $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithCompare   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $d            , $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithSection   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $d            , false,           false,       false,            false,     false,       false,            false,           false,          $this->query, false,       false,          $this->diff, $this->jump ); } // this clears section-specific params automatically too
-	function WithCategory  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $d             , $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithIcon      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $d         , $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithCharacter ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $d              , $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithId        ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $d       , $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithName      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $d         , $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithMapLetter ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $d              , $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithMapFloor  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $d             , $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithEnemies   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $d            , $this->query, $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithQuery     ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $d          , $this->page, $this->perpage, $this->diff, $this->jump ); }
-	function WithPage      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $d         , $this->perpage, $this->diff, $this->jump ); }
-	function WithPerPage   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $d            , $this->diff, $this->jump ); }
-	function WithDiff      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $d         , $this->jump ); }
-	function WithJump      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $d          ); }
+	function WithVersion   ( $d ) { return new VesperiaUrlHelper( $d,             $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithLocale    ( $d ) { return new VesperiaUrlHelper( $this->version, $d           , $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithCompare   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $d            , $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithSection   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $d            , false,           false,       false,            false,     false,       false,            false,           false,          $this->query, false,       false,          $this->diff, $this->jump, $this->filtered ); } // this clears section-specific params automatically too
+	function WithCategory  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $d             , $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithIcon      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $d         , $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithCharacter ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $d              , $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithId        ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $d       , $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithName      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $d         , $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithMapLetter ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $d              , $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithMapFloor  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $d             , $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithEnemies   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $d            , $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithQuery     ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $d          , $this->page, $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithPage      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $d         , $this->perpage, $this->diff, $this->jump, $this->filtered ); }
+	function WithPerPage   ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $d            , $this->diff, $this->jump, $this->filtered ); }
+	function WithDiff      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $d         , $this->jump, $this->filtered ); }
+	function WithJump      ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $d         , $this->filtered ); }
+	function WithFiltered  ( $d ) { return new VesperiaUrlHelper( $this->version, $this->locale, $this->compare, $this->section, $this->category, $this->icon, $this->character, $this->id, $this->name, $this->mapletter, $this->mapfloor, $this->enemies, $this->query, $this->page, $this->perpage, $this->diff, $this->jump, $d              ); }
 
 	function MapLetterAsLetter() {
 		if ($this->mapletter !== false && $this->mapletter >= 0 && $this->mapletter < 6) {
@@ -456,6 +463,9 @@ class VesperiaUrlHelper {
 		}
 		if ( $this->jump === false ) {
 			$link .= '&jump=false';
+		}
+		if ( $this->filtered === false ) {
+			$link .= '&filtered=false';
 		}
 		return $link;
 	}

@@ -301,11 +301,13 @@ class db {
 		die();
 	}
 	
-	function GetArtesHtml( $compare, $id = false ) {
+	function GetArtesHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Artes ';
 		if ( $id === false ) {
-			$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character > 0 AND Artes.character <= 9 ) ';
+			if ( $filtered ) {
+				$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character > 0 AND Artes.character <= 9 ) ';
+			}
 		} else {
 			$s .= 'WHERE Artes.gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -350,10 +352,14 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetArtesByCharacterHtml( $compare, $character ) {
+	function GetArtesByCharacterHtml( $compare, $character, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Artes ';
-		$s .= 'WHERE ( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ( Artes.character = :searchChar ) ';
+		$s .= 'WHERE ';
+		if ( $filtered ) {
+			$s .= '( ( Artes.type > 0 AND Artes.type <= 11 ) OR Artes.type = 13 ) AND ';
+		}
+		$s .= '( Artes.character = :searchChar ) ';
 		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
 		
@@ -367,11 +373,13 @@ class db {
 		return $items;
 	}
 	
-	function GetSkillsHtml( $compare, $id = false ) {
+	function GetSkillsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Skills ';
 		if ( $id === false ) {
-			$s .= 'WHERE learnableBy > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE learnableBy > 0 ';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -414,10 +422,12 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetSkillsByCharacterHtml( $compare, $character ) {
+	function GetSkillsByCharacterHtml( $compare, $character, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Skills ';
-		$s .= 'WHERE ( learnableBy & ( 1 << ( :searchChar - 1 ) ) ) > 0 ';
+		if ( $filtered ) {
+			$s .= 'WHERE ( learnableBy & ( 1 << ( :searchChar - 1 ) ) ) > 0 ';
+		}
 		$args['searchChar'] = $character;
 		$s .= 'ORDER BY id ASC';
 		
@@ -431,11 +441,13 @@ class db {
 		return $items;
 	}
 	
-	function GetRecipesHtml( $compare, $id = false ) {
+	function GetRecipesHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Recipes ';
 		if ( $id === false ) {
-			$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE id > 0 ';
+			}
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -478,11 +490,13 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetShopsHtml( $compare, $id = false ) {
+	function GetShopsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Shops ';
 		if ( $id === false ) {
-			$s .= 'WHERE gameId > 1 ';
+			if ( $filtered ) {
+				$s .= 'WHERE gameId > 1 ';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -499,14 +513,16 @@ class db {
 		return $items;
 	}
 	
-	function GetTitlesHtml( $compare, $id = false ) {
+	function GetTitlesHtml( $compare, $id, $filtered ) {
 		// gameId = 67 is an Estelle Title with 0 points that still shows up in-game in PS3
 		// consider checks for this a hack
 		
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Titles ';
 		if ( $id === false ) {
-			$s .= 'WHERE gameId > 0 AND ( points > 0 OR gameId = 67 )';
+			if ( $filtered ) {
+				$s .= 'WHERE gameId > 0 AND ( points > 0 OR gameId = 67 )';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -549,11 +565,14 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetTitlesByCharacterHtml( $compare, $character ) {
+	function GetTitlesByCharacterHtml( $compare, $character, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Titles ';
-		$s .= 'WHERE Titles.character = :searchChar AND ( points > 0 OR gameId = 67 ) ';
+		$s .= 'WHERE Titles.character = :searchChar ';
 		$args['searchChar'] = $character;
+		if ( $filtered ) {
+			$s .= 'AND ( points > 0 OR gameId = 67 ) ';
+		}
 		$s .= 'ORDER BY id ASC';
 		
 		$stmt = $this->conn->prepare( $s );
@@ -566,11 +585,13 @@ class db {
 		return $items;
 	}
 	
-	function GetSynopsisHtml( $compare, $id = false ) {
+	function GetSynopsisHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Synopsis ';
 		if ( $id === false ) {
-			$s .= 'WHERE storyMax > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE storyMax > 0 ';
+			}
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -613,11 +634,13 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetBattleBookHtml( $compare, $id = false ) {
+	function GetBattleBookHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM BattleBook ';
 		if ( $id === false ) {
-			$s .= 'WHERE id > 1 ';
+			if ( $filtered ) {
+				$s .= 'WHERE id > 1 ';
+			}
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -660,17 +683,22 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetEnemiesHtml( $compare, $id = false, $category = false ) {
+	function GetEnemiesHtml( $compare, $id, $category, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Enemies ';
 		if ( $id !== false ) {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
 		} elseif ( $category !== false ) {
-			$s .= 'WHERE category = :searchId AND id > 0 ';
+			$s .= 'WHERE category = :searchId ';
 			$args['searchId'] = $category;
+			if ( $filtered ) {
+				$s .= 'AND id > 0 ';
+			}
 		} else {
-			$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE id > 0 ';
+			}
 		}
 		$s .= 'ORDER BY id ASC';
 		
@@ -710,7 +738,7 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetItemsHtml( $compare, $id = false, $category = false, $icon = false, $rowOffset = 0, $rowCount = 250 ) {
+	function GetItemsHtml( $compare, $id, $category, $icon, $rowOffset, $rowCount, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Items ';
 		if ( $id !== false ) {
@@ -723,7 +751,9 @@ class db {
 			$s .= 'WHERE category = :searchId ';
 			$args['searchId'] = $category;
 		} else {
-			//$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE inCollectorsBook != 0 ';
+			}
 		}
 		$s .= 'ORDER BY id ASC LIMIT '.$rowOffset.','.$rowCount;
 		
@@ -737,7 +767,7 @@ class db {
 		return $items;
 	}
 
-	function GetItemsCount( $id = false, $category = false, $icon = false ) {
+	function GetItemsCount( $id, $category, $icon, $filtered ) {
 		$args = array();
 		$s = 'SELECT COUNT(1) AS cnt FROM Items ';
 		if ( $id !== false ) {
@@ -750,7 +780,9 @@ class db {
 			$s .= 'WHERE category = :searchId ';
 			$args['searchId'] = $category;
 		} else {
-			//$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE inCollectorsBook != 0 ';
+			}
 		}
 		
 		$stmt = $this->conn->prepare( $s );
@@ -789,11 +821,13 @@ class db {
 		return $this->ExecuteAndReturnFirstValueAsInteger( $s, $args );
 	}
 
-	function GetLocationsHtml( $compare, $id = false ) {
+	function GetLocationsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Locations ';
 		if ( $id === false ) {
-			$s .= 'WHERE category > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE category > 0 ';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -810,11 +844,13 @@ class db {
 		return $items;
 	}
 	
-	function GetSearchPointsHtml( $compare, $id = false ) {
+	function GetSearchPointsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM SearchPoints ';
 		if ( $id === false ) {
-			$s .= 'WHERE displayId >= 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE displayId >= 0 ';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -831,11 +867,13 @@ class db {
 		return $items;
 	}
 	
-	function GetRecordsHtml( $compare, $id = false ) {
+	function GetRecordsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Records ';
 		if ( $id === false ) {
-			//$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				//$s .= 'WHERE id > 0 ';
+			}
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -852,11 +890,13 @@ class db {
 		return $items;
 	}
 	
-	function GetSettingsHtml( $compare, $id = false ) {
+	function GetSettingsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM Settings ';
 		if ( $id === false ) {
-			//$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				//$s .= 'WHERE id > 0 ';
+			}
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -873,11 +913,13 @@ class db {
 		return $items;
 	}
 	
-	function GetGradeShopHtml( $compare, $id = false ) {
+	function GetGradeShopHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM GradeShop ';
 		if ( $id === false ) {
-			$s .= 'WHERE cost > 0 ';
+			if ( $filtered ) {
+				$s .= 'WHERE cost > 0 ';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;
@@ -938,11 +980,13 @@ class db {
 		return $items;
 	}
 	
-	function GetStrategySetHtml( $compare, $id = false ) {
+	function GetStrategySetHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM StrategySet ';
 		if ( $id === false ) {
-			//$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				//$s .= 'WHERE id > 0 ';
+			}
 		} else {
 			$s .= 'WHERE id = :searchId ';
 			$args['searchId'] = $id;
@@ -959,11 +1003,13 @@ class db {
 		return $items;
 	}
 	
-	function GetStrategyOptionsHtml( $compare, $id = false ) {
+	function GetStrategyOptionsHtml( $compare, $id, $filtered ) {
 		$args = array();
 		$s = 'SELECT html'.$this->GetHtmlColumnPostfix($compare).' as html FROM StrategyOptions ';
 		if ( $id === false ) {
-			//$s .= 'WHERE id > 0 ';
+			if ( $filtered ) {
+				//$s .= 'WHERE id > 0 ';
+			}
 		} else {
 			$s .= 'WHERE gameId = :searchId ';
 			$args['searchId'] = $id;

@@ -40,6 +40,7 @@ $page = $urlHelper->page === false ? 1 : $urlHelper->page;
 $markVersionDifferences = $urlHelper->diff;
 $showScenarioJumper = $urlHelper->jump;
 $perPage = $urlHelper->perpage === false ? 0 : $urlHelper->perpage;
+$filtered = $urlHelper->filtered;
 
 include '../credentials.php';
 $db = new db( __db_connstr_vesperia_from_version_and_locale__( $version, $locale ), $__db_username_vesperia__, $__db_password_vesperia__ );
@@ -390,9 +391,9 @@ if ( $section === 'search' ) {
 	echo '<table>';
 	
 	if ( $character === false ) {
-		$artes = $db->GetArtesHtml( $compare, $id );
+		$artes = $db->GetArtesHtml( $compare, $id, $filtered );
 	} else {
-		$artes = $db->GetArtesByCharacterHtml( $compare, $character );
+		$artes = $db->GetArtesByCharacterHtml( $compare, $character, $filtered );
 	}
 	$first = true;
 	foreach ( $artes as $a ) {
@@ -409,9 +410,9 @@ if ( $section === 'search' ) {
 	echo '<table>';
 	
 	if ( $character === false ) {
-		$skills = $db->GetSkillsHtml( $compare, $id );
+		$skills = $db->GetSkillsHtml( $compare, $id, $filtered );
 	} else {
-		$skills = $db->GetSkillsByCharacterHtml( $compare, $character );
+		$skills = $db->GetSkillsByCharacterHtml( $compare, $character, $filtered );
 	}
 	$first = true;
 	foreach ( $skills as $a ) {
@@ -426,7 +427,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Recipes' );
 	echo '<table>';
 	
-	$items = $db->GetRecipesHtml( $compare, $id );
+	$items = $db->GetRecipesHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -442,7 +443,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Shops' );
 	echo '<table>';
 	
-	$items = $db->GetShopsHtml( $compare, $id );
+	$items = $db->GetShopsHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -458,9 +459,9 @@ if ( $section === 'search' ) {
 	echo '<table>';
 	
 	if ( $character === false ) {
-		$items = $db->GetTitlesHtml( $compare, $id );
+		$items = $db->GetTitlesHtml( $compare, $id, $filtered );
 	} else {
-		$items = $db->GetTitlesByCharacterHtml( $compare, $character );
+		$items = $db->GetTitlesByCharacterHtml( $compare, $character, $filtered );
 	}
 	$first = true;
 	foreach ( $items as $item ) {
@@ -474,7 +475,7 @@ if ( $section === 'search' ) {
 } elseif ( $section === 'synopsis' ) {
 	print_top( $urlHelper, 'Synopsis' );
 	
-	$items = $db->GetSynopsisHtml( $compare, $id );
+	$items = $db->GetSynopsisHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -487,7 +488,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Battle Book' );
 	echo '<table>';
 	
-	$items = $db->GetBattleBookHtml( $compare, $id );
+	$items = $db->GetBattleBookHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -503,7 +504,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Enemies' );
 	echo '<table>';
 	
-	$items = $db->GetEnemiesHtml( $compare, $id, $category );
+	$items = $db->GetEnemiesHtml( $compare, $id, $category, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -519,9 +520,9 @@ if ( $section === 'search' ) {
 	if ( $perPage <=   0 ) { $perPage = 120; }
 	if ( $perPage >  500 ) { $perPage = 500; }
 
-	$itemcount = $db->GetItemsCount( $id, $category, $icon );
+	$itemcount = $db->GetItemsCount( $id, $category, $icon, $filtered );
 	$offset = ($page - 1) * $perPage;
-	$items = $db->GetItemsHtml( $compare, $id, $category, $icon, $offset, $perPage );
+	$items = $db->GetItemsHtml( $compare, $id, $category, $icon, $offset, $perPage, $filtered );
 
 	paginate( $page, $perPage, $itemcount, $urlHelper );
 
@@ -540,7 +541,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Locations' );
 	echo '<table>';
 	
-	$items = $db->GetLocationsHtml( $compare, $id );
+	$items = $db->GetLocationsHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -556,7 +557,7 @@ if ( $section === 'search' ) {
 	echo '<hr>';
 	echo '<table>';
 	
-	$items = $db->GetSearchPointsHtml( $compare, $id );
+	$items = $db->GetSearchPointsHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -570,7 +571,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Records' );
 	echo '<table>';
 	
-	$items = $db->GetRecordsHtml( $compare, $id );
+	$items = $db->GetRecordsHtml( $compare, $id, $filtered );
 	foreach ( $items as $item ) {
 		echo $item;
 	}
@@ -580,7 +581,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Settings' );
 	echo '<table>';
 	
-	$items = $db->GetSettingsHtml( $compare, $id );
+	$items = $db->GetSettingsHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -594,7 +595,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Grade Shop' );
 	echo '<table>';
 	
-	$items = $db->GetGradeShopHtml( $compare, $id );
+	$items = $db->GetGradeShopHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -622,7 +623,7 @@ if ( $section === 'search' ) {
 	print_top( $urlHelper, 'Strategy' );
 	echo '<table>';
 	
-	$items = $db->GetStrategySetHtml( $compare, $id );
+	$items = $db->GetStrategySetHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
@@ -635,7 +636,7 @@ if ( $section === 'search' ) {
 	echo '<hr>';
 	echo '<table>';
 	
-	$items = $db->GetStrategyOptionsHtml( $compare, $id );
+	$items = $db->GetStrategyOptionsHtml( $compare, $id, $filtered );
 	$first = true;
 	foreach ( $items as $item ) {
 		if ( $first === true ) { $first = false; } else {
